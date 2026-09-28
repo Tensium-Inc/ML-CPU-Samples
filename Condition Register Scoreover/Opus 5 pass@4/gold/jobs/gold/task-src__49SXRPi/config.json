@@ -1,0 +1,9 @@
+{
+    "task": {
+        "path": "/tmp/drydock-ds/task-src",
+        "source": "drydock-ds"
+    },
+    "trial_name": "task-src__49SXRPi",
+    "trials_dir": "jobs/gold",
+    "job_id": "ea455c74-f48f-49b6-a508-e0eca2c4f574"
+}

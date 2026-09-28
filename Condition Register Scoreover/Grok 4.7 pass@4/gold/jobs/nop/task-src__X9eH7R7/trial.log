@@ -1,0 +1,4 @@
+Skipping image OS validation for hb__0371cfa14013a992bc90c8c7ac2c4868: docker inspect returned 1
+Running healthcheck: python3 -c "import socket; socket.socket(socket.AF_UNIX).connect('/run/envd/envd.sock')"
+Healthcheck passed
+Collecting main service artifacts

@@ -1,0 +1,9 @@
+{
+    "job_name": "gold",
+    "n_concurrent_trials": 1,
+    "datasets": [
+        {
+            "path": "/tmp/drydock-ds"
+        }
+    ]
+}

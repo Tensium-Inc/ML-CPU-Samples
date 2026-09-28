@@ -1,0 +1,4 @@
+{"job_id": "score-batch-2008-w21", "kind": "batch_score", "batch": "data/serving_batch.csv", "encounters_in_batch": 8548, "rows_written": 25562, "status": "ok"}
+{"job_id": "register-refresh-2008-w21", "kind": "register_refresh", "grain": "one row per encounter", "encounters_in_batch": 8548, "rows_written": 25562, "status": "ok"}
+{"job_id": "score-batch-2008-w22", "kind": "batch_score", "batch": "data/serving_batch.csv", "encounters_in_batch": 8548, "rows_written": 25562, "status": "ok", "note": "ward asked why an admission shows up several times in the export"}
+{"job_id": "register-refresh-2008-w22", "kind": "register_refresh", "grain": "one row per encounter", "encounters_in_batch": 8548, "rows_written": 25562, "status": "ok", "note": "clinical audit query open: a patient's condition list got shorter between two admissions"}

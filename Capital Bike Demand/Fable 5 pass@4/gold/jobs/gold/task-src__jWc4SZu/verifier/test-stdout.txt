@@ -1,0 +1,63 @@
+{
+  "detail": {
+    "accepted_action_counts": {
+      "audit.horizon": 1,
+      "audit.intervals": 1,
+      "backtest.replay": 1,
+      "cache.audit": 1,
+      "candidate.attest": 1,
+      "deploy.commit": 2,
+      "deploy.prepare": 2,
+      "diagnostics.read": 1,
+      "freeze": 1,
+      "hypothesis.commit": 1,
+      "inspect.contract": 1,
+      "inspect.exports": 1,
+      "probe.commute": 1,
+      "probe.horizon": 1,
+      "probe.leakage": 1,
+      "probe.schema": 1,
+      "probe.year_bridge": 1,
+      "profile.current": 1,
+      "promote.canary": 1,
+      "promote.production": 1,
+      "recovery.apply": 1,
+      "recovery.plan": 1,
+      "recovery.verify": 1,
+      "reproduce": 2,
+      "stage.open": 2,
+      "submit": 1,
+      "test.visible": 1,
+      "validate": 2,
+      "validate.canary": 1
+    },
+    "binding_reason": "ok",
+    "causal_gate_walk_ok": true,
+    "chain_reason": "ok",
+    "gate_reason": "ok",
+    "isolation_reason": "ok",
+    "service_state_isolated": true,
+    "signed_root_action_chain_ok": true,
+    "terminal": {
+      "commute_mae": 68.34472,
+      "coverage": 0.781856,
+      "deliverable_bound": true,
+      "healthy": true,
+      "mean_width": 112.039574,
+      "month_rmse": {
+        "10": 71.724414,
+        "11": 61.826278,
+        "12": 59.409038,
+        "9": 55.782004
+      },
+      "overall_rmse": 62.402253,
+      "reason": "ok",
+      "row_order_invariant": true
+    },
+    "terminal_binding_ok": true,
+    "terminal_correct": true,
+    "terminal_reason": "ok"
+  },
+  "reward": 1
+}
+Final score: 1

@@ -1,0 +1,40 @@
+{
+  "reward": 0.0,
+  "detail": {
+    "deliverable_ok": true,
+    "deliverable_reason": "ok",
+    "table_ok": false,
+    "table_reason": "row_pass_rate=0.991678 missing=0 surplus=0 label=55413/55878 key=55878/55878 commitment=55878/55878 pre_discount=55878/55878 discount=55878/55878 committed=55878/55878 months=55878/55878 failing=['label']",
+    "walk_ok": false,
+    "walk_reason": "walk_incomplete:6/8",
+    "notes_ok": true,
+    "notes_reason": "ok",
+    "submitted": false,
+    "comparison": {
+      "row_pass_rate": 0.9916782991517235,
+      "requests_agreeing": 55413,
+      "requests_reference": 55878,
+      "requests_missing": 0,
+      "requests_surplus": 0,
+      "label_agreeing": 55413,
+      "applicant_key_agreeing": 55878,
+      "filed_commitment_cents_agreeing": 55878,
+      "filed_pre_discount_cents_agreeing": 55878,
+      "filed_discount_pct_agreeing": 55878,
+      "candidate_label_counts": {
+        "funded": 51930,
+        "not_funded": 3544,
+        "undecided": 404
+      },
+      "sample_wrong": [
+        "2499058927",
+        "2499058971",
+        "2499059053",
+        "2499059065",
+        "2499059118"
+      ]
+    },
+    "n_actions": 186,
+    "strict_pass": false
+  }
+}

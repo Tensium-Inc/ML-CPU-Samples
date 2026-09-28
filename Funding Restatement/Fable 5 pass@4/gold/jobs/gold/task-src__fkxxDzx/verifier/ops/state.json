@@ -1,0 +1,26 @@
+{
+  "reproduced": true,
+  "deploys": 1,
+  "deployed": true,
+  "fault_active": false,
+  "fault_seen": true,
+  "diagnosed": true,
+  "recovered": true,
+  "v_budget": 5,
+  "r_budget": 2,
+  "a_budget": 12,
+  "adjudicated": [],
+  "clean_after_recovery": true,
+  "released": true,
+  "submitted": true,
+  "policies_read": [
+    "applicant",
+    "decisions",
+    "deliverable",
+    "harness",
+    "recovery",
+    "requests"
+  ],
+  "seq": 17,
+  "receipt": "78c6af7a792ef382"
+}

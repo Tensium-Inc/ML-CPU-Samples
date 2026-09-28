@@ -1,0 +1,12 @@
+{
+    "task": {
+        "path": "/tmp/drydock-ds/task-src",
+        "source": "drydock-ds"
+    },
+    "trial_name": "task-src__X9eH7R7",
+    "trials_dir": "jobs/nop",
+    "agent": {
+        "name": "nop"
+    },
+    "job_id": "e0df4dcf-60b1-49ae-86fc-ffd99a086c88"
+}

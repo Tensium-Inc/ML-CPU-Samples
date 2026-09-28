@@ -1,0 +1,120 @@
+{
+    "id": "57bc0c8a-0bc7-4853-bcaa-ca446036fb85",
+    "task_name": "drydock/funding-restatement-harness-mini",
+    "trial_name": "task-src__XoQVSpw",
+    "trial_uri": "file:///home/runner/work/Anvil/Anvil/jobs/agent/task-src__XoQVSpw",
+    "task_id": {
+        "path": "/tmp/drydock-ds/task-src"
+    },
+    "source": "drydock-ds",
+    "task_checksum": "d5c426f63c0214f55925d8e4b89a62d0223784d0ec9706e0df3590342202f716",
+    "config": {
+        "task": {
+            "path": "/tmp/drydock-ds/task-src",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": "drydock-ds"
+        },
+        "trial_name": "task-src__XoQVSpw",
+        "trials_dir": "jobs/agent",
+        "install_only": false,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": 5.0,
+        "environment_build_timeout_multiplier": null,
+        "agent": {
+            "name": "mini-swe-agent",
+            "import_path": null,
+            "model_name": "anthropic/claude-fable-5",
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": null,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {
+                "reasoning_effort": "xhigh",
+                "max_tokens": 32000
+            },
+            "mcp_servers": []
+        },
+        "user_agent": null,
+        "environment": {
+            "type": "docker",
+            "import_path": null,
+            "force_build": false,
+            "delete": true,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "extra_instructions": [],
+        "job_id": "cb6cb641-171c-4f05-86e7-26eff415638c",
+        "source_trial": null
+    },
+    "agent_info": {
+        "name": "mini-swe-agent",
+        "version": "2.4.6",
+        "model_info": {
+            "name": "claude-fable-5",
+            "provider": "anthropic"
+        }
+    },
+    "agent_result": {
+        "n_input_tokens": 2656929,
+        "n_cache_tokens": 2568463,
+        "n_output_tokens": 59987,
+        "cost_usd": 6.673382999999999,
+        "rollout_details": null,
+        "metadata": null
+    },
+    "verifier_result": {
+        "rewards": {
+            "reward": 1.0
+        }
+    },
+    "verifier_environment_mode": "shared",
+    "exception_info": null,
+    "started_at": "2026-09-02T15:15:29.144458Z",
+    "finished_at": "2026-09-02T15:32:31.034203Z",
+    "environment_setup": {
+        "started_at": "2026-09-02T15:15:29.341649Z",
+        "finished_at": "2026-09-02T15:16:09.918960Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-09-02T15:16:10.115527Z",
+        "finished_at": "2026-09-02T15:16:43.637851Z"
+    },
+    "agent_execution": {
+        "started_at": "2026-09-02T15:16:43.637991Z",
+        "finished_at": "2026-09-02T15:32:13.139601Z"
+    },
+    "verifier": {
+        "started_at": "2026-09-02T15:32:13.411245Z",
+        "finished_at": "2026-09-02T15:32:18.691440Z"
+    },
+    "step_results": null
+}

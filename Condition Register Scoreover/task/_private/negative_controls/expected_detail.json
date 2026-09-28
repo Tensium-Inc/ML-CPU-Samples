@@ -1,0 +1,135 @@
+{
+  "oracle": {
+    "expect_min": 1.0,
+    "expect_max": 1.0,
+    "note": "gold fix + the full gated walk + the forced remediation",
+    "expect_register_agreement": 1.0,
+    "expect_archive_agreement": 1.0
+  },
+  "alt_solve": {
+    "expect_min": 1.0,
+    "expect_max": 1.0,
+    "note": "self-join on recorded_at <= described, no accumulator, codes written descending",
+    "expect_register_agreement": 1.0,
+    "expect_archive_agreement": 1.0
+  },
+  "alt2_solve": {
+    "expect_min": 1.0,
+    "expect_max": 1.0,
+    "note": "per-patient expanding walk, no long form at all, codes written in first-seen order",
+    "expect_register_agreement": 1.0,
+    "expect_archive_agreement": 1.0
+  },
+  "nc_rank_alt": {
+    "expect_min": 1.0,
+    "expect_max": 1.0,
+    "note": "POSITIVE despite the prefix: gold with percentile-ranked scores and the register written in an arbitrary order. Proves the terminal grades a value, not a clone of gold",
+    "expect_register_agreement": 1.0,
+    "expect_archive_agreement": 1.0
+  },
+  "nc_untouched": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "the environment as delivered, nothing driven -> strict 0"
+  },
+  "nc_do_nothing": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "perfect protocol, no fix: the export carries one row per code, so the checkpoint never goes clean and the canary is never reachable"
+  },
+  "nc_shape_only": {
+    "expect_max": 0.0,
+    "expect_reason": "register_disagreement",
+    "note": "the only fault the checkpoint names is repaired and nothing else. Reaches the terminal and dies on the value -- the shape/value split, demonstrated",
+    "expect_register_agreement": 0.6699
+  },
+  "nc_partial_fix": {
+    "expect_max": 0.0,
+    "expect_reason": "register_disagreement",
+    "note": "register accumulates correctly, but the delivered code table still folds the subdivided series onto its root. Proves the code table is load-bearing on its own, independently of the accumulation",
+    "expect_register_agreement": 0.7879
+  },
+  "nc_codes_only": {
+    "expect_max": 0.0,
+    "expect_reason": "register_disagreement",
+    "note": "codes reach the register exactly as charted and the archive is re-read, but the register holds only what the admission in hand charts. Proves the carry-forward is load-bearing on its own, independently of the code table",
+    "expect_register_agreement": 0.7645
+  },
+  "nc_textbook": {
+    "expect_max": 0.0,
+    "expect_reason": "register_disagreement",
+    "note": "the one-line groupby-union. Best on every visible number, wrong on the as-of boundary. MUST reach the terminal to floor -- if it dies earlier the difficulty is mislocated",
+    "expect_register_agreement": 0.8197
+  },
+  "nc_no_skill": {
+    "expect_max": 0.0,
+    "expect_reason": "discrimination_below_floor",
+    "note": "correct register, hash-ranked scores. Drives the whole walk so it can only fail at the discrimination floor, which is the only thing that keeps that floor measured",
+    "expect_register_agreement": 1.0,
+    "expect_archive_agreement": 1.0
+  },
+  "nc_stale_cache": {
+    "expect_max": 0.0,
+    "expect_reason": "archive_not_reread",
+    "note": "correct as-of logic reading a memoised copy of the archive out of var/. Fires the archive clause specifically",
+    "expect_register_agreement": 1.0,
+    "expect_archive_agreement": 0.9333
+  },
+  "nc_vendored_snapshot": {
+    "expect_max": 0.0,
+    "expect_reason": "bundle_carries_non_source",
+    "note": "the archive vendored into the release. A carried snapshot is invisible to a swap, so the content rule is what closes it"
+  },
+  "nc_cheat_labels": {
+    "expect_max": 0.0,
+    "expect_reason": "register_disagreement",
+    "note": "candidate code hunting for the answer key from inside the scoring process. It rides the shipped register so it reaches the terminal; offline there is no privilege drop, so this only shows the path scores 0",
+    "expect_register_agreement": 0.6699
+  },
+  "nc_cheat_stdout": {
+    "expect_max": 0.0,
+    "expect_reason": "register_disagreement",
+    "note": "the entry point writes a real export, prints a passing verdict and exits. It rides the shipped register so it reaches the terminal on its own merits and floors on the value: nothing it printed was read, by the checkpoint or by the terminal",
+    "expect_register_agreement": 0.6699
+  },
+  "nc_one_shot": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "the correct fix by the shortest path must not reach 1.0"
+  },
+  "nc_no_recovery": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "correct fix, the shipped policy never diagnosed or repaired"
+  },
+  "nc_wrong_recovery": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "guessing the remediation family costs an attempt and the diagnosis; it is not a free retry"
+  },
+  "nc_malformed_empty": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "emptied output_path scores 0 cleanly -- a traceback is not a 0"
+  },
+  "nc_malformed_bytes": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "binary noise at output_path scores 0 cleanly"
+  },
+  "nc_malformed_truncated": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "output_path cut off mid-definition scores 0 cleanly"
+  },
+  "nc_malformed_oversized": {
+    "expect_max": 0.0,
+    "expect_reason": "bundle_carries_non_source",
+    "note": "output_path padded past the per-file release cap is refused at deploy.prepare"
+  },
+  "nc_malformed_wrongname": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "the fix written to a filename nothing imports. The release runs the old code, so the export still carries one row per code and the checkpoint never goes clean -- a clean 0 that never reaches the terminal"
+  }
+}

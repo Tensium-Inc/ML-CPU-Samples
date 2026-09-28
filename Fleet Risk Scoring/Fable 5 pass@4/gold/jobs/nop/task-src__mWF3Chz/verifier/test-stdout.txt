@@ -1,0 +1,16 @@
+{
+  "agree_pass": 0.999,
+  "current": {
+    "agreement": 0.0,
+    "ran": false,
+    "stderr": " call last):\n  File \"/tmp/candidate_rnv46cgj/target/run_scoring.py\", line 35, in <module>\n    main()\n  File \"/tmp/candidate_rnv46cgj/target/run_scoring.py\", line 25, in main\n    scores, fit_df, score_df = pipeline.run(cfg)\n                               ^^^^^^^^^^^^^^^^^\n  File \"/tmp/candidate_rnv46cgj/target/src/fleetrisk/pipeline.py\", line 70, in run\n    fit_df, score_df = build(cfg)\n                       ^^^^^^^^^^\n  File \"/tmp/candidate_rnv46cgj/target/src/fleetrisk/pipeline.py\", line 28, in build\n    labelled = observation.attach_label(flights, groundings, window_days)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/candidate_rnv46cgj/target/src/fleetrisk/observation.py\", line 9, in attach_label\n    raise NotImplementedError\nNotImplementedError\n"
+  },
+  "reference": {
+    "agreement": 0.0,
+    "ran": false,
+    "stderr": " call last):\n  File \"/tmp/candidate_rnv46cgj/target/run_scoring.py\", line 35, in <module>\n    main()\n  File \"/tmp/candidate_rnv46cgj/target/run_scoring.py\", line 25, in main\n    scores, fit_df, score_df = pipeline.run(cfg)\n                               ^^^^^^^^^^^^^^^^^\n  File \"/tmp/candidate_rnv46cgj/target/src/fleetrisk/pipeline.py\", line 70, in run\n    fit_df, score_df = build(cfg)\n                       ^^^^^^^^^^\n  File \"/tmp/candidate_rnv46cgj/target/src/fleetrisk/pipeline.py\", line 28, in build\n    labelled = observation.attach_label(flights, groundings, window_days)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/candidate_rnv46cgj/target/src/fleetrisk/observation.py\", line 9, in attach_label\n    raise NotImplementedError\nNotImplementedError\n"
+  },
+  "reward": 0.0,
+  "tolerance": 0.001
+}
+Final score: 0.0

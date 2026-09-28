@@ -1,0 +1,71 @@
+{
+  "label": "mini-swe-agent / xai/grok-4.7 (pass@4)",
+  "reasoning_effort": "xhigh",
+  "k": 4,
+  "trials_produced": 4,
+  "trials_missing": 0,
+  "avg_at_k": 0.25,
+  "pass_at_k": true,
+  "solves": 1,
+  "model": "grok-4.7",
+  "provider": "xai",
+  "total_cost_usd": 27.2842,
+  "cost_estimated": false,
+  "prompt_tokens": 39155012,
+  "completion_tokens": 347063,
+  "cached_tokens": 35611264,
+  "trials": [
+    {
+      "trial": "task-src__2B8CNDE",
+      "reward": 0.0,
+      "exception": null,
+      "model": "mini-swe-agent / grok-4.7",
+      "cost_usd": 7.229337999999999,
+      "prompt_tokens": 8682332,
+      "completion_tokens": 89051,
+      "cached_tokens": 7113088,
+      "steps": 83,
+      "reasoning_tokens": 101,
+      "reasoning_in_trace": true
+    },
+    {
+      "trial": "task-src__cHAVSeV",
+      "reward": 0.0,
+      "exception": null,
+      "model": "mini-swe-agent / grok-4.7",
+      "cost_usd": 9.700264000000004,
+      "prompt_tokens": 14916020,
+      "completion_tokens": 125262,
+      "cached_tokens": 14128000,
+      "steps": 123,
+      "reasoning_tokens": 49,
+      "reasoning_in_trace": true
+    },
+    {
+      "trial": "task-src__txGSZQv",
+      "reward": 0.0,
+      "exception": null,
+      "model": "mini-swe-agent / grok-4.7",
+      "cost_usd": 9.872294000000002,
+      "prompt_tokens": 15141586,
+      "completion_tokens": 119755,
+      "cached_tokens": 14086272,
+      "steps": 133,
+      "reasoning_tokens": 8659,
+      "reasoning_in_trace": true
+    },
+    {
+      "trial": "task-src__ySykpzY",
+      "reward": 1.0,
+      "exception": null,
+      "model": "mini-swe-agent / grok-4.7",
+      "cost_usd": 0.48226199999999997,
+      "prompt_tokens": 415074,
+      "completion_tokens": 12995,
+      "cached_tokens": 283904,
+      "steps": 19,
+      "reasoning_tokens": 33,
+      "reasoning_in_trace": true
+    }
+  ]
+}

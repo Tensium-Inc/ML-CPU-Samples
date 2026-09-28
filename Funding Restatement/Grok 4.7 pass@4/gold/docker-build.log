@@ -1,0 +1,969 @@
+===== docker build: task-src =====
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 4.92kB done
+#1 DONE 0.0s
+
+#2 [auth] docker/dockerfile:pull token for registry-1.docker.io
+#2 DONE 0.0s
+
+#3 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#3 DONE 0.7s
+
+#4 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#4 resolve docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32 done
+#4 sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32 9.08kB / 9.08kB done
+#4 sha256:34b128e419449565adc5ed7f487a6f503a73f1077012cfed86354c731338c44f 1.13kB / 1.13kB done
+#4 sha256:c844dc65644b70ea8b391444db20ff38537384d800ea9896d46ab8f3ce897f51 1.33kB / 1.33kB done
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 0B / 14.14MB 0.1s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 14.14MB / 14.14MB 0.3s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 14.14MB / 14.14MB 0.4s done
+#4 extracting sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed
+#4 extracting sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 0.2s done
+#4 DONE 0.6s
+
+#5 [internal] load metadata for docker.io/library/python:3.12-slim
+#5 ...
+
+#6 [auth] library/python:pull token for registry-1.docker.io
+#6 DONE 0.0s
+
+#5 [internal] load metadata for docker.io/library/python:3.12-slim
+#5 DONE 0.5s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 2B done
+#7 DONE 0.0s
+
+#8 [ 1/12] FROM docker.io/library/python:3.12-slim@sha256:f77ac9e44ae96ef2c90b8053ea08c31f8be030f824196b0ae4db6d462c84e51f
+#8 ...
+
+#9 [internal] load build context
+#9 transferring context: 6.38MB 0.0s done
+#9 DONE 0.0s
+
+#8 [ 1/12] FROM docker.io/library/python:3.12-slim@sha256:f77ac9e44ae96ef2c90b8053ea08c31f8be030f824196b0ae4db6d462c84e51f
+#8 resolve docker.io/library/python:3.12-slim@sha256:f77ac9e44ae96ef2c90b8053ea08c31f8be030f824196b0ae4db6d462c84e51f done
+#8 sha256:f77ac9e44ae96ef2c90b8053ea08c31f8be030f824196b0ae4db6d462c84e51f 10.37kB / 10.37kB done
+#8 sha256:44ff437bba879d4941b710a369a8f19266aea34b29002807f0c487fabc9eec9b 1.75kB / 1.75kB done
+#8 sha256:9e87977b867847e186d066f531ef783b006d582a985c341c269446088d90f2c4 5.65kB / 5.65kB done
+#8 sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 0B / 29.83MB 0.1s
+#8 sha256:3764a9a7d1e8a98213ab2201a41dbf3da9c60240ea35a5ea96ab994555070a70 0B / 1.29MB 0.1s
+#8 sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0 0B / 12.12MB 0.1s
+#8 sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 25.17MB / 29.83MB 0.2s
+#8 extracting sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8
+#8 sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 29.83MB / 29.83MB 0.2s done
+#8 sha256:3764a9a7d1e8a98213ab2201a41dbf3da9c60240ea35a5ea96ab994555070a70 1.29MB / 1.29MB 0.3s done
+#8 sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0 4.19MB / 12.12MB 0.3s
+#8 sha256:06ad939ed42b51caafb25b14810875d14e0ee0c441d3e2e5e46475fb8c150bca 249B / 249B 0.3s done
+#8 sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0 12.12MB / 12.12MB 0.4s done
+#8 extracting sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 1.1s done
+#8 extracting sha256:3764a9a7d1e8a98213ab2201a41dbf3da9c60240ea35a5ea96ab994555070a70
+#8 extracting sha256:3764a9a7d1e8a98213ab2201a41dbf3da9c60240ea35a5ea96ab994555070a70 0.1s done
+#8 extracting sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0
+#8 extracting sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0 0.7s done
+#8 extracting sha256:06ad939ed42b51caafb25b14810875d14e0ee0c441d3e2e5e46475fb8c150bca
+#8 extracting sha256:06ad939ed42b51caafb25b14810875d14e0ee0c441d3e2e5e46475fb8c150bca done
+#8 DONE 2.3s
+
+#10 [ 2/12] RUN apt-get update -y   && apt-get install -y --no-install-recommends bash ca-certificates util-linux   && rm -rf /var/lib/apt/lists/*   && pip install --no-cache-dir numpy==2.1.3 pandas==2.2.3 scipy==1.14.1        scikit-learn==1.5.2
+#10 0.248 Hit:1 http://deb.debian.org/debian trixie InRelease
+#10 0.254 Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+#10 0.280 Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+#10 0.298 Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9678 kB]
+#10 0.462 Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [4412 B]
+#10 0.478 Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [263 kB]
+#10 1.177 Fetched 10.0 MB in 1s (9953 kB/s)
+#10 1.177 Reading package lists...
+#10 1.716 Reading package lists...
+#10 2.238 Building dependency tree...
+#10 2.378 Reading state information...
+#10 2.544 bash is already the newest version (5.2.37-2+b10).
+#10 2.544 bash set to manually installed.
+#10 2.544 ca-certificates is already the newest version (20250419).
+#10 2.544 util-linux is already the newest version (2.41.5-0+deb13u1).
+#10 2.544 util-linux set to manually installed.
+#10 2.544 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+#10 4.116 Collecting numpy==2.1.3
+#10 4.175   Downloading numpy-2.1.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (62 kB)
+#10 4.315 Collecting pandas==2.2.3
+#10 4.329   Downloading pandas-2.2.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (89 kB)
+#10 4.471 Collecting scipy==1.14.1
+#10 4.486   Downloading scipy-1.14.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (60 kB)
+#10 4.570 Collecting scikit-learn==1.5.2
+#10 4.585   Downloading scikit_learn-1.5.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (13 kB)
+#10 4.617 Collecting python-dateutil>=2.8.2 (from pandas==2.2.3)
+#10 4.630   Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+#10 4.669 Collecting pytz>=2020.1 (from pandas==2.2.3)
+#10 4.682   Downloading pytz-2026.4-py2.py3-none-any.whl.metadata (22 kB)
+#10 4.702 Collecting tzdata>=2022.7 (from pandas==2.2.3)
+#10 4.715   Downloading tzdata-2026.4-py2.py3-none-any.whl.metadata (1.4 kB)
+#10 4.753 Collecting joblib>=1.2.0 (from scikit-learn==1.5.2)
+#10 4.766   Downloading joblib-1.6.0-py3-none-any.whl.metadata (6.5 kB)
+#10 4.783 Collecting threadpoolctl>=3.1.0 (from scikit-learn==1.5.2)
+#10 4.796   Downloading threadpoolctl-3.7.0-py3-none-any.whl.metadata (24 kB)
+#10 4.817 Collecting cloudpickle>=3.0 (from joblib>=1.2.0->scikit-learn==1.5.2)
+#10 4.830   Downloading cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+#10 4.848 Collecting six>=1.5 (from python-dateutil>=2.8.2->pandas==2.2.3)
+#10 4.862   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+#10 4.881 Downloading numpy-2.1.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (16.0 MB)
+#10 5.023    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.0/16.0 MB 135.8 MB/s eta 0:00:00
+#10 5.036 Downloading pandas-2.2.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.7 MB)
+#10 5.085    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.7/12.7 MB 273.8 MB/s eta 0:00:00
+#10 5.099 Downloading scipy-1.14.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (40.8 MB)
+#10 5.228    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.8/40.8 MB 323.5 MB/s eta 0:00:00
+#10 5.243 Downloading scikit_learn-1.5.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.9 MB)
+#10 5.278    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.9/12.9 MB 384.3 MB/s eta 0:00:00
+#10 5.292 Downloading joblib-1.6.0-py3-none-any.whl (306 kB)
+#10 5.306 Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+#10 5.320 Downloading pytz-2026.4-py2.py3-none-any.whl (506 kB)
+#10 5.334 Downloading threadpoolctl-3.7.0-py3-none-any.whl (26 kB)
+#10 5.347 Downloading tzdata-2026.4-py2.py3-none-any.whl (347 kB)
+#10 5.361 Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+#10 5.374 Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+#10 5.555 Installing collected packages: pytz, tzdata, threadpoolctl, six, numpy, cloudpickle, scipy, python-dateutil, joblib, scikit-learn, pandas
+#10 17.64 Successfully installed cloudpickle-3.1.2 joblib-1.6.0 numpy-2.1.3 pandas-2.2.3 python-dateutil-2.9.0.post0 pytz-2026.4 scikit-learn-1.5.2 scipy-1.14.1 six-1.17.0 threadpoolctl-3.7.0 tzdata-2026.4
+#10 17.64 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#10 17.73 
+#10 17.73 [notice] A new release of pip is available: 25.0.1 -> 26.2.1
+#10 17.73 [notice] To update, run: pip install --upgrade pip
+#10 DONE 18.4s
+
+#11 [ 3/12] RUN groupadd --gid 1000 ubuntu && useradd --uid 1000 --gid 1000 -m ubuntu
+#11 DONE 0.2s
+
+#12 [ 4/12] COPY backend/ /opt/task/
+#12 DONE 0.0s
+
+#13 [ 5/12] RUN chown -R root:root /opt/task   && chmod 755 /opt/task   && chmod 700 /opt/task/policies.py /opt/task/reference.py /opt/task/grading.py        /opt/task/broker.py /opt/task/sandbox.py /opt/task/corpus.py   && chmod 755 /opt/task/daemon.py /opt/task/task-entrypoint.sh   && mkdir -p /var/lib/fundops   && chown root:root /var/lib/fundops   && chmod 700 /var/lib/fundops
+#13 DONE 0.2s
+
+#14 [ 6/12] COPY trusted/ /opt/task/data/
+#14 DONE 0.0s
+
+#15 [ 7/12] RUN chown -R root:root /opt/task/data && chmod -R 700 /opt/task/data
+#15 DONE 0.2s
+
+#16 [ 8/12] WORKDIR /workspace/target
+#16 DONE 0.0s
+
+#17 [ 9/12] COPY workspace/ /workspace/target/
+#17 DONE 0.0s
+
+#18 [10/12] RUN chown -R ubuntu:ubuntu /workspace/target   && mkdir -p /workspace/target/.ops /logs/verifier/ops /logs/agent /logs/artifacts   && chown -R root:root /workspace/target/.ops /logs/verifier   && chmod 755 /logs /logs/artifacts /workspace/target/.ops   && chmod 777 /logs/agent   && chmod 700 /logs/verifier /logs/verifier/ops   && chmod 1755 /workspace/target
+#18 DONE 0.2s
+
+#19 [11/12] RUN set -e;   for d in _private gold oracle alt alt2 backend trusted negative_controls; do     if [ -e "/workspace/target/$d" ]; then echo "REFUSAL: reference dir in workspace ($d)" >&2; exit 1; fi;   done;   for f in solve.sh alt_solve.sh alt2_solve.sh grade.py reference.py policies.py broker.py grading.py sandbox.py corpus.py; do     if [ -e "/workspace/target/$f" ]; then echo "REFUSAL: verifier material in workspace ($f)" >&2; exit 1; fi;   done;   if grep -rIn -E "form_version.*==.*Original|Original.*==.*form_version|row\[.ben.\]|"ben"\]|Cancelled.*not_funded|not_funded.*Cancelled"        /workspace/target --include='*.py' 2>/dev/null; then     echo "REFUSAL: a shipped answer leaked into the workspace" >&2; exit 1;   fi;   true
+#19 DONE 0.2s
+
+#20 [12/12] RUN set -eux;   apt-get update -y;   apt-get install -y --no-install-recommends curl bash build-essential git python3 python3-pip ca-certificates;   rm -rf /var/lib/apt/lists/*;   if ! command -v uv >/dev/null 2>&1; then     curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh;   fi;   uv --version;   MSWE="mini-swe-agent --with litellm --with orjson --with fastapi";   uv tool install $MSWE;   AGENT_USER="$(id -un 1000 2>/dev/null || true)";   if [ -n "$AGENT_USER" ] && [ "$AGENT_USER" != "root" ]; then     install -d -o "$AGENT_USER" -g "$AGENT_USER" "/home/$AGENT_USER/.local";     AGENT_UID="$(id -u "$AGENT_USER")"; AGENT_GID="$(id -g "$AGENT_USER")";     if command -v setpriv >/dev/null 2>&1; then       setpriv --reuid="$AGENT_UID" --regid="$AGENT_GID" --init-groups         env PATH=/usr/local/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin HOME=/home/$AGENT_USER uv tool install $MSWE;     elif command -v runuser >/dev/null 2>&1; then       runuser -u "$AGENT_USER" --         env PATH=/usr/local/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin HOME=/home/$AGENT_USER uv tool install $MSWE;     elif command -v su >/dev/null 2>&1; then       su "$AGENT_USER" -s /bin/sh -c         "export PATH=/usr/local/bin:$PATH HOME=/home/$AGENT_USER; uv tool install $MSWE";     else       echo "WARN: no setpriv/runuser/su; per-user agent tool install skipped (root install stands)" >&2;     fi;   fi
+#20 0.179 + apt-get update -y
+#20 0.233 Get:1 http://deb.debian.org/debian trixie InRelease [140 kB]
+#20 0.259 Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+#20 0.268 Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+#20 0.284 Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9678 kB]
+#20 0.394 Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [4412 B]
+#20 0.395 Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [263 kB]
+#20 1.106 Fetched 10.2 MB in 1s (11.3 MB/s)
+#20 1.106 Reading package lists...
+#20 1.663 + apt-get install -y --no-install-recommends curl bash build-essential git python3 python3-pip ca-certificates
+#20 1.671 Reading package lists...
+#20 2.231 Building dependency tree...
+#20 2.387 Reading state information...
+#20 2.585 bash is already the newest version (5.2.37-2+b10).
+#20 2.585 ca-certificates is already the newest version (20250419).
+#20 2.585 The following additional packages will be installed:
+#20 2.585   binutils binutils-common binutils-x86-64-linux-gnu bzip2 cpp cpp-14
+#20 2.585   cpp-14-x86-64-linux-gnu cpp-x86-64-linux-gnu dpkg-dev g++ g++-14
+#20 2.585   g++-14-x86-64-linux-gnu g++-x86-64-linux-gnu gcc gcc-14
+#20 2.585   gcc-14-x86-64-linux-gnu gcc-x86-64-linux-gnu git-man libasan8 libatomic1
+#20 2.585   libbinutils libbrotli1 libc-dev-bin libc6-dev libcc1-0 libcom-err2
+#20 2.585   libcrypt-dev libctf-nobfd0 libctf0 libcurl3t64-gnutls libcurl4t64
+#20 2.586   libdpkg-perl liberror-perl libexpat1 libgcc-14-dev libgdbm-compat4t64
+#20 2.586   libgnutls30t64 libgomp1 libgprofng0 libgssapi-krb5-2 libhwasan0 libidn2-0
+#20 2.586   libisl23 libitm1 libjansson4 libk5crypto3 libkeyutils1 libkrb5-3
+#20 2.586   libkrb5support0 libldap2 liblsan0 libmpc3 libmpfr6 libnghttp2-14
+#20 2.586   libnghttp3-9 libngtcp2-16 libngtcp2-crypto-gnutls8 libp11-kit0 libperl5.40
+#20 2.586   libpsl5t64 libpython3-stdlib libpython3.13-minimal libpython3.13-stdlib
+#20 2.586   libquadmath0 librtmp1 libsasl2-2 libsasl2-modules-db libsframe1 libssh2-1t64
+#20 2.586   libstdc++-14-dev libtasn1-6 libtsan2 libubsan1 libunistring5 linux-libc-dev
+#20 2.586   make media-types patch perl perl-modules-5.40 python3-minimal
+#20 2.586   python3-packaging python3-wheel python3.13 python3.13-minimal rpcsvc-proto
+#20 2.586   xz-utils
+#20 2.587 Suggested packages:
+#20 2.587   binutils-doc gprofng-gui binutils-gold bzip2-doc cpp-doc gcc-14-locales
+#20 2.587   cpp-14-doc debian-keyring debian-tag2upload-keyring g++-multilib
+#20 2.587   g++-14-multilib gcc-14-doc gcc-multilib manpages-dev autoconf automake
+#20 2.587   libtool flex bison gdb gcc-doc gcc-14-multilib gdb-x86-64-linux-gnu
+#20 2.587   gettext-base git-doc git-email git-gui gitk gitweb git-cvs git-mediawiki
+#20 2.587   git-svn libc-devtools glibc-doc sq | sqop | rsop | gosop | pgpainless-cli
+#20 2.587   | gpg-sq | gnupg sensible-utils bzr gnutls-bin krb5-doc krb5-user
+#20 2.587   libstdc++-14-doc make-doc ed diffutils-doc perl-doc
+#20 2.587   libterm-readline-gnu-perl | libterm-readline-perl-perl
+#20 2.587   libtap-harness-archive-perl python3-doc python3-tk python3-venv
+#20 2.587   python3-setuptools python3.13-venv python3.13-doc binfmt-support
+#20 2.587 Recommended packages:
+#20 2.587   bash-completion fakeroot sq | sqop | rsop | gosop | pgpainless-cli | gpg-sq
+#20 2.587   | gnupg libalgorithm-merge-perl less ssh-client manpages manpages-dev
+#20 2.587   libfile-fcntllock-perl liblocale-gettext-perl krb5-locales libldap-common
+#20 2.587   publicsuffix libsasl2-modules python3-dev libjs-sphinxdoc
+#20 3.021 The following NEW packages will be installed:
+#20 3.021   binutils binutils-common binutils-x86-64-linux-gnu build-essential bzip2 cpp
+#20 3.021   cpp-14 cpp-14-x86-64-linux-gnu cpp-x86-64-linux-gnu curl dpkg-dev g++ g++-14
+#20 3.021   g++-14-x86-64-linux-gnu g++-x86-64-linux-gnu gcc gcc-14
+#20 3.021   gcc-14-x86-64-linux-gnu gcc-x86-64-linux-gnu git git-man libasan8 libatomic1
+#20 3.021   libbinutils libbrotli1 libc-dev-bin libc6-dev libcc1-0 libcom-err2
+#20 3.021   libcrypt-dev libctf-nobfd0 libctf0 libcurl3t64-gnutls libcurl4t64
+#20 3.022   libdpkg-perl liberror-perl libexpat1 libgcc-14-dev libgdbm-compat4t64
+#20 3.022   libgnutls30t64 libgomp1 libgprofng0 libgssapi-krb5-2 libhwasan0 libidn2-0
+#20 3.022   libisl23 libitm1 libjansson4 libk5crypto3 libkeyutils1 libkrb5-3
+#20 3.022   libkrb5support0 libldap2 liblsan0 libmpc3 libmpfr6 libnghttp2-14
+#20 3.022   libnghttp3-9 libngtcp2-16 libngtcp2-crypto-gnutls8 libp11-kit0 libperl5.40
+#20 3.022   libpsl5t64 libpython3-stdlib libpython3.13-minimal libpython3.13-stdlib
+#20 3.022   libquadmath0 librtmp1 libsasl2-2 libsasl2-modules-db libsframe1 libssh2-1t64
+#20 3.022   libstdc++-14-dev libtasn1-6 libtsan2 libubsan1 libunistring5 linux-libc-dev
+#20 3.022   make media-types patch perl perl-modules-5.40 python3 python3-minimal
+#20 3.022   python3-packaging python3-pip python3-wheel python3.13 python3.13-minimal
+#20 3.022   rpcsvc-proto xz-utils
+#20 3.097 0 upgraded, 92 newly installed, 0 to remove and 0 not upgraded.
+#20 3.097 Need to get 107 MB of archives.
+#20 3.097 After this operation, 439 MB of additional disk space will be used.
+#20 3.097 Get:1 http://deb.debian.org/debian trixie/main amd64 libexpat1 amd64 2.8.3-1~deb13u1 [123 kB]
+#20 3.117 Get:2 http://deb.debian.org/debian trixie/main amd64 libpython3.13-minimal amd64 3.13.5-2+deb13u5 [863 kB]
+#20 3.162 Get:3 http://deb.debian.org/debian trixie/main amd64 python3.13-minimal amd64 3.13.5-2+deb13u5 [2225 kB]
+#20 3.189 Get:4 http://deb.debian.org/debian trixie/main amd64 python3-minimal amd64 3.13.5-1 [27.2 kB]
+#20 3.190 Get:5 http://deb.debian.org/debian trixie/main amd64 media-types all 13.0.0 [29.3 kB]
+#20 3.190 Get:6 http://deb.debian.org/debian trixie/main amd64 libpython3.13-stdlib amd64 3.13.5-2+deb13u5 [1959 kB]
+#20 3.201 Get:7 http://deb.debian.org/debian trixie/main amd64 python3.13 amd64 3.13.5-2+deb13u5 [757 kB]
+#20 3.206 Get:8 http://deb.debian.org/debian trixie/main amd64 libpython3-stdlib amd64 3.13.5-1 [10.2 kB]
+#20 3.207 Get:9 http://deb.debian.org/debian trixie/main amd64 python3 amd64 3.13.5-1 [28.2 kB]
+#20 3.208 Get:10 http://deb.debian.org/debian trixie/main amd64 bzip2 amd64 1.0.8-6 [40.5 kB]
+#20 3.208 Get:11 http://deb.debian.org/debian trixie/main amd64 perl-modules-5.40 all 5.40.1-6+deb13u1 [3014 kB]
+#20 3.220 Get:12 http://deb.debian.org/debian trixie/main amd64 libgdbm-compat4t64 amd64 1.24-2 [50.3 kB]
+#20 3.222 Get:13 http://deb.debian.org/debian trixie/main amd64 libperl5.40 amd64 5.40.1-6+deb13u1 [4326 kB]
+#20 3.237 Get:14 http://deb.debian.org/debian trixie/main amd64 perl amd64 5.40.1-6+deb13u1 [268 kB]
+#20 3.239 Get:15 http://deb.debian.org/debian trixie/main amd64 xz-utils amd64 5.8.1-1+deb13u1 [659 kB]
+#20 3.242 Get:16 http://deb.debian.org/debian trixie/main amd64 libsframe1 amd64 2.44-3 [78.4 kB]
+#20 3.246 Get:17 http://deb.debian.org/debian trixie/main amd64 binutils-common amd64 2.44-3 [2509 kB]
+#20 3.256 Get:18 http://deb.debian.org/debian trixie/main amd64 libbinutils amd64 2.44-3 [534 kB]
+#20 3.259 Get:19 http://deb.debian.org/debian trixie/main amd64 libgprofng0 amd64 2.44-3 [808 kB]
+#20 3.263 Get:20 http://deb.debian.org/debian trixie/main amd64 libctf-nobfd0 amd64 2.44-3 [156 kB]
+#20 3.264 Get:21 http://deb.debian.org/debian trixie/main amd64 libctf0 amd64 2.44-3 [88.6 kB]
+#20 3.266 Get:22 http://deb.debian.org/debian trixie/main amd64 libjansson4 amd64 2.14-2+b3 [39.8 kB]
+#20 3.267 Get:23 http://deb.debian.org/debian trixie/main amd64 binutils-x86-64-linux-gnu amd64 2.44-3 [1014 kB]
+#20 3.273 Get:24 http://deb.debian.org/debian trixie/main amd64 binutils amd64 2.44-3 [265 kB]
+#20 3.275 Get:25 http://deb.debian.org/debian trixie/main amd64 libc-dev-bin amd64 2.41-12+deb13u4 [60.0 kB]
+#20 3.276 Get:26 http://deb.debian.org/debian trixie/main amd64 linux-libc-dev all 6.12.107-1 [2919 kB]
+#20 3.290 Get:27 http://deb.debian.org/debian trixie/main amd64 libcrypt-dev amd64 1:4.4.38-1 [119 kB]
+#20 3.291 Get:28 http://deb.debian.org/debian trixie/main amd64 rpcsvc-proto amd64 1.4.3-1 [63.3 kB]
+#20 3.292 Get:29 http://deb.debian.org/debian trixie/main amd64 libc6-dev amd64 2.41-12+deb13u4 [1995 kB]
+#20 3.300 Get:30 http://deb.debian.org/debian trixie/main amd64 libisl23 amd64 0.27-1 [659 kB]
+#20 3.304 Get:31 http://deb.debian.org/debian trixie/main amd64 libmpfr6 amd64 4.2.2-1 [729 kB]
+#20 3.308 Get:32 http://deb.debian.org/debian trixie/main amd64 libmpc3 amd64 1.3.1-1+b3 [52.2 kB]
+#20 3.309 Get:33 http://deb.debian.org/debian trixie/main amd64 cpp-14-x86-64-linux-gnu amd64 14.2.0-19 [11.0 MB]
+#20 3.352 Get:34 http://deb.debian.org/debian trixie/main amd64 cpp-14 amd64 14.2.0-19 [1280 B]
+#20 3.354 Get:35 http://deb.debian.org/debian trixie/main amd64 cpp-x86-64-linux-gnu amd64 4:14.2.0-1 [4840 B]
+#20 3.355 Get:36 http://deb.debian.org/debian trixie/main amd64 cpp amd64 4:14.2.0-1 [1568 B]
+#20 3.356 Get:37 http://deb.debian.org/debian trixie/main amd64 libcc1-0 amd64 14.2.0-19 [42.8 kB]
+#20 3.356 Get:38 http://deb.debian.org/debian trixie/main amd64 libgomp1 amd64 14.2.0-19 [137 kB]
+#20 3.357 Get:39 http://deb.debian.org/debian trixie/main amd64 libitm1 amd64 14.2.0-19 [26.0 kB]
+#20 3.358 Get:40 http://deb.debian.org/debian trixie/main amd64 libatomic1 amd64 14.2.0-19 [9308 B]
+#20 3.359 Get:41 http://deb.debian.org/debian trixie/main amd64 libasan8 amd64 14.2.0-19 [2725 kB]
+#20 3.366 Get:42 http://deb.debian.org/debian trixie/main amd64 liblsan0 amd64 14.2.0-19 [1204 kB]
+#20 3.371 Get:43 http://deb.debian.org/debian trixie/main amd64 libtsan2 amd64 14.2.0-19 [2460 kB]
+#20 3.380 Get:44 http://deb.debian.org/debian trixie/main amd64 libubsan1 amd64 14.2.0-19 [1074 kB]
+#20 3.385 Get:45 http://deb.debian.org/debian trixie/main amd64 libhwasan0 amd64 14.2.0-19 [1488 kB]
+#20 3.391 Get:46 http://deb.debian.org/debian trixie/main amd64 libquadmath0 amd64 14.2.0-19 [145 kB]
+#20 3.392 Get:47 http://deb.debian.org/debian trixie/main amd64 libgcc-14-dev amd64 14.2.0-19 [2672 kB]
+#20 3.403 Get:48 http://deb.debian.org/debian trixie/main amd64 gcc-14-x86-64-linux-gnu amd64 14.2.0-19 [21.4 MB]
+#20 3.481 Get:49 http://deb.debian.org/debian trixie/main amd64 gcc-14 amd64 14.2.0-19 [540 kB]
+#20 3.483 Get:50 http://deb.debian.org/debian trixie/main amd64 gcc-x86-64-linux-gnu amd64 4:14.2.0-1 [1436 B]
+#20 3.483 Get:51 http://deb.debian.org/debian trixie/main amd64 gcc amd64 4:14.2.0-1 [5136 B]
+#20 3.484 Get:52 http://deb.debian.org/debian trixie/main amd64 libstdc++-14-dev amd64 14.2.0-19 [2376 kB]
+#20 3.493 Get:53 http://deb.debian.org/debian trixie/main amd64 g++-14-x86-64-linux-gnu amd64 14.2.0-19 [12.1 MB]
+#20 3.535 Get:54 http://deb.debian.org/debian trixie/main amd64 g++-14 amd64 14.2.0-19 [22.5 kB]
+#20 3.537 Get:55 http://deb.debian.org/debian trixie/main amd64 g++-x86-64-linux-gnu amd64 4:14.2.0-1 [1200 B]
+#20 3.538 Get:56 http://deb.debian.org/debian trixie/main amd64 g++ amd64 4:14.2.0-1 [1344 B]
+#20 3.539 Get:57 http://deb.debian.org/debian trixie/main amd64 make amd64 4.4.1-2 [463 kB]
+#20 3.540 Get:58 http://deb.debian.org/debian trixie/main amd64 libdpkg-perl all 1.22.22 [651 kB]
+#20 3.541 Get:59 http://deb.debian.org/debian trixie/main amd64 patch amd64 2.8-2 [134 kB]
+#20 3.542 Get:60 http://deb.debian.org/debian trixie/main amd64 dpkg-dev all 1.22.22 [1337 kB]
+#20 3.547 Get:61 http://deb.debian.org/debian trixie/main amd64 build-essential amd64 12.12 [4624 B]
+#20 3.547 Get:62 http://deb.debian.org/debian trixie/main amd64 libbrotli1 amd64 1.1.0-2+b7 [307 kB]
+#20 3.549 Get:63 http://deb.debian.org/debian trixie/main amd64 libkrb5support0 amd64 1.21.3-5+deb13u1 [33.1 kB]
+#20 3.549 Get:64 http://deb.debian.org/debian trixie/main amd64 libcom-err2 amd64 1.47.2-3+b12 [25.0 kB]
+#20 3.555 Get:65 http://deb.debian.org/debian trixie/main amd64 libk5crypto3 amd64 1.21.3-5+deb13u1 [81.2 kB]
+#20 3.557 Get:66 http://deb.debian.org/debian trixie/main amd64 libkeyutils1 amd64 1.6.3-6 [9456 B]
+#20 3.557 Get:67 http://deb.debian.org/debian trixie/main amd64 libkrb5-3 amd64 1.21.3-5+deb13u1 [326 kB]
+#20 3.558 Get:68 http://deb.debian.org/debian trixie/main amd64 libgssapi-krb5-2 amd64 1.21.3-5+deb13u1 [138 kB]
+#20 3.559 Get:69 http://deb.debian.org/debian trixie/main amd64 libunistring5 amd64 1.3-2 [477 kB]
+#20 3.564 Get:70 http://deb.debian.org/debian trixie/main amd64 libidn2-0 amd64 2.3.8-2 [109 kB]
+#20 3.565 Get:71 http://deb.debian.org/debian trixie/main amd64 libsasl2-modules-db amd64 2.1.28+dfsg1-9 [19.8 kB]
+#20 3.566 Get:72 http://deb.debian.org/debian trixie/main amd64 libsasl2-2 amd64 2.1.28+dfsg1-9 [57.5 kB]
+#20 3.566 Get:73 http://deb.debian.org/debian trixie/main amd64 libldap2 amd64 2.6.10+dfsg-1 [194 kB]
+#20 3.567 Get:74 http://deb.debian.org/debian trixie/main amd64 libnghttp2-14 amd64 1.64.0-1.1+deb13u1 [76.2 kB]
+#20 3.572 Get:75 http://deb.debian.org/debian trixie/main amd64 libnghttp3-9 amd64 1.8.0-1 [67.7 kB]
+#20 3.573 Get:76 http://deb.debian.org/debian trixie/main amd64 libpsl5t64 amd64 0.21.2-1.1+b1 [57.2 kB]
+#20 3.574 Get:77 http://deb.debian.org/debian trixie/main amd64 libp11-kit0 amd64 0.25.5-3 [425 kB]
+#20 3.576 Get:78 http://deb.debian.org/debian trixie/main amd64 libtasn1-6 amd64 4.20.0-2+deb13u1 [50.1 kB]
+#20 3.576 Get:79 http://deb.debian.org/debian trixie/main amd64 libgnutls30t64 amd64 3.8.9-3+deb13u4 [1469 kB]
+#20 3.582 Get:80 http://deb.debian.org/debian trixie/main amd64 librtmp1 amd64 2.4+20151223.gitfa8646d.1-2+b5 [58.8 kB]
+#20 3.582 Get:81 http://deb.debian.org/debian trixie/main amd64 libssh2-1t64 amd64 1.11.1-1+deb13u2 [245 kB]
+#20 3.583 Get:82 http://deb.debian.org/debian trixie/main amd64 libcurl4t64 amd64 8.14.1-2+deb13u5 [391 kB]
+#20 3.585 Get:83 http://deb.debian.org/debian trixie/main amd64 curl amd64 8.14.1-2+deb13u5 [270 kB]
+#20 3.586 Get:84 http://deb.debian.org/debian trixie/main amd64 libngtcp2-16 amd64 1.11.0-1+deb13u1 [132 kB]
+#20 3.589 Get:85 http://deb.debian.org/debian trixie/main amd64 libngtcp2-crypto-gnutls8 amd64 1.11.0-1+deb13u1 [29.5 kB]
+#20 3.590 Get:86 http://deb.debian.org/debian trixie/main amd64 libcurl3t64-gnutls amd64 8.14.1-2+deb13u5 [384 kB]
+#20 3.592 Get:87 http://deb.debian.org/debian trixie/main amd64 liberror-perl all 0.17030-1 [26.9 kB]
+#20 3.593 Get:88 http://deb.debian.org/debian trixie/main amd64 git-man all 1:2.47.3-0+deb13u1 [2205 kB]
+#20 3.600 Get:89 http://deb.debian.org/debian trixie/main amd64 git amd64 1:2.47.3-0+deb13u1 [8862 kB]
+#20 3.633 Get:90 http://deb.debian.org/debian trixie/main amd64 python3-packaging all 25.0-1 [56.6 kB]
+#20 3.633 Get:91 http://deb.debian.org/debian trixie/main amd64 python3-wheel all 0.46.1-2 [21.7 kB]
+#20 3.635 Get:92 http://deb.debian.org/debian trixie/main amd64 python3-pip all 25.1.1+dfsg-1 [1457 kB]
+#20 3.761 debconf: unable to initialize frontend: Dialog
+#20 3.761 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#20 3.761 debconf: falling back to frontend: Readline
+#20 3.762 debconf: unable to initialize frontend: Readline
+#20 3.762 debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC entries checked: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.40.1 /usr/local/share/perl/5.40.1 /usr/lib/x86_64-linux-gnu/perl5/5.40 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl-base /usr/lib/x86_64-linux-gnu/perl/5.40 /usr/share/perl/5.40 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 8, <STDIN> line 92.)
+#20 3.762 debconf: falling back to frontend: Teletype
+#20 3.767 debconf: unable to initialize frontend: Teletype
+#20 3.767 debconf: (This frontend requires a controlling tty.)
+#20 3.767 debconf: falling back to frontend: Noninteractive
+#20 5.877 Fetched 107 MB in 1s (177 MB/s)
+#20 5.892 Selecting previously unselected package libexpat1:amd64.
+#20 5.892 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 5660 files and directories currently installed.)
+#20 5.900 Preparing to unpack .../libexpat1_2.8.3-1~deb13u1_amd64.deb ...
+#20 5.901 Unpacking libexpat1:amd64 (2.8.3-1~deb13u1) ...
+#20 5.921 Selecting previously unselected package libpython3.13-minimal:amd64.
+#20 5.923 Preparing to unpack .../libpython3.13-minimal_3.13.5-2+deb13u5_amd64.deb ...
+#20 5.923 Unpacking libpython3.13-minimal:amd64 (3.13.5-2+deb13u5) ...
+#20 5.999 Selecting previously unselected package python3.13-minimal.
+#20 6.001 Preparing to unpack .../python3.13-minimal_3.13.5-2+deb13u5_amd64.deb ...
+#20 6.005 Unpacking python3.13-minimal (3.13.5-2+deb13u5) ...
+#20 6.117 Setting up libpython3.13-minimal:amd64 (3.13.5-2+deb13u5) ...
+#20 6.121 Setting up libexpat1:amd64 (2.8.3-1~deb13u1) ...
+#20 6.123 Setting up python3.13-minimal (3.13.5-2+deb13u5) ...
+#20 6.804 Selecting previously unselected package python3-minimal.
+#20 6.804 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 5994 files and directories currently installed.)
+#20 6.811 Preparing to unpack .../python3-minimal_3.13.5-1_amd64.deb ...
+#20 6.812 Unpacking python3-minimal (3.13.5-1) ...
+#20 6.828 Selecting previously unselected package media-types.
+#20 6.830 Preparing to unpack .../media-types_13.0.0_all.deb ...
+#20 6.830 Unpacking media-types (13.0.0) ...
+#20 6.846 Selecting previously unselected package libpython3.13-stdlib:amd64.
+#20 6.848 Preparing to unpack .../libpython3.13-stdlib_3.13.5-2+deb13u5_amd64.deb ...
+#20 6.849 Unpacking libpython3.13-stdlib:amd64 (3.13.5-2+deb13u5) ...
+#20 6.970 Selecting previously unselected package python3.13.
+#20 6.972 Preparing to unpack .../python3.13_3.13.5-2+deb13u5_amd64.deb ...
+#20 6.973 Unpacking python3.13 (3.13.5-2+deb13u5) ...
+#20 6.993 Selecting previously unselected package libpython3-stdlib:amd64.
+#20 6.994 Preparing to unpack .../libpython3-stdlib_3.13.5-1_amd64.deb ...
+#20 6.995 Unpacking libpython3-stdlib:amd64 (3.13.5-1) ...
+#20 7.009 Setting up python3-minimal (3.13.5-1) ...
+#20 7.142 Selecting previously unselected package python3.
+#20 7.142 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 6448 files and directories currently installed.)
+#20 7.148 Preparing to unpack .../00-python3_3.13.5-1_amd64.deb ...
+#20 7.151 Unpacking python3 (3.13.5-1) ...
+#20 7.166 Selecting previously unselected package bzip2.
+#20 7.168 Preparing to unpack .../01-bzip2_1.0.8-6_amd64.deb ...
+#20 7.168 Unpacking bzip2 (1.0.8-6) ...
+#20 7.186 Selecting previously unselected package perl-modules-5.40.
+#20 7.186 Preparing to unpack .../02-perl-modules-5.40_5.40.1-6+deb13u1_all.deb ...
+#20 7.187 Unpacking perl-modules-5.40 (5.40.1-6+deb13u1) ...
+#20 7.465 Selecting previously unselected package libgdbm-compat4t64:amd64.
+#20 7.467 Preparing to unpack .../03-libgdbm-compat4t64_1.24-2_amd64.deb ...
+#20 7.467 Unpacking libgdbm-compat4t64:amd64 (1.24-2) ...
+#20 7.483 Selecting previously unselected package libperl5.40:amd64.
+#20 7.485 Preparing to unpack .../04-libperl5.40_5.40.1-6+deb13u1_amd64.deb ...
+#20 7.486 Unpacking libperl5.40:amd64 (5.40.1-6+deb13u1) ...
+#20 7.734 Selecting previously unselected package perl.
+#20 7.736 Preparing to unpack .../05-perl_5.40.1-6+deb13u1_amd64.deb ...
+#20 7.737 Unpacking perl (5.40.1-6+deb13u1) ...
+#20 7.763 Selecting previously unselected package xz-utils.
+#20 7.765 Preparing to unpack .../06-xz-utils_5.8.1-1+deb13u1_amd64.deb ...
+#20 7.766 Unpacking xz-utils (5.8.1-1+deb13u1) ...
+#20 7.799 Selecting previously unselected package libsframe1:amd64.
+#20 7.801 Preparing to unpack .../07-libsframe1_2.44-3_amd64.deb ...
+#20 7.802 Unpacking libsframe1:amd64 (2.44-3) ...
+#20 7.819 Selecting previously unselected package binutils-common:amd64.
+#20 7.820 Preparing to unpack .../08-binutils-common_2.44-3_amd64.deb ...
+#20 7.821 Unpacking binutils-common:amd64 (2.44-3) ...
+#20 7.942 Selecting previously unselected package libbinutils:amd64.
+#20 7.944 Preparing to unpack .../09-libbinutils_2.44-3_amd64.deb ...
+#20 7.945 Unpacking libbinutils:amd64 (2.44-3) ...
+#20 7.987 Selecting previously unselected package libgprofng0:amd64.
+#20 7.987 Preparing to unpack .../10-libgprofng0_2.44-3_amd64.deb ...
+#20 7.987 Unpacking libgprofng0:amd64 (2.44-3) ...
+#20 8.040 Selecting previously unselected package libctf-nobfd0:amd64.
+#20 8.042 Preparing to unpack .../11-libctf-nobfd0_2.44-3_amd64.deb ...
+#20 8.043 Unpacking libctf-nobfd0:amd64 (2.44-3) ...
+#20 8.064 Selecting previously unselected package libctf0:amd64.
+#20 8.066 Preparing to unpack .../12-libctf0_2.44-3_amd64.deb ...
+#20 8.066 Unpacking libctf0:amd64 (2.44-3) ...
+#20 8.084 Selecting previously unselected package libjansson4:amd64.
+#20 8.086 Preparing to unpack .../13-libjansson4_2.14-2+b3_amd64.deb ...
+#20 8.087 Unpacking libjansson4:amd64 (2.14-2+b3) ...
+#20 8.102 Selecting previously unselected package binutils-x86-64-linux-gnu.
+#20 8.104 Preparing to unpack .../14-binutils-x86-64-linux-gnu_2.44-3_amd64.deb ...
+#20 8.104 Unpacking binutils-x86-64-linux-gnu (2.44-3) ...
+#20 8.187 Selecting previously unselected package binutils.
+#20 8.189 Preparing to unpack .../15-binutils_2.44-3_amd64.deb ...
+#20 8.191 Unpacking binutils (2.44-3) ...
+#20 8.219 Selecting previously unselected package libc-dev-bin.
+#20 8.220 Preparing to unpack .../16-libc-dev-bin_2.41-12+deb13u4_amd64.deb ...
+#20 8.221 Unpacking libc-dev-bin (2.41-12+deb13u4) ...
+#20 8.237 Selecting previously unselected package linux-libc-dev.
+#20 8.238 Preparing to unpack .../17-linux-libc-dev_6.12.107-1_all.deb ...
+#20 8.239 Unpacking linux-libc-dev (6.12.107-1) ...
+#20 8.567 Selecting previously unselected package libcrypt-dev:amd64.
+#20 8.569 Preparing to unpack .../18-libcrypt-dev_1%3a4.4.38-1_amd64.deb ...
+#20 8.575 Unpacking libcrypt-dev:amd64 (1:4.4.38-1) ...
+#20 8.593 Selecting previously unselected package rpcsvc-proto.
+#20 8.595 Preparing to unpack .../19-rpcsvc-proto_1.4.3-1_amd64.deb ...
+#20 8.596 Unpacking rpcsvc-proto (1.4.3-1) ...
+#20 8.616 Selecting previously unselected package libc6-dev:amd64.
+#20 8.618 Preparing to unpack .../20-libc6-dev_2.41-12+deb13u4_amd64.deb ...
+#20 8.619 Unpacking libc6-dev:amd64 (2.41-12+deb13u4) ...
+#20 8.755 Selecting previously unselected package libisl23:amd64.
+#20 8.757 Preparing to unpack .../21-libisl23_0.27-1_amd64.deb ...
+#20 8.758 Unpacking libisl23:amd64 (0.27-1) ...
+#20 8.803 Selecting previously unselected package libmpfr6:amd64.
+#20 8.804 Preparing to unpack .../22-libmpfr6_4.2.2-1_amd64.deb ...
+#20 8.805 Unpacking libmpfr6:amd64 (4.2.2-1) ...
+#20 8.837 Selecting previously unselected package libmpc3:amd64.
+#20 8.839 Preparing to unpack .../23-libmpc3_1.3.1-1+b3_amd64.deb ...
+#20 8.840 Unpacking libmpc3:amd64 (1.3.1-1+b3) ...
+#20 8.856 Selecting previously unselected package cpp-14-x86-64-linux-gnu.
+#20 8.858 Preparing to unpack .../24-cpp-14-x86-64-linux-gnu_14.2.0-19_amd64.deb ...
+#20 8.859 Unpacking cpp-14-x86-64-linux-gnu (14.2.0-19) ...
+#20 9.311 Selecting previously unselected package cpp-14.
+#20 9.313 Preparing to unpack .../25-cpp-14_14.2.0-19_amd64.deb ...
+#20 9.314 Unpacking cpp-14 (14.2.0-19) ...
+#20 9.328 Selecting previously unselected package cpp-x86-64-linux-gnu.
+#20 9.330 Preparing to unpack .../26-cpp-x86-64-linux-gnu_4%3a14.2.0-1_amd64.deb ...
+#20 9.331 Unpacking cpp-x86-64-linux-gnu (4:14.2.0-1) ...
+#20 9.360 Selecting previously unselected package cpp.
+#20 9.365 Preparing to unpack .../27-cpp_4%3a14.2.0-1_amd64.deb ...
+#20 9.370 Unpacking cpp (4:14.2.0-1) ...
+#20 9.390 Selecting previously unselected package libcc1-0:amd64.
+#20 9.395 Preparing to unpack .../28-libcc1-0_14.2.0-19_amd64.deb ...
+#20 9.397 Unpacking libcc1-0:amd64 (14.2.0-19) ...
+#20 9.425 Selecting previously unselected package libgomp1:amd64.
+#20 9.427 Preparing to unpack .../29-libgomp1_14.2.0-19_amd64.deb ...
+#20 9.486 Unpacking libgomp1:amd64 (14.2.0-19) ...
+#20 9.579 Selecting previously unselected package libitm1:amd64.
+#20 9.581 Preparing to unpack .../30-libitm1_14.2.0-19_amd64.deb ...
+#20 9.582 Unpacking libitm1:amd64 (14.2.0-19) ...
+#20 9.600 Selecting previously unselected package libatomic1:amd64.
+#20 9.600 Preparing to unpack .../31-libatomic1_14.2.0-19_amd64.deb ...
+#20 9.601 Unpacking libatomic1:amd64 (14.2.0-19) ...
+#20 9.617 Selecting previously unselected package libasan8:amd64.
+#20 9.619 Preparing to unpack .../32-libasan8_14.2.0-19_amd64.deb ...
+#20 9.620 Unpacking libasan8:amd64 (14.2.0-19) ...
+#20 9.769 Selecting previously unselected package liblsan0:amd64.
+#20 9.771 Preparing to unpack .../33-liblsan0_14.2.0-19_amd64.deb ...
+#20 9.772 Unpacking liblsan0:amd64 (14.2.0-19) ...
+#20 9.842 Selecting previously unselected package libtsan2:amd64.
+#20 9.844 Preparing to unpack .../34-libtsan2_14.2.0-19_amd64.deb ...
+#20 9.845 Unpacking libtsan2:amd64 (14.2.0-19) ...
+#20 9.974 Selecting previously unselected package libubsan1:amd64.
+#20 9.976 Preparing to unpack .../35-libubsan1_14.2.0-19_amd64.deb ...
+#20 9.977 Unpacking libubsan1:amd64 (14.2.0-19) ...
+#20 10.04 Selecting previously unselected package libhwasan0:amd64.
+#20 10.04 Preparing to unpack .../36-libhwasan0_14.2.0-19_amd64.deb ...
+#20 10.05 Unpacking libhwasan0:amd64 (14.2.0-19) ...
+#20 10.13 Selecting previously unselected package libquadmath0:amd64.
+#20 10.13 Preparing to unpack .../37-libquadmath0_14.2.0-19_amd64.deb ...
+#20 10.13 Unpacking libquadmath0:amd64 (14.2.0-19) ...
+#20 10.15 Selecting previously unselected package libgcc-14-dev:amd64.
+#20 10.15 Preparing to unpack .../38-libgcc-14-dev_14.2.0-19_amd64.deb ...
+#20 10.15 Unpacking libgcc-14-dev:amd64 (14.2.0-19) ...
+#20 10.28 Selecting previously unselected package gcc-14-x86-64-linux-gnu.
+#20 10.29 Preparing to unpack .../39-gcc-14-x86-64-linux-gnu_14.2.0-19_amd64.deb ...
+#20 10.29 Unpacking gcc-14-x86-64-linux-gnu (14.2.0-19) ...
+#20 10.97 Selecting previously unselected package gcc-14.
+#20 10.97 Preparing to unpack .../40-gcc-14_14.2.0-19_amd64.deb ...
+#20 10.98 Unpacking gcc-14 (14.2.0-19) ...
+#20 11.00 Selecting previously unselected package gcc-x86-64-linux-gnu.
+#20 11.00 Preparing to unpack .../41-gcc-x86-64-linux-gnu_4%3a14.2.0-1_amd64.deb ...
+#20 11.00 Unpacking gcc-x86-64-linux-gnu (4:14.2.0-1) ...
+#20 11.02 Selecting previously unselected package gcc.
+#20 11.02 Preparing to unpack .../42-gcc_4%3a14.2.0-1_amd64.deb ...
+#20 11.02 Unpacking gcc (4:14.2.0-1) ...
+#20 11.03 Selecting previously unselected package libstdc++-14-dev:amd64.
+#20 11.04 Preparing to unpack .../43-libstdc++-14-dev_14.2.0-19_amd64.deb ...
+#20 11.04 Unpacking libstdc++-14-dev:amd64 (14.2.0-19) ...
+#20 11.24 Selecting previously unselected package g++-14-x86-64-linux-gnu.
+#20 11.24 Preparing to unpack .../44-g++-14-x86-64-linux-gnu_14.2.0-19_amd64.deb ...
+#20 11.24 Unpacking g++-14-x86-64-linux-gnu (14.2.0-19) ...
+#20 11.71 Selecting previously unselected package g++-14.
+#20 11.71 Preparing to unpack .../45-g++-14_14.2.0-19_amd64.deb ...
+#20 11.71 Unpacking g++-14 (14.2.0-19) ...
+#20 11.73 Selecting previously unselected package g++-x86-64-linux-gnu.
+#20 11.73 Preparing to unpack .../46-g++-x86-64-linux-gnu_4%3a14.2.0-1_amd64.deb ...
+#20 11.73 Unpacking g++-x86-64-linux-gnu (4:14.2.0-1) ...
+#20 11.74 Selecting previously unselected package g++.
+#20 11.75 Preparing to unpack .../47-g++_4%3a14.2.0-1_amd64.deb ...
+#20 11.75 Unpacking g++ (4:14.2.0-1) ...
+#20 11.76 Selecting previously unselected package make.
+#20 11.76 Preparing to unpack .../48-make_4.4.1-2_amd64.deb ...
+#20 11.76 Unpacking make (4.4.1-2) ...
+#20 11.80 Selecting previously unselected package libdpkg-perl.
+#20 11.80 Preparing to unpack .../49-libdpkg-perl_1.22.22_all.deb ...
+#20 11.80 Unpacking libdpkg-perl (1.22.22) ...
+#20 11.84 Selecting previously unselected package patch.
+#20 11.84 Preparing to unpack .../50-patch_2.8-2_amd64.deb ...
+#20 11.84 Unpacking patch (2.8-2) ...
+#20 11.86 Selecting previously unselected package dpkg-dev.
+#20 11.87 Preparing to unpack .../51-dpkg-dev_1.22.22_all.deb ...
+#20 11.87 Unpacking dpkg-dev (1.22.22) ...
+#20 11.92 Selecting previously unselected package build-essential.
+#20 11.92 Preparing to unpack .../52-build-essential_12.12_amd64.deb ...
+#20 11.92 Unpacking build-essential (12.12) ...
+#20 11.94 Selecting previously unselected package libbrotli1:amd64.
+#20 11.94 Preparing to unpack .../53-libbrotli1_1.1.0-2+b7_amd64.deb ...
+#20 11.94 Unpacking libbrotli1:amd64 (1.1.0-2+b7) ...
+#20 11.97 Selecting previously unselected package libkrb5support0:amd64.
+#20 11.97 Preparing to unpack .../54-libkrb5support0_1.21.3-5+deb13u1_amd64.deb ...
+#20 11.97 Unpacking libkrb5support0:amd64 (1.21.3-5+deb13u1) ...
+#20 11.99 Selecting previously unselected package libcom-err2:amd64.
+#20 11.99 Preparing to unpack .../55-libcom-err2_1.47.2-3+b12_amd64.deb ...
+#20 11.99 Unpacking libcom-err2:amd64 (1.47.2-3+b12) ...
+#20 12.01 Selecting previously unselected package libk5crypto3:amd64.
+#20 12.01 Preparing to unpack .../56-libk5crypto3_1.21.3-5+deb13u1_amd64.deb ...
+#20 12.01 Unpacking libk5crypto3:amd64 (1.21.3-5+deb13u1) ...
+#20 12.03 Selecting previously unselected package libkeyutils1:amd64.
+#20 12.03 Preparing to unpack .../57-libkeyutils1_1.6.3-6_amd64.deb ...
+#20 12.03 Unpacking libkeyutils1:amd64 (1.6.3-6) ...
+#20 12.05 Selecting previously unselected package libkrb5-3:amd64.
+#20 12.05 Preparing to unpack .../58-libkrb5-3_1.21.3-5+deb13u1_amd64.deb ...
+#20 12.05 Unpacking libkrb5-3:amd64 (1.21.3-5+deb13u1) ...
+#20 12.08 Selecting previously unselected package libgssapi-krb5-2:amd64.
+#20 12.08 Preparing to unpack .../59-libgssapi-krb5-2_1.21.3-5+deb13u1_amd64.deb ...
+#20 12.08 Unpacking libgssapi-krb5-2:amd64 (1.21.3-5+deb13u1) ...
+#20 12.11 Selecting previously unselected package libunistring5:amd64.
+#20 12.11 Preparing to unpack .../60-libunistring5_1.3-2_amd64.deb ...
+#20 12.11 Unpacking libunistring5:amd64 (1.3-2) ...
+#20 12.15 Selecting previously unselected package libidn2-0:amd64.
+#20 12.15 Preparing to unpack .../61-libidn2-0_2.3.8-2_amd64.deb ...
+#20 12.15 Unpacking libidn2-0:amd64 (2.3.8-2) ...
+#20 12.17 Selecting previously unselected package libsasl2-modules-db:amd64.
+#20 12.18 Preparing to unpack .../62-libsasl2-modules-db_2.1.28+dfsg1-9_amd64.deb ...
+#20 12.18 Unpacking libsasl2-modules-db:amd64 (2.1.28+dfsg1-9) ...
+#20 12.19 Selecting previously unselected package libsasl2-2:amd64.
+#20 12.19 Preparing to unpack .../63-libsasl2-2_2.1.28+dfsg1-9_amd64.deb ...
+#20 12.20 Unpacking libsasl2-2:amd64 (2.1.28+dfsg1-9) ...
+#20 12.21 Selecting previously unselected package libldap2:amd64.
+#20 12.22 Preparing to unpack .../64-libldap2_2.6.10+dfsg-1_amd64.deb ...
+#20 12.22 Unpacking libldap2:amd64 (2.6.10+dfsg-1) ...
+#20 12.24 Selecting previously unselected package libnghttp2-14:amd64.
+#20 12.24 Preparing to unpack .../65-libnghttp2-14_1.64.0-1.1+deb13u1_amd64.deb ...
+#20 12.24 Unpacking libnghttp2-14:amd64 (1.64.0-1.1+deb13u1) ...
+#20 12.26 Selecting previously unselected package libnghttp3-9:amd64.
+#20 12.26 Preparing to unpack .../66-libnghttp3-9_1.8.0-1_amd64.deb ...
+#20 12.26 Unpacking libnghttp3-9:amd64 (1.8.0-1) ...
+#20 12.28 Selecting previously unselected package libpsl5t64:amd64.
+#20 12.28 Preparing to unpack .../67-libpsl5t64_0.21.2-1.1+b1_amd64.deb ...
+#20 12.28 Unpacking libpsl5t64:amd64 (0.21.2-1.1+b1) ...
+#20 12.30 Selecting previously unselected package libp11-kit0:amd64.
+#20 12.30 Preparing to unpack .../68-libp11-kit0_0.25.5-3_amd64.deb ...
+#20 12.30 Unpacking libp11-kit0:amd64 (0.25.5-3) ...
+#20 12.34 Selecting previously unselected package libtasn1-6:amd64.
+#20 12.34 Preparing to unpack .../69-libtasn1-6_4.20.0-2+deb13u1_amd64.deb ...
+#20 12.34 Unpacking libtasn1-6:amd64 (4.20.0-2+deb13u1) ...
+#20 12.36 Selecting previously unselected package libgnutls30t64:amd64.
+#20 12.36 Preparing to unpack .../70-libgnutls30t64_3.8.9-3+deb13u4_amd64.deb ...
+#20 12.36 Unpacking libgnutls30t64:amd64 (3.8.9-3+deb13u4) ...
+#20 12.42 Selecting previously unselected package librtmp1:amd64.
+#20 12.42 Preparing to unpack .../71-librtmp1_2.4+20151223.gitfa8646d.1-2+b5_amd64.deb ...
+#20 12.42 Unpacking librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2+b5) ...
+#20 12.44 Selecting previously unselected package libssh2-1t64:amd64.
+#20 12.44 Preparing to unpack .../72-libssh2-1t64_1.11.1-1+deb13u2_amd64.deb ...
+#20 12.44 Unpacking libssh2-1t64:amd64 (1.11.1-1+deb13u2) ...
+#20 12.47 Selecting previously unselected package libcurl4t64:amd64.
+#20 12.47 Preparing to unpack .../73-libcurl4t64_8.14.1-2+deb13u5_amd64.deb ...
+#20 12.47 Unpacking libcurl4t64:amd64 (8.14.1-2+deb13u5) ...
+#20 12.50 Selecting previously unselected package curl.
+#20 12.50 Preparing to unpack .../74-curl_8.14.1-2+deb13u5_amd64.deb ...
+#20 12.50 Unpacking curl (8.14.1-2+deb13u5) ...
+#20 12.53 Selecting previously unselected package libngtcp2-16:amd64.
+#20 12.53 Preparing to unpack .../75-libngtcp2-16_1.11.0-1+deb13u1_amd64.deb ...
+#20 12.53 Unpacking libngtcp2-16:amd64 (1.11.0-1+deb13u1) ...
+#20 12.55 Selecting previously unselected package libngtcp2-crypto-gnutls8:amd64.
+#20 12.55 Preparing to unpack .../76-libngtcp2-crypto-gnutls8_1.11.0-1+deb13u1_amd64.deb ...
+#20 12.55 Unpacking libngtcp2-crypto-gnutls8:amd64 (1.11.0-1+deb13u1) ...
+#20 12.57 Selecting previously unselected package libcurl3t64-gnutls:amd64.
+#20 12.57 Preparing to unpack .../77-libcurl3t64-gnutls_8.14.1-2+deb13u5_amd64.deb ...
+#20 12.57 Unpacking libcurl3t64-gnutls:amd64 (8.14.1-2+deb13u5) ...
+#20 12.60 Selecting previously unselected package liberror-perl.
+#20 12.61 Preparing to unpack .../78-liberror-perl_0.17030-1_all.deb ...
+#20 12.61 Unpacking liberror-perl (0.17030-1) ...
+#20 12.62 Selecting previously unselected package git-man.
+#20 12.62 Preparing to unpack .../79-git-man_1%3a2.47.3-0+deb13u1_all.deb ...
+#20 12.63 Unpacking git-man (1:2.47.3-0+deb13u1) ...
+#20 12.68 Selecting previously unselected package git.
+#20 12.68 Preparing to unpack .../80-git_1%3a2.47.3-0+deb13u1_amd64.deb ...
+#20 12.69 Unpacking git (1:2.47.3-0+deb13u1) ...
+#20 13.03 Selecting previously unselected package python3-packaging.
+#20 13.04 Preparing to unpack .../81-python3-packaging_25.0-1_all.deb ...
+#20 13.04 Unpacking python3-packaging (25.0-1) ...
+#20 13.06 Selecting previously unselected package python3-wheel.
+#20 13.06 Preparing to unpack .../82-python3-wheel_0.46.1-2_all.deb ...
+#20 13.06 Unpacking python3-wheel (0.46.1-2) ...
+#20 13.08 Selecting previously unselected package python3-pip.
+#20 13.08 Preparing to unpack .../83-python3-pip_25.1.1+dfsg-1_all.deb ...
+#20 13.08 Unpacking python3-pip (25.1.1+dfsg-1) ...
+#20 13.21 Setting up media-types (13.0.0) ...
+#20 13.22 Setting up libkeyutils1:amd64 (1.6.3-6) ...
+#20 13.22 Setting up libgdbm-compat4t64:amd64 (1.24-2) ...
+#20 13.22 Setting up libbrotli1:amd64 (1.1.0-2+b7) ...
+#20 13.22 Setting up binutils-common:amd64 (2.44-3) ...
+#20 13.22 Setting up libnghttp2-14:amd64 (1.64.0-1.1+deb13u1) ...
+#20 13.22 Setting up linux-libc-dev (6.12.107-1) ...
+#20 13.23 Setting up libctf-nobfd0:amd64 (2.44-3) ...
+#20 13.23 Setting up libcom-err2:amd64 (1.47.2-3+b12) ...
+#20 13.23 Setting up libgomp1:amd64 (14.2.0-19) ...
+#20 13.23 Setting up bzip2 (1.0.8-6) ...
+#20 13.23 Setting up libsframe1:amd64 (2.44-3) ...
+#20 13.23 Setting up libjansson4:amd64 (2.14-2+b3) ...
+#20 13.24 Setting up libkrb5support0:amd64 (1.21.3-5+deb13u1) ...
+#20 13.24 Setting up libsasl2-modules-db:amd64 (2.1.28+dfsg1-9) ...
+#20 13.24 Setting up rpcsvc-proto (1.4.3-1) ...
+#20 13.24 Setting up make (4.4.1-2) ...
+#20 13.24 Setting up libmpfr6:amd64 (4.2.2-1) ...
+#20 13.25 Setting up xz-utils (5.8.1-1+deb13u1) ...
+#20 13.25 update-alternatives: using /usr/bin/xz to provide /usr/bin/lzma (lzma) in auto mode
+#20 13.25 update-alternatives: warning: skip creation of /usr/share/man/man1/lzma.1.gz because associated file /usr/share/man/man1/xz.1.gz (of link group lzma) doesn't exist
+#20 13.25 update-alternatives: warning: skip creation of /usr/share/man/man1/unlzma.1.gz because associated file /usr/share/man/man1/unxz.1.gz (of link group lzma) doesn't exist
+#20 13.25 update-alternatives: warning: skip creation of /usr/share/man/man1/lzcat.1.gz because associated file /usr/share/man/man1/xzcat.1.gz (of link group lzma) doesn't exist
+#20 13.25 update-alternatives: warning: skip creation of /usr/share/man/man1/lzmore.1.gz because associated file /usr/share/man/man1/xzmore.1.gz (of link group lzma) doesn't exist
+#20 13.25 update-alternatives: warning: skip creation of /usr/share/man/man1/lzless.1.gz because associated file /usr/share/man/man1/xzless.1.gz (of link group lzma) doesn't exist
+#20 13.25 update-alternatives: warning: skip creation of /usr/share/man/man1/lzdiff.1.gz because associated file /usr/share/man/man1/xzdiff.1.gz (of link group lzma) doesn't exist
+#20 13.25 update-alternatives: warning: skip creation of /usr/share/man/man1/lzcmp.1.gz because associated file /usr/share/man/man1/xzcmp.1.gz (of link group lzma) doesn't exist
+#20 13.25 update-alternatives: warning: skip creation of /usr/share/man/man1/lzgrep.1.gz because associated file /usr/share/man/man1/xzgrep.1.gz (of link group lzma) doesn't exist
+#20 13.25 update-alternatives: warning: skip creation of /usr/share/man/man1/lzegrep.1.gz because associated file /usr/share/man/man1/xzegrep.1.gz (of link group lzma) doesn't exist
+#20 13.25 update-alternatives: warning: skip creation of /usr/share/man/man1/lzfgrep.1.gz because associated file /usr/share/man/man1/xzfgrep.1.gz (of link group lzma) doesn't exist
+#20 13.26 Setting up libquadmath0:amd64 (14.2.0-19) ...
+#20 13.26 Setting up libp11-kit0:amd64 (0.25.5-3) ...
+#20 13.26 Setting up libunistring5:amd64 (1.3-2) ...
+#20 13.26 Setting up libmpc3:amd64 (1.3.1-1+b3) ...
+#20 13.26 Setting up libatomic1:amd64 (14.2.0-19) ...
+#20 13.27 Setting up patch (2.8-2) ...
+#20 13.27 Setting up libk5crypto3:amd64 (1.21.3-5+deb13u1) ...
+#20 13.27 Setting up libsasl2-2:amd64 (2.1.28+dfsg1-9) ...
+#20 13.27 Setting up libnghttp3-9:amd64 (1.8.0-1) ...
+#20 13.27 Setting up libubsan1:amd64 (14.2.0-19) ...
+#20 13.27 Setting up perl-modules-5.40 (5.40.1-6+deb13u1) ...
+#20 13.28 Setting up libhwasan0:amd64 (14.2.0-19) ...
+#20 13.28 Setting up libcrypt-dev:amd64 (1:4.4.38-1) ...
+#20 13.29 Setting up libasan8:amd64 (14.2.0-19) ...
+#20 13.29 Setting up libtasn1-6:amd64 (4.20.0-2+deb13u1) ...
+#20 13.29 Setting up git-man (1:2.47.3-0+deb13u1) ...
+#20 13.29 Setting up libngtcp2-16:amd64 (1.11.0-1+deb13u1) ...
+#20 13.29 Setting up libkrb5-3:amd64 (1.21.3-5+deb13u1) ...
+#20 13.29 Setting up libssh2-1t64:amd64 (1.11.1-1+deb13u2) ...
+#20 13.30 Setting up libtsan2:amd64 (14.2.0-19) ...
+#20 13.30 Setting up libbinutils:amd64 (2.44-3) ...
+#20 13.30 Setting up libisl23:amd64 (0.27-1) ...
+#20 13.30 Setting up libc-dev-bin (2.41-12+deb13u4) ...
+#20 13.30 Setting up libpython3.13-stdlib:amd64 (3.13.5-2+deb13u5) ...
+#20 13.30 Setting up libcc1-0:amd64 (14.2.0-19) ...
+#20 13.31 Setting up libldap2:amd64 (2.6.10+dfsg-1) ...
+#20 13.31 Setting up liblsan0:amd64 (14.2.0-19) ...
+#20 13.31 Setting up libitm1:amd64 (14.2.0-19) ...
+#20 13.31 Setting up libpython3-stdlib:amd64 (3.13.5-1) ...
+#20 13.31 Setting up libctf0:amd64 (2.44-3) ...
+#20 13.32 Setting up python3.13 (3.13.5-2+deb13u5) ...
+#20 14.07 Setting up python3 (3.13.5-1) ...
+#20 14.07 running python rtupdate hooks for python3.13...
+#20 14.07 running python post-rtupdate hooks for python3.13...
+#20 14.15 Setting up libidn2-0:amd64 (2.3.8-2) ...
+#20 14.15 Setting up libperl5.40:amd64 (5.40.1-6+deb13u1) ...
+#20 14.16 Setting up perl (5.40.1-6+deb13u1) ...
+#20 14.16 Setting up libgprofng0:amd64 (2.44-3) ...
+#20 14.16 Setting up python3-packaging (25.0-1) ...
+#20 14.29 Setting up libgssapi-krb5-2:amd64 (1.21.3-5+deb13u1) ...
+#20 14.29 Setting up cpp-14-x86-64-linux-gnu (14.2.0-19) ...
+#20 14.29 Setting up libdpkg-perl (1.22.22) ...
+#20 14.30 Setting up cpp-14 (14.2.0-19) ...
+#20 14.30 Setting up libc6-dev:amd64 (2.41-12+deb13u4) ...
+#20 14.30 Setting up libgcc-14-dev:amd64 (14.2.0-19) ...
+#20 14.30 Setting up libstdc++-14-dev:amd64 (14.2.0-19) ...
+#20 14.30 Setting up binutils-x86-64-linux-gnu (2.44-3) ...
+#20 14.31 Setting up cpp-x86-64-linux-gnu (4:14.2.0-1) ...
+#20 14.31 Setting up libgnutls30t64:amd64 (3.8.9-3+deb13u4) ...
+#20 14.31 Setting up libpsl5t64:amd64 (0.21.2-1.1+b1) ...
+#20 14.31 Setting up binutils (2.44-3) ...
+#20 14.31 Setting up python3-wheel (0.46.1-2) ...
+#20 14.42 Setting up dpkg-dev (1.22.22) ...
+#20 14.42 Setting up liberror-perl (0.17030-1) ...
+#20 14.42 Setting up librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2+b5) ...
+#20 14.43 Setting up python3-pip (25.1.1+dfsg-1) ...
+#20 15.23 Setting up cpp (4:14.2.0-1) ...
+#20 15.24 Setting up gcc-14-x86-64-linux-gnu (14.2.0-19) ...
+#20 15.24 Setting up libngtcp2-crypto-gnutls8:amd64 (1.11.0-1+deb13u1) ...
+#20 15.24 Setting up gcc-x86-64-linux-gnu (4:14.2.0-1) ...
+#20 15.24 Setting up libcurl4t64:amd64 (8.14.1-2+deb13u5) ...
+#20 15.25 Setting up libcurl3t64-gnutls:amd64 (8.14.1-2+deb13u5) ...
+#20 15.25 Setting up gcc-14 (14.2.0-19) ...
+#20 15.25 Setting up git (1:2.47.3-0+deb13u1) ...
+#20 15.26 Setting up g++-14-x86-64-linux-gnu (14.2.0-19) ...
+#20 15.28 Setting up g++-x86-64-linux-gnu (4:14.2.0-1) ...
+#20 15.28 Setting up curl (8.14.1-2+deb13u5) ...
+#20 15.28 Setting up g++-14 (14.2.0-19) ...
+#20 15.28 Setting up gcc (4:14.2.0-1) ...
+#20 15.29 Setting up g++ (4:14.2.0-1) ...
+#20 15.29 update-alternatives: using /usr/bin/g++ to provide /usr/bin/c++ (c++) in auto mode
+#20 15.30 Setting up build-essential (12.12) ...
+#20 15.30 Processing triggers for libc-bin (2.41-12+deb13u4) ...
+#20 15.34 + rm -rf /var/lib/apt/lists/auxfiles /var/lib/apt/lists/deb.debian.org_debian-security_dists_trixie-security_InRelease /var/lib/apt/lists/deb.debian.org_debian-security_dists_trixie-security_main_binary-amd64_Packages.lz4 /var/lib/apt/lists/deb.debian.org_debian_dists_trixie-updates_InRelease /var/lib/apt/lists/deb.debian.org_debian_dists_trixie-updates_main_binary-amd64_Packages.lz4 /var/lib/apt/lists/deb.debian.org_debian_dists_trixie_InRelease /var/lib/apt/lists/deb.debian.org_debian_dists_trixie_main_binary-amd64_Packages.lz4 /var/lib/apt/lists/lock /var/lib/apt/lists/partial
+#20 15.34 + command -v uv
+#20 15.35 + curl -LsSf https://astral.sh/uv/install.sh
+#20 15.35 + env UV_INSTALL_DIR=/usr/local/bin sh
+#20 15.51 downloading uv 0.12.19 x86_64-unknown-linux-gnu
+#20 16.17 installing to /usr/local/bin
+#20 16.18   uv
+#20 16.19   uvx
+#20 16.19 everything's installed!
+#20 16.20 + uv --version
+#20 16.20 uv 0.12.19 (x86_64-unknown-linux-gnu)
+#20 16.20 + MSWE=mini-swe-agent --with litellm --with orjson --with fastapi
+#20 16.20 + uv tool install mini-swe-agent --with litellm --with orjson --with fastapi
+#20 16.97 Resolved 80 packages in 710ms
+#20 17.05 Downloading botocore (15.2MiB)
+#20 17.05 Downloading openai (1.6MiB)
+#20 17.05 Downloading numpy (15.9MiB)
+#20 17.05 Downloading litellm (26.1MiB)
+#20 17.05 Downloading pygments (1.2MiB)
+#20 17.05 Downloading hf-xet (4.3MiB)
+#20 17.05 Downloading tiktoken (1.1MiB)
+#20 17.05 Downloading aiohttp (1.7MiB)
+#20 17.05 Downloading pydantic-core (2.0MiB)
+#20 17.05 Downloading pyarrow (47.8MiB)
+#20 17.05 Downloading tokenizers (3.2MiB)
+#20 17.05 Downloading pandas (10.3MiB)
+#20 17.46  Downloaded tiktoken
+#20 17.51  Downloaded pygments
+#20 17.52  Downloaded aiohttp
+#20 17.53  Downloaded pydantic-core
+#20 17.60  Downloaded tokenizers
+#20 17.66  Downloaded hf-xet
+#20 17.78  Downloaded openai
+#20 18.18  Downloaded numpy
+#20 18.19  Downloaded pandas
+#20 18.22  Downloaded botocore
+#20 18.57  Downloaded litellm
+#20 18.58  Downloaded pyarrow
+#20 18.58 Prepared 80 packages in 1.61s
+#20 19.11 Installed 80 packages in 526ms
+#20 19.11  + aiohappyeyeballs==2.7.1
+#20 19.11  + aiohttp==3.14.3
+#20 19.11  + aiosignal==1.4.0
+#20 19.11  + annotated-doc==0.0.5
+#20 19.11  + annotated-types==0.8.0
+#20 19.11  + anyio==4.15.1
+#20 19.11  + attrs==26.1.0
+#20 19.11  + boto3==1.43.103
+#20 19.11  + botocore==1.43.103
+#20 19.11  + certifi==2026.7.22
+#20 19.11  + charset-normalizer==3.5.1
+#20 19.11  + click==8.5.0
+#20 19.11  + datasets==5.0.1
+#20 19.11  + dill==0.4.1
+#20 19.11  + distro==1.9.0
+#20 19.11  + fastapi==0.141.1
+#20 19.11  + fastuuid==0.14.0
+#20 19.11  + filelock==4.0.4
+#20 19.11  + frozenlist==1.8.0
+#20 19.11  + fsspec==2026.6.0
+#20 19.11  + h11==0.16.0
+#20 19.11  + hf-xet==1.6.0
+#20 19.11  + httpcore==1.0.9
+#20 19.11  + httpx==0.28.1
+#20 19.11  + huggingface-hub==1.33.0
+#20 19.11  + idna==3.20
+#20 19.11  + importlib-metadata==8.9.0
+#20 19.11  + jinja2==3.1.6
+#20 19.11  + jiter==0.17.0
+#20 19.11  + jmespath==1.1.0
+#20 19.11  + jsonschema==4.26.0
+#20 19.11  + jsonschema-specifications==2025.9.1
+#20 19.11  + linkify-it-py==2.2.0
+#20 19.11  + litellm==1.102.1
+#20 19.11  + markdown-it-py==4.2.0
+#20 19.11  + markupsafe==3.0.3
+#20 19.11  + mdit-py-plugins==0.6.1
+#20 19.11  + mdurl==0.1.2
+#20 19.11  + mini-swe-agent==2.4.6
+#20 19.11  + multidict==6.9.1
+#20 19.11  + multiprocess==0.70.19
+#20 19.11  + numpy==2.5.3
+#20 19.11  + openai==2.54.0
+#20 19.11  + orjson==3.12.0
+#20 19.11  + packaging==26.3
+#20 19.11  + pandas==3.0.6
+#20 19.11  + platformdirs==4.12.0
+#20 19.11  + prompt-toolkit==3.0.53
+#20 19.11  + propcache==0.5.4
+#20 19.11  + pyarrow==25.0.1
+#20 19.11  + pydantic==2.13.5
+#20 19.11  + pydantic-core==2.46.5
+#20 19.11  + pydantic-settings==2.15.0
+#20 19.11  + pygments==2.21.0
+#20 19.11  + python-dateutil==2.9.0.post0
+#20 19.11  + python-dotenv==1.2.3
+#20 19.11  + pyyaml==6.0.3
+#20 19.11  + referencing==0.37.0
+#20 19.11  + regex==2026.9.10
+#20 19.11  + requests==2.34.2
+#20 19.11  + rich==15.0.0
+#20 19.11  + rpds-py==2026.6.3
+#20 19.11  + s3transfer==0.19.2
+#20 19.11  + shellingham==1.5.4
+#20 19.11  + six==1.17.0
+#20 19.11  + sniffio==1.3.1
+#20 19.11  + starlette==1.7.0
+#20 19.11  + tenacity==9.1.4
+#20 19.11  + textual==8.2.8
+#20 19.11  + tiktoken==0.14.0
+#20 19.11  + tokenizers==0.23.2
+#20 19.11  + tqdm==4.70.1
+#20 19.11  + typer==0.27.2
+#20 19.11  + typing-extensions==4.16.0
+#20 19.11  + typing-inspection==0.4.4
+#20 19.11  + urllib3==2.8.0
+#20 19.11  + wcwidth==0.9.1
+#20 19.11  + xxhash==4.0.1
+#20 19.11  + yarl==1.25.1
+#20 19.11  + zipp==4.1.0
+#20 19.12 Installed 4 executables: mini, mini-e, mini-extra, mini-swe-agent
+#20 19.12 warning: `/root/.local/bin` is not on your PATH. To use installed tools, add the directory to your PATH.
+#20 19.13 + id -un 1000
+#20 19.13 + AGENT_USER=ubuntu
+#20 19.13 + [ -n ubuntu ]
+#20 19.13 + [ ubuntu != root ]
+#20 19.13 + install -d -o ubuntu -g ubuntu /home/ubuntu/.local
+#20 19.15 + id -u ubuntu
+#20 19.15 + AGENT_UID=1000
+#20 19.15 + id -g ubuntu
+#20 19.16 + AGENT_GID=1000
+#20 19.16 + command -v setpriv
+#20 19.16 + setpriv --reuid=1000 --regid=1000 --init-groups env PATH=/usr/local/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin HOME=/home/ubuntu uv tool install mini-swe-agent --with litellm --with orjson --with fastapi
+#20 19.90 Resolved 80 packages in 680ms
+#20 19.97 Downloading botocore (15.2MiB)
+#20 19.98 Downloading pydantic-core (2.0MiB)
+#20 19.98 Downloading pygments (1.2MiB)
+#20 19.98 Downloading pyarrow (47.8MiB)
+#20 19.98 Downloading tokenizers (3.2MiB)
+#20 19.98 Downloading tiktoken (1.1MiB)
+#20 19.98 Downloading numpy (15.9MiB)
+#20 19.99 Downloading aiohttp (1.7MiB)
+#20 19.99 Downloading pandas (10.3MiB)
+#20 19.99 Downloading hf-xet (4.3MiB)
+#20 19.99 Downloading openai (1.6MiB)
+#20 19.99 Downloading litellm (26.1MiB)
+#20 20.40  Downloaded tiktoken
+#20 20.40  Downloaded pygments
+#20 20.46  Downloaded pydantic-core
+#20 20.49  Downloaded aiohttp
+#20 20.56  Downloaded tokenizers
+#20 20.61  Downloaded hf-xet
+#20 20.62  Downloaded openai
+#20 21.54  Downloaded pandas
+#20 21.54  Downloaded numpy
+#20 21.59  Downloaded botocore
+#20 21.92  Downloaded litellm
+#20 21.95  Downloaded pyarrow
+#20 21.95 Prepared 80 packages in 2.04s
+#20 22.98 Installed 80 packages in 1.02s
+#20 22.98  + aiohappyeyeballs==2.7.1
+#20 22.98  + aiohttp==3.14.3
+#20 22.98  + aiosignal==1.4.0
+#20 22.98  + annotated-doc==0.0.5
+#20 22.98  + annotated-types==0.8.0
+#20 22.98  + anyio==4.15.1
+#20 22.98  + attrs==26.1.0
+#20 22.98  + boto3==1.43.103
+#20 22.98  + botocore==1.43.103
+#20 22.98  + certifi==2026.7.22
+#20 22.98  + charset-normalizer==3.5.1
+#20 22.98  + click==8.5.0
+#20 22.98  + datasets==5.0.1
+#20 22.98  + dill==0.4.1
+#20 22.98  + distro==1.9.0
+#20 22.98  + fastapi==0.141.1
+#20 22.98  + fastuuid==0.14.0
+#20 22.98  + filelock==4.0.4
+#20 22.98  + frozenlist==1.8.0
+#20 22.98  + fsspec==2026.6.0
+#20 22.98  + h11==0.16.0
+#20 22.98  + hf-xet==1.6.0
+#20 22.98  + httpcore==1.0.9
+#20 22.98  + httpx==0.28.1
+#20 22.98  + huggingface-hub==1.33.0
+#20 22.98  + idna==3.20
+#20 22.98  + importlib-metadata==8.9.0
+#20 22.98  + jinja2==3.1.6
+#20 22.98  + jiter==0.17.0
+#20 22.98  + jmespath==1.1.0
+#20 22.98  + jsonschema==4.26.0
+#20 22.98  + jsonschema-specifications==2025.9.1
+#20 22.98  + linkify-it-py==2.2.0
+#20 22.98  + litellm==1.102.1
+#20 22.98  + markdown-it-py==4.2.0
+#20 22.98  + markupsafe==3.0.3
+#20 22.98  + mdit-py-plugins==0.6.1
+#20 22.98  + mdurl==0.1.2
+#20 22.98  + mini-swe-agent==2.4.6
+#20 22.98  + multidict==6.9.1
+#20 22.98  + multiprocess==0.70.19
+#20 22.98  + numpy==2.5.3
+#20 22.98  + openai==2.54.0
+#20 22.98  + orjson==3.12.0
+#20 22.98  + packaging==26.3
+#20 22.98  + pandas==3.0.6
+#20 22.98  + platformdirs==4.12.0
+#20 22.98  + prompt-toolkit==3.0.53
+#20 22.98  + propcache==0.5.4
+#20 22.98  + pyarrow==25.0.1
+#20 22.98  + pydantic==2.13.5
+#20 22.98  + pydantic-core==2.46.5
+#20 22.98  + pydantic-settings==2.15.0
+#20 22.98  + pygments==2.21.0
+#20 22.98  + python-dateutil==2.9.0.post0
+#20 22.98  + python-dotenv==1.2.3
+#20 22.98  + pyyaml==6.0.3
+#20 22.98  + referencing==0.37.0
+#20 22.98  + regex==2026.9.10
+#20 22.98  + requests==2.34.2
+#20 22.98  + rich==15.0.0
+#20 22.98  + rpds-py==2026.6.3
+#20 22.98  + s3transfer==0.19.2
+#20 22.98  + shellingham==1.5.4
+#20 22.98  + six==1.17.0
+#20 22.99  + sniffio==1.3.1
+#20 22.99  + starlette==1.7.0
+#20 22.99  + tenacity==9.1.4
+#20 22.99  + textual==8.2.8
+#20 22.99  + tiktoken==0.14.0
+#20 22.99  + tokenizers==0.23.2
+#20 22.99  + tqdm==4.70.1
+#20 22.99  + typer==0.27.2
+#20 22.99  + typing-extensions==4.16.0
+#20 22.99  + typing-inspection==0.4.4
+#20 22.99  + urllib3==2.8.0
+#20 22.99  + wcwidth==0.9.1
+#20 22.99  + xxhash==4.0.1
+#20 22.99  + yarl==1.25.1
+#20 22.99  + zipp==4.1.0
+#20 22.99 Installed 4 executables: mini, mini-e, mini-extra, mini-swe-agent
+#20 22.99 warning: `/home/ubuntu/.local/bin` is not on your PATH. To use installed tools, add the directory to your PATH.
+#20 DONE 25.7s
+
+#21 exporting to image
+#21 exporting layers
+#21 exporting layers 14.5s done
+#21 writing image sha256:d3870dc402d7adecec10ef832c69a59ff3ca2548f0ab0ec5f7ba7a8ddfb8363a done
+#21 naming to docker.io/drydock-evidence/task-src:built done
+#21 DONE 14.5s

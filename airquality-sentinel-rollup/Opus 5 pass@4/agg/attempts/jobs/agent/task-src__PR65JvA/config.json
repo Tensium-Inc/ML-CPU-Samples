@@ -1,0 +1,18 @@
+{
+    "task": {
+        "path": "/tmp/drydock-ds/task-src",
+        "source": "drydock-ds"
+    },
+    "trial_name": "task-src__PR65JvA",
+    "trials_dir": "jobs/agent",
+    "agent_setup_timeout_multiplier": 5.0,
+    "agent": {
+        "name": "mini-swe-agent",
+        "model_name": "anthropic/claude-opus-5",
+        "kwargs": {
+            "reasoning_effort": "xhigh",
+            "max_tokens": 32000
+        }
+    },
+    "job_id": "d7b09162-277f-4ecf-9700-aa2e7ac4c922"
+}

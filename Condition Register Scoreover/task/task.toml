@@ -1,0 +1,32 @@
+schema_version = "1.1"
+
+[task]
+name = "condition-register-carryforward"
+description = "A readmission scorer exports a condition register that shows the same admission several times and that shrinks between a patient's visits; drive the gated release service to find what the register is really counting, repair a policy the builder ships incomplete, and cut over an artifact whose registers match the record."
+keywords = ["long-horizon", "cpu-ml-engineering", "gated-ops", "as-of", "grouping", "sklearn"]
+
+output_path = "workspace/src/register.py"
+
+[verifier]
+timeout_sec = 2400.0
+user = "root"
+
+[agent]
+timeout_sec = 9000.0
+user = "ubuntu"
+
+[environment]
+build_timeout_sec = 3600.0
+cpus = 2
+memory_mb = 7168
+storage_mb = 10240
+gpus = 0
+allow_internet = false
+
+[environment.healthcheck]
+command = '''python3 -c "import socket; socket.socket(socket.AF_UNIX).connect('/run/envd/envd.sock')"'''
+interval_sec = 10.0
+timeout_sec = 15.0
+start_period_sec = 60.0
+start_interval_sec = 2.0
+retries = 5

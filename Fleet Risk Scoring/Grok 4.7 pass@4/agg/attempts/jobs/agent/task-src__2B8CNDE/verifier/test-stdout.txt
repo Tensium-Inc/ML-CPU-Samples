@@ -1,0 +1,25 @@
+{
+  "agree_pass": 0.999,
+  "current": {
+    "agreement": 0.169717,
+    "note": "7993 of 47096 rows within 0.001",
+    "ran": true,
+    "rank_quality": {
+      "average_precision": 0.024936,
+      "roc_auc": 0.591203
+    }
+  },
+  "reference": {
+    "agreement": 0.79365,
+    "note": "19696 of 24817 rows within 0.001",
+    "ran": true,
+    "rank_quality": {
+      "average_precision": 0.808211,
+      "roc_auc": 0.998028
+    }
+  },
+  "reward": 0.0,
+  "tolerance": 0.001,
+  "verifier_dir_sealed": true
+}
+Final score: 0.0

@@ -1,0 +1,120 @@
+{
+    "id": "a69552e7-6e41-431b-be74-62e732f2df36",
+    "task_name": "drydock/fleet-risk-scoring-mini",
+    "trial_name": "task-src__ySykpzY",
+    "trial_uri": "file:///home/runner/work/Anvil/Anvil/jobs/agent/task-src__ySykpzY",
+    "task_id": {
+        "path": "/tmp/drydock-ds/task-src"
+    },
+    "source": "drydock-ds",
+    "task_checksum": "0863a1c08e323884e4c36e342c13c9a4696b5fb61e840c36cd9fb3ce0396e8ca",
+    "config": {
+        "task": {
+            "path": "/tmp/drydock-ds/task-src",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": "drydock-ds"
+        },
+        "trial_name": "task-src__ySykpzY",
+        "trials_dir": "jobs/agent",
+        "install_only": false,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": 5.0,
+        "environment_build_timeout_multiplier": null,
+        "agent": {
+            "name": "mini-swe-agent",
+            "import_path": null,
+            "model_name": "xai/grok-4.7",
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": null,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {
+                "reasoning_effort": "xhigh",
+                "max_tokens": 32000
+            },
+            "mcp_servers": []
+        },
+        "user_agent": null,
+        "environment": {
+            "type": "docker",
+            "import_path": null,
+            "force_build": false,
+            "delete": true,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "extra_instructions": [],
+        "job_id": "2ab90af1-41c9-4459-91a3-b300fac8f248",
+        "source_trial": null
+    },
+    "agent_info": {
+        "name": "mini-swe-agent",
+        "version": "2.4.6",
+        "model_info": {
+            "name": "grok-4.7",
+            "provider": "xai"
+        }
+    },
+    "agent_result": {
+        "n_input_tokens": 415074,
+        "n_cache_tokens": 283904,
+        "n_output_tokens": 12995,
+        "cost_usd": 0.48226199999999997,
+        "rollout_details": null,
+        "metadata": null
+    },
+    "verifier_result": {
+        "rewards": {
+            "reward": 1.0
+        }
+    },
+    "verifier_environment_mode": "shared",
+    "exception_info": null,
+    "started_at": "2026-09-26T19:25:40.031504Z",
+    "finished_at": "2026-09-26T19:30:31.214788Z",
+    "environment_setup": {
+        "started_at": "2026-09-26T19:25:40.202826Z",
+        "finished_at": "2026-09-26T19:26:09.914049Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-09-26T19:26:09.914106Z",
+        "finished_at": "2026-09-26T19:26:34.706887Z"
+    },
+    "agent_execution": {
+        "started_at": "2026-09-26T19:26:34.707057Z",
+        "finished_at": "2026-09-26T19:29:41.417123Z"
+    },
+    "verifier": {
+        "started_at": "2026-09-26T19:29:41.818150Z",
+        "finished_at": "2026-09-26T19:30:16.531537Z"
+    },
+    "step_results": null
+}

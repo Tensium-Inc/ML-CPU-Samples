@@ -1,0 +1,82 @@
+
+>>> read every ops note
+  read applicant
+  read decisions
+  read deliverable
+  read harness
+  read recovery
+  read requests
+
+>>> look at the shape of the extract
+
+>>> rebuild the package
+built 55,878 requests
+
+>>> drive the incident
+{
+  "ok": true,
+  "op": "reproduce",
+  "note": "current harness recorded as the starting point",
+  "receipt": "ffe775062d827bf0",
+  "next_command": "python3 env_cli.py deploy --receipt ffe775062d827bf0"
+}
+{
+  "ok": true,
+  "op": "deploy",
+  "deploys": 1,
+  "note": "candidate registered",
+  "receipt": "1107f6a1b9c1c925",
+  "next_command": "python3 env_cli.py validate --receipt 1107f6a1b9c1c925"
+}
+{
+  "ok": true,
+  "op": "validate",
+  "status": "dirty",
+  "reason": "scoring did not run against the deployed build",
+  "remaining": 6,
+  "note": "this verdict is about the serving cache and not about your build, so it has not been charged",
+  "receipt": "8017f604ea470ac8",
+  "next_command": "python3 env_cli.py diagnostics.read --receipt 8017f604ea470ac8"
+}
+{
+  "ok": true,
+  "op": "diagnostics.read",
+  "family": "stale_applicant_cache",
+  "symptom": "feature_cache_predates_the_deployed_applicant_key",
+  "detail": "the serving feature cache is keyed by applicant and was built by the harness that was live before this deploy, so scoring never reached your build",
+  "repair": "recovery.apply --family stale_applicant_cache",
+  "receipt": "839914adf69f435a",
+  "next_command": "python3 env_cli.py recovery.apply --family stale_applicant_cache --receipt 839914adf69f435a"
+}
+{
+  "ok": true,
+  "op": "recovery.apply",
+  "family": "stale_applicant_cache",
+  "note": "cache cleared; the next scoring run reaches your build",
+  "receipt": "1b79c1ceda239023",
+  "next_command": "python3 env_cli.py validate --receipt 1b79c1ceda239023"
+}
+{
+  "ok": true,
+  "op": "validate",
+  "status": "clean",
+  "remaining": 5,
+  "receipt": "a3c278c52071f792",
+  "next_command": "python3 env_cli.py check.release --receipt a3c278c52071f792"
+}
+{
+  "ok": true,
+  "op": "check.release",
+  "note": "released; the build's own account of the extract matches it",
+  "receipt": "21239913a591767a",
+  "next_command": "python3 env_cli.py submit --receipt 21239913a591767a"
+}
+{
+  "ok": true,
+  "op": "submit",
+  "note": "submitted; the environment recomputes the outcome from the deployed build",
+  "receipt": "78c6af7a792ef382",
+  "next_command": "python3 env_cli.py submit --receipt 78c6af7a792ef382"
+}
+
+>>> done

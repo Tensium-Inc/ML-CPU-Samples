@@ -1,0 +1,38 @@
+{
+  "reproduced": true,
+  "deploys": 2,
+  "deployed": true,
+  "fault_active": false,
+  "fault_seen": true,
+  "diagnosed": true,
+  "recovered": true,
+  "v_budget": 4,
+  "r_budget": 2,
+  "a_budget": 1,
+  "adjudicated": [
+    "2499000008",
+    "2499000089",
+    "2499000028",
+    "2499000755",
+    "2499000181",
+    "2499000227",
+    "2499022438",
+    "2499000001",
+    "2499001519",
+    "2499058927",
+    "2499016356"
+  ],
+  "clean_after_recovery": true,
+  "released": true,
+  "submitted": true,
+  "policies_read": [
+    "applicant",
+    "decisions",
+    "deliverable",
+    "harness",
+    "recovery",
+    "requests"
+  ],
+  "seq": 39,
+  "receipt": "f86939d01be527dc"
+}

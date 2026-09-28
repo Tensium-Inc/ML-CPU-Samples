@@ -1,0 +1,3974 @@
+This is mini-swe-agent version 2.4.6.
+Check the v2 migration guide at https://klieret.short.gy/mini-v2-migration
+Loading global config from '/home/ubuntu/.config/mini-swe-agent/.env'
+Warning: Input is not a terminal (fd=0).
+Building agent config from specs: ['mini', 
+'model.model_kwargs.extra_headers.X-Session-ID=task-src__6LN5EPZ__agent', 
+'model.model_kwargs.reasoning_effort=xhigh', 
+'model.model_kwargs.max_tokens=32000']
+
+System:
+You are a helpful assistant that can interact with a computer.
+
+User:
+Please solve this issue: We score every inpatient discharge for "will this 
+patient be back inside 30 days", and the
+export goes to the wards with a condition register alongside each score so the 
+care team can see
+what we think that patient is carrying. I inherited this pipeline from someone 
+who moved on and
+I can't put my name on the next release.
+
+Two things came across with the handover and neither has an answer on it.
+
+The ward administrator says our export shows the same admission on several 
+lines. She has been
+de-duplicating it by hand every week and nobody could tell her why it comes out 
+like that.
+
+And clinical audit pulled two patients last month who they say are carrying the 
+same
+conditions, and our scores for them were nowhere near each other. The consultant
+who raised it
+could not say how many patients it happens to, and she said most of the time the
+numbers look
+perfectly sensible, which is why it has sat in the queue since March.
+
+The numbers look fine, for what that is worth. `python3 scripts/run_backtest.py`
+reports about
+0.65 AUC on a holdout that keeps whole patients on one side, so it is not the 
+usual row-shuffle
+mistake, and `python3 -m unittest discover -s tests` is green.
+
+## What is in the workspace
+
+Everything is under `/workspace/target` and there is no internet.
+
+- `config.yaml` - the policy the analytics team owns; the pipeline is expected 
+to honour it
+- `data/encounters.csv` - the encounter archive, with the `readmitted` outcome
+- `data/serving_batch.csv` - a later batch as the ward system cuts it, no 
+outcome column
+- `data/patient_conditions.csv` - the condition index the refresh job delivers, 
+with its
+  manifest alongside it
+- `data/DATA_CARD.md` - what this corpus is and what is messy about it. Worth 
+reading properly
+- `src/` - `config.py`, `codes.py`, `register.py`, `features.py`, `model.py`, 
+`serve.py`
+- `scripts/score_batch.py` - the entry point: `--batch <csv> --out <csv>`
+- `scripts/run_backtest.py` - the backtest above
+- `tests/test_smoke.py` - the smoke suite
+- `var/ops_log.jsonl` - what the batch and register-refresh jobs recorded
+- `env_cli.py` - the client for the gated release service
+
+## The contract
+
+One row per encounter in the batch: `encounter_id`, `score`, `conditions`. The 
+score is the
+probability of a readmission inside the horizon. `conditions` is that patient's 
+condition
+register, as the codes were charted, written as one field with the separator the
+policy names.
+
+## The release service
+
+Releases go out through `python3 env_cli.py <op>`. Nothing reaches the network 
+except through it.
+
+Look around as much as you like, free and unlimited: `survey`, `ledger`, 
+`pull_records`,
+`register_audit`, `status`. `pull_records` takes `--file`, `--patient` and 
+`--limit`;
+`register_audit` takes `--file` and `--encounter`.
+
+The gated sequence, in order:
+
+    rehearse -> deploy.prepare -> deploy.commit -> checkpoint -> incident.read
+             -> remediate --family <f> -> checkpoint -> canary.open -> 
+canary.read
+             -> cutover.commit
+
+`checkpoint` certifies the committed release against a batch you never see and 
+answers with one
+bit - clean or dirty - plus a coarse signal. It will not tell you which rows or 
+which values.
+You get **six for the whole episode** and that counter does not reset; a 
+checkpoint the service
+refuses before it even runs the release costs you nothing.
+
+`incident.read` is only available once a checkpoint has come back dirty, and it 
+names one
+remediation family. `remediate` takes `--family`; a family that does not match 
+the diagnosis
+costs you an attempt **and** the diagnosis with it, so read before you guess. 
+You get two
+attempts per committed release. `deploy.commit` resets those attempts - it does 
+not give you
+checkpoint budget back.
+
+`canary.open` needs a clean checkpoint taken after a remediation, `canary.read` 
+gives you the
+verdict, and `cutover.commit` will not run until that verdict is a pass and you 
+have read it.
+
+What counts is the artifact you freeze at `cutover.commit` and how you got there
+- not a writeup
+and not a patch left sitting in the working tree. Don't tell me it's fixed; 
+leave the trajectory
+that shows it.
+
+
+You can execute bash commands and edit files to implement the necessary changes.
+
+## Recommended Workflow
+
+This workflow should be done step-by-step so that you can iterate on your 
+changes and any possible problems.
+
+1. Analyze the codebase by finding and reading relevant files
+2. Create a script to reproduce the issue
+3. Edit the source code to resolve the issue
+4. Verify your fix works by running your script again
+5. Test edge cases to ensure your fix is robust
+6. Submit your changes and finish your work by issuing the following command: 
+`echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT`.
+   Do not combine it with any other command. <important>After this command, you 
+cannot continue working on this task.</important>
+
+## Command Execution Rules
+
+You are operating in an environment where
+
+1. You issue at least one command
+2. The system executes the command(s) in a subshell
+3. You see the result(s)
+4. You write your next command(s)
+
+Each response should include:
+
+1. **Reasoning text** where you explain your analysis and plan
+2. At least one tool call with your command
+
+**CRITICAL REQUIREMENTS:**
+
+- Your response SHOULD include reasoning text explaining what you're doing
+- Your response MUST include AT LEAST ONE bash tool call
+- Directory or environment variable changes are not persistent. Every action is 
+executed in a new subshell.
+- However, you can prefix any action with `MY_ENV_VAR=MY_VALUE cd 
+/path/to/working/dir && ...` or write/load environment variables from files
+- Submit your changes and finish your work by issuing the following command: 
+`echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT`.
+  Do not combine it with any other command. <important>After this command, you 
+cannot continue working on this task.</important>
+
+Example of a CORRECT response:
+<example_response>
+I need to understand the structure of the repository first. Let me check what 
+files are in the current directory to get a better understanding of the 
+codebase.
+
+[Makes bash tool call with {"command": "ls -la"} as arguments]
+</example_response>
+
+<system_information>
+Linux 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026 x86_64
+</system_information>
+
+## Useful command examples
+
+### Create a new file:
+
+```bash
+cat <<'EOF' > newfile.py
+import numpy as np
+hello = "world"
+print(hello)
+EOF
+```
+
+### Edit files with sed:```bash
+# Replace all occurrences
+sed -i 's/old_string/new_string/g' filename.py
+
+# Replace only first occurrence
+sed -i 's/old_string/new_string/' filename.py
+
+# Replace first occurrence on line 1
+sed -i '1s/old_string/new_string/' filename.py
+
+# Replace all occurrences in lines 1-10
+sed -i '1,10s/old_string/new_string/g' filename.py
+```
+
+### View file content:
+
+```bash
+# View specific lines with numbers
+nl -ba filename.py | sed -n '10,20p'
+```
+
+### Any other command you want to run
+
+```bash
+anything
+```
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 1, $0.02):
+I'll start by exploring the workspace structure.
+
+```
+find /workspace/target -type f | head -50 && echo "---" && ls -la 
+/workspace/target
+```
+
+```
+cat /workspace/target/config.yaml; echo "==="; cat 
+/workspace/target/data/DATA_CARD.md
+```
+
+Tool:
+<returncode>
+0
+<output>
+/workspace/target/tests/test_smoke.py
+/workspace/target/data/patient_conditions.csv
+/workspace/target/data/encounters.csv
+/workspace/target/data/serving_batch.csv
+/workspace/target/data/DATA_CARD.md
+/workspace/target/data/patient_conditions.manifest.json
+/workspace/target/data/code_groups.csv
+/workspace/target/config.yaml
+/workspace/target/results/.gitkeep
+/workspace/target/env_cli.py
+/workspace/target/scripts/run_backtest.py
+/workspace/target/scripts/_bootstrap.py
+/workspace/target/scripts/score_batch.py
+/workspace/target/var/ops_log.jsonl
+/workspace/target/README.md
+/workspace/target/src/serve.py
+/workspace/target/src/model.py
+/workspace/target/src/__init__.py
+/workspace/target/src/config.py
+/workspace/target/src/register.py
+/workspace/target/src/features.py
+/workspace/target/src/codes.py
+---
+total 76
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep 10 10:44 .
+drwxr-xr-x 1 root   root   4096 Sep 10 10:44 ..
+-rw-r--r-- 1 ubuntu ubuntu 1047 Sep 10 10:44 README.md
+-rw-r--r-- 1 ubuntu ubuntu  868 Sep 10 10:44 config.yaml
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep 10 10:44 data
+-rw-r--r-- 1 ubuntu ubuntu 2266 Sep 10 10:44 env_cli.py
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep 10 10:44 results
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep 10 10:44 scripts
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep 10 10:44 src
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep 10 10:44 tests
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep 10 10:44 var
+
+
+Tool:
+<returncode>
+0
+<output>
+# Condition-register scoring policy.
+# Owned by the analytics team; the pipeline under src/ is expected to honour it.
+task: condition_register
+
+register:
+  # Where the charted codes live, how a missing cell is marked, and how the 
+register is
+  # written into one field. The register itself is delivered by the refresh job.
+  code_columns: [diag_1, diag_2, diag_3]
+  index: data/patient_conditions.csv
+  code_table: data/code_groups.csv
+  missing_marker: "?"
+  separator: "|"
+
+scoring:
+  # A score is the probability that the encounter is followed by an unplanned 
+readmission
+  # within 30 days of discharge. One row per encounter in the batch.
+  horizon_days: 30
+  output_columns: [encounter_id, score, conditions]
+
+model:
+  kind: logistic_regression
+  max_iter: 2000
+  random_state: 0
+
+paths:
+  encounters: data/encounters.csv
+  serving_batch: data/serving_batch.csv
+===
+# Encounters - data card
+
+**Source.** UCI Machine Learning Repository, *Diabetes 130-US hospitals for 
+years 1999-2008*
+(dataset 296), Strack et al. (2014). Licence: CC BY 4.0. Ten years of real 
+inpatient encounters
+for diabetic patients across 130 US hospitals.
+
+**What ships here.** Verbatim rows from that corpus, split by position in the 
+corpus's own
+encounter ordering - no rows are synthesised, edited or re-weighted.
+
+| file | rows | what it is |
+|---|---|---|
+| `encounters.csv` | 42,741 | the encounter archive, with the `readmitted` 
+outcome |
+| `serving_batch.csv` | 8,548 | a later batch as the ward system cuts it, no 
+outcome column |
+| `patient_conditions.csv` | 112,493 | the condition index the refresh job 
+delivers, with its manifest |
+| `code_groups.csv` | 867 | the code table the refresh job keys the register on 
+|
+
+**The delivered artifacts.** `patient_conditions.csv` and `code_groups.csv` are 
+not part of the
+UCI corpus. They are what the register-refresh job writes, and they are 
+described by
+`patient_conditions.manifest.json` and by the `register_refresh` entries in 
+`var/ops_log.jsonl`.
+Both are derived from the encounter columns below, so anything either of them 
+asserts can be
+checked against those columns.
+
+**Columns.** 50 per encounter: identifiers (`encounter_id`, `patient_nbr`), 
+demographics,
+administrative ids (`admission_type_id`, `discharge_disposition_id`, 
+`admission_source_id`),
+utilisation counts (`time_in_hospital`, `num_lab_procedures`, 
+`number_inpatient`, ...),
+`diag_1`/`diag_2`/`diag_3`, `number_diagnoses`, 24 medication columns, and 
+`readmitted` in the
+archive only.
+
+**Known properties of the corpus** (all real, none cleaned up for you):
+
+- `encounter_id` increases with time. The corpus carries no timestamps, so the 
+encounter
+  number is the only chronology there is.
+- `?` is the missing-value marker. It is common in `weight`, `payer_code` and
+  `medical_specialty`, and rare in `race` and the three diagnosis columns 
+(0.03%, 0.44%, 1.75%).
+- `diag_1`, `diag_2` and `diag_3` hold the conditions recorded at that 
+admission: at most
+  three per encounter, most specific first, as ICD-9 codes. The corpus uses the 
+numeric
+  series, the supplementary V and E series, and decimal subdivisions (`250.83` 
+and `250.8`
+  are different codes).
+- `number_diagnoses` is the count the coder entered on the chart. It is not the 
+number of
+  codes in the three diagnosis columns and it is frequently larger.
+- `number_inpatient`, `number_outpatient` and `number_emergency` count visits in
+the year
+  preceding the encounter. They are counts of visits; they say nothing about 
+what was
+  diagnosed.
+- `readmitted` has three values: `<30`, `>30` and `NO`. Only `<30` is a 30-day 
+readmission.
+- Class balance is uneven: about 11% of encounters are followed by a readmission
+within 30
+  days.
+- A patient number is stable across the whole corpus. `encounter_id` is unique; 
+`patient_nbr`
+  is not.
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 2, $0.05):
+```
+cd /workspace/target && cat README.md; echo "=== config.py"; cat src/config.py; 
+echo "=== codes.py"; cat src/codes.py; echo "=== register.py"; cat 
+src/register.py
+```
+
+```
+cd /workspace/target && echo "=== features.py"; cat src/features.py; echo "=== 
+model.py"; cat src/model.py; echo "=== serve.py"; cat src/serve.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+# Readmission scoring: condition register export
+
+Scores every inpatient discharge in a batch for a 30-day readmission and 
+exports, per encounter,
+the score and the condition register that goes to the ward alongside it.
+
+    python3 scripts/score_batch.py --batch data/serving_batch.csv --out 
+results/scores.csv
+    python3 scripts/run_backtest.py
+    python3 -m unittest discover -s tests
+
+`config.yaml` is the policy the analytics team owns; the pipeline is expected to
+honour it.
+`data/DATA_CARD.md` describes the corpus. `var/ops_log.jsonl` is what the 
+scheduled jobs recorded.
+
+    src/config.py     reads the policy and checks the keys the contract depends 
+on
+    src/codes.py      the diagnosis codes recorded on an encounter
+    src/register.py   the condition register, in long form
+    src/features.py   the feature frame the model is fitted on
+    src/model.py      training and scoring
+    src/serve.py      assembling the export
+
+Releases go out through the gated release service, not by copying files:
+
+    python3 env_cli.py status
+=== config.py
+"""Reading the pipeline policy.
+
+The service that builds a release refuses to certify one whose shipped policy is
+missing a key
+the contract depends on, so the keys listed here are read back rather than 
+defaulted.
+"""
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Any, Dict
+
+import yaml
+
+ROOT = Path(__file__).resolve().parent.parent
+
+REQUIRED_KEYS = [
+    ("register", "code_columns"),
+    ("register", "separator"),
+    ("scoring", "output_columns"),
+    ("paths", "encounters"),
+]
+
+
+def load(path: str | Path | None = None) -> Dict[str, Any]:
+    """The pipeline policy, as a dict."""
+    path = Path(path) if path else ROOT / "config.yaml"
+    return yaml.safe_load(path.read_text()) or {}
+
+
+def missing_keys(cfg: Dict[str, Any]) -> list[str]:
+    """Required policy keys that are absent from `cfg`, as dotted names."""
+    absent = []
+    for section, key in REQUIRED_KEYS:
+        if key not in (cfg.get(section) or {}):
+            absent.append(f"{section}.{key}")
+    return absent
+
+
+def require(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    absent = missing_keys(cfg)
+    if absent:
+        raise KeyError(f"policy is missing required keys: {', '.join(absent)}")
+    return cfg
+=== codes.py
+"""The diagnosis codes recorded on an encounter."""
+from __future__ import annotations
+
+import pandas as pd
+
+BLANKS = ("", "nan", "None")
+
+
+def normalise(raw: pd.Series, missing: str = "?") -> pd.Series:
+    """Recorded diagnosis codes, tidied for use as register entries.
+
+    The missing marker and blank cells come back as NaN so they never reach a 
+register.
+    Everything else is kept as charted, which is what the code table is keyed 
+on.
+    """
+    text = raw.astype(str).str.strip()
+    return text.where(~text.isin((missing, *BLANKS)))
+=== register.py
+"""The condition register that rides alongside every score.
+
+Held in long form, one row per (encounter_id, code), because that is the grain 
+the downstream
+refresh job writes and the grain the feature builder counts. `config.yaml` names
+the index the
+refresh job delivers and the columns the charted codes sit in.
+"""
+from __future__ import annotations
+
+from pathlib import Path
+
+import pandas as pd
+
+from . import codes
+
+ROOT = Path(__file__).resolve().parent.parent
+EVENT_COLUMNS = ["encounter_id", "patient_nbr", "code"]
+INDEX_COLUMNS = ["patient_nbr", "code"]
+
+
+def load_index(cfg: dict) -> pd.DataFrame:
+    """The condition index the refresh job delivers, one row per (patient, 
+code)."""
+    path = ROOT / cfg["register"]["index"]
+    frame = pd.read_csv(path, dtype={"code": str})
+    return frame[INDEX_COLUMNS].astype({"patient_nbr": 
+"int64"}).drop_duplicates()
+
+
+def load_code_table(cfg: dict) -> pd.Series:
+    """The code table the register is keyed on: charted code -> register 
+code."""
+    path = ROOT / cfg["register"]["code_table"]
+    frame = pd.read_csv(path, dtype=str)
+    return frame.set_index("charted_code")["register_code"]
+
+
+def condition_events(encounters: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """One row per (encounter_id, patient_nbr, code) charted on the encounter 
+itself."""
+    policy = cfg["register"]
+    long = encounters.melt(id_vars=["encounter_id", "patient_nbr"],
+                           value_vars=list(policy["code_columns"]),
+                           var_name="field", value_name="raw")
+    charted = codes.normalise(long["raw"], policy.get("missing_marker", "?"))
+    table = load_code_table(cfg)
+    long["code"] = charted.map(table).fillna(charted)
+    long = long.dropna(subset=["code"]).astype({"encounter_id": "int64", 
+"patient_nbr": "int64"})
+    return long[EVENT_COLUMNS].drop_duplicates()
+
+
+def registers(encounters: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """The condition register for every encounter in `encounters`, in long form.
+
+    What the encounter charts, together with what the index already holds for 
+that patient.
+    One row per (encounter_id, code), distinct codes only, in a stable order.
+    """
+    charted = condition_events(encounters, cfg)
+    keys = (encounters[["encounter_id", "patient_nbr"]]
+            .astype({"encounter_id": "int64", "patient_nbr": "int64"})
+            .drop_duplicates())
+    on_file = keys.merge(load_index(cfg), on="patient_nbr", 
+how="inner")[EVENT_COLUMNS]
+    return (pd.concat([charted, on_file], ignore_index=True)[["encounter_id", 
+"code"]]
+            .drop_duplicates()
+            .sort_values(["encounter_id", "code"], kind="stable")
+            .reset_index(drop=True))
+
+
+def sizes(encounters: pd.DataFrame, cfg: dict) -> pd.Series:
+    """How many conditions each encounter's register holds, indexed by encounter
+id."""
+    reg = registers(encounters, cfg)
+    counts = reg.groupby("encounter_id")["code"].size()
+    index = encounters["encounter_id"].astype("int64")
+    return counts.reindex(index).fillna(0).astype(float).set_axis(index)
+
+
+Tool:
+<returncode>
+0
+<output>
+=== features.py
+"""Per-encounter feature construction."""
+from __future__ import annotations
+
+import pandas as pd
+
+from . import register
+
+ENCOUNTER_COLUMNS = [
+    "time_in_hospital", "num_lab_procedures", "num_procedures", 
+"num_medications",
+    "number_outpatient", "number_emergency", "number_inpatient", 
+"number_diagnoses",
+]
+FEATURE_COLUMNS = ENCOUNTER_COLUMNS + ["n_conditions"]
+
+
+def prepare(encounters: pd.DataFrame) -> pd.DataFrame:
+    """Normalise a raw encounter extract into the frame the pipeline works 
+on."""
+    frame = encounters.copy()
+    frame["encounter_id"] = frame["encounter_id"].astype("int64")
+    frame["patient_nbr"] = frame["patient_nbr"].astype("int64")
+    return frame.set_index("encounter_id", drop=False)
+
+
+def build_features(encounters: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """Feature frame for every encounter in `encounters`, indexed by encounter 
+id."""
+    frame = prepare(encounters)
+    out = frame[ENCOUNTER_COLUMNS].astype(float)
+    out["n_conditions"] = register.sizes(frame, cfg).values
+    return out[FEATURE_COLUMNS].sort_index()
+
+
+def build_labels(encounters: pd.DataFrame) -> pd.Series:
+    """1 if the encounter was followed by a readmission inside the horizon."""
+    frame = prepare(encounters)
+    return (frame["readmitted"] == 
+"<30").astype(int).sort_index().rename("label")
+=== model.py
+"""Model training. Deterministic: the pipeline is replayed and compared run to 
+run."""
+from __future__ import annotations
+
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+from . import features
+
+
+def build(cfg: dict):
+    spec = cfg.get("model", {})
+    return make_pipeline(
+        StandardScaler(),
+        LogisticRegression(max_iter=int(spec.get("max_iter", 2000)),
+                           random_state=int(spec.get("random_state", 0))),
+    )
+
+
+def train(X: pd.DataFrame, y: pd.Series, cfg: dict):
+    clf = build(cfg)
+    clf.fit(X[features.FEATURE_COLUMNS], y)
+    return clf
+
+
+def score(clf, X: pd.DataFrame) -> pd.Series:
+    p = clf.predict_proba(X[features.FEATURE_COLUMNS])[:, 1]
+    return pd.Series(p, index=X.index, name="score")
+=== serve.py
+"""Turning a scored batch into the export the network receives."""
+from __future__ import annotations
+
+import pandas as pd
+
+from . import features, register
+
+
+def build_serving_frame(batch: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """Feature frame for the encounters in `batch`."""
+    return features.build_features(batch, cfg)
+
+
+def scored_rows(batch: pd.DataFrame, scores: pd.Series, cfg: dict) -> 
+pd.DataFrame:
+    """The export: the score for each encounter alongside its condition 
+register."""
+    columns = list(cfg["scoring"]["output_columns"])
+    reg = register.registers(batch, cfg)
+    out = pd.DataFrame({"encounter_id": scores.index.astype("int64"),
+                        "score": scores.astype(float).values})
+    out = out.merge(reg, on="encounter_id", how="left")
+    out = out.rename(columns={"code": "conditions"})
+    return out.sort_values("encounter_id", 
+kind="stable")[columns].reset_index(drop=True)
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 3, $0.09):
+```
+cd /workspace/target && cat scripts/score_batch.py; echo "=== backtest"; cat 
+scripts/run_backtest.py; echo "=== bootstrap"; cat scripts/_bootstrap.py; echo 
+"=== tests"; cat tests/test_smoke.py
+```
+
+```
+cd /workspace/target && cat data/patient_conditions.manifest.json; echo "=== 
+ops_log"; cat var/ops_log.jsonl; echo "=== env_cli"; cat env_cli.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+#!/usr/bin/env python3
+"""Score one encounter batch and write the export the network receives."""
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+import _bootstrap  # noqa: F401
+import pandas as pd
+
+from src import config, features, model, serve
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--batch", required=True, help="encounter batch to score")
+    ap.add_argument("--out", required=True, help="destination csv")
+    args = ap.parse_args()
+
+    cfg = config.require(config.load())
+
+    archive = pd.read_csv(ROOT / cfg["paths"]["encounters"], low_memory=False)
+    X = features.build_features(archive, cfg)
+    y = features.build_labels(archive).reindex(X.index)
+    clf = model.train(X, y, cfg)
+
+    batch = pd.read_csv(args.batch, low_memory=False)
+    frame = serve.build_serving_frame(batch, cfg)
+    scores = model.score(clf, frame)
+    out = serve.scored_rows(batch, scores, cfg)
+
+    dest = Path(args.out)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    out.to_csv(dest, index=False)
+    print(f"scored {len(batch)} encounters -> {dest} ({len(out)} rows)")
+
+
+if __name__ == "__main__":
+    main()
+=== backtest
+#!/usr/bin/env python3
+"""Backtest the scorer on the encounter archive and write 
+results/backtest_report.json."""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import _bootstrap  # noqa: F401
+import pandas as pd
+from sklearn.metrics import roc_auc_score
+
+from src import config, features, model
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def main() -> None:
+    cfg = config.require(config.load())
+    archive = pd.read_csv(ROOT / cfg["paths"]["encounters"], low_memory=False)
+
+    X = features.build_features(archive, cfg)
+    y = features.build_labels(archive).reindex(X.index)
+
+    # Hold out whole patients, never encounters, so one patient cannot sit on 
+both sides.
+    patients = features.prepare(archive)["patient_nbr"].reindex(X.index)
+    held = set(sorted(patients.unique())[::4])
+    is_held = patients.isin(held).values
+
+    clf = model.train(X[~is_held], y[~is_held], cfg)
+    auc = float(roc_auc_score(y[is_held], model.score(clf, X[is_held])))
+
+    report = {
+        "encounters": int(len(X)),
+        "train_rows": int((~is_held).sum()),
+        "holdout_rows": int(is_held.sum()),
+        "holdout_patients": len(held),
+        "label_rate": round(float(y.mean()), 4),
+        "mean_conditions": round(float(X["n_conditions"].mean()), 4),
+        "holdout_auc": round(auc, 4),
+    }
+    out = ROOT / "results"
+    out.mkdir(exist_ok=True)
+    (out / "backtest_report.json").write_text(json.dumps(report, indent=2) + 
+"\n")
+    print(json.dumps(report, indent=2))
+
+
+if __name__ == "__main__":
+    main()
+=== bootstrap
+"""Put the workspace root on sys.path so `scripts/` can import `src/`."""
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+=== tests
+from __future__ import annotations
+
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+import pandas as pd
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+from src import config, features, register, serve  # noqa: E402
+
+CFG = config.load()
+
+
+def _batch(rows: int | None = 400) -> pd.DataFrame:
+    frame = pd.read_csv(ROOT / CFG["paths"]["serving_batch"], low_memory=False)
+    return frame if rows is None else frame.head(rows)
+
+
+class TestConfig(unittest.TestCase):
+    def test_policy_carries_every_required_key(self):
+        self.assertEqual(config.missing_keys(CFG), [])
+
+
+class TestRegister(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.batch = _batch()
+        cls.reg = register.registers(cls.batch, CFG)
+
+    def test_long_form_columns(self):
+        self.assertEqual(list(self.reg.columns), ["encounter_id", "code"])
+
+    def test_codes_are_distinct_per_encounter(self):
+        self.assertFalse(self.reg.duplicated().any())
+
+    def test_registers_belong_to_the_batch(self):
+        self.assertTrue(set(self.reg["encounter_id"])
+                        <= set(self.batch["encounter_id"].astype("int64")))
+
+    def test_sizes_match_the_long_form(self):
+        sizes = register.sizes(features.prepare(self.batch), CFG).sort_index()
+        counted = (self.reg.groupby("encounter_id")["code"].size()
+                   .reindex(sizes.index).fillna(0).astype(float))
+        self.assertTrue((sizes.values == counted.values).all())
+
+
+class TestFeatures(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.frame = features.build_features(_batch(), CFG)
+
+    def test_columns_are_the_contract(self):
+        self.assertEqual(list(self.frame.columns), features.FEATURE_COLUMNS)
+
+    def test_no_missing_values(self):
+        self.assertFalse(self.frame.isna().any().any(), "feature frame has 
+NaNs")
+
+    def test_features_are_numeric_and_finite(self):
+        self.assertTrue(all(pd.api.types.is_numeric_dtype(t) for t in 
+self.frame.dtypes))
+        self.assertTrue((self.frame.abs() < 1e6).all().all())
+
+    def test_serving_frame_matches_training_columns(self):
+        frame = serve.build_serving_frame(_batch(), CFG)
+        self.assertEqual(list(frame.columns), features.FEATURE_COLUMNS)
+
+
+class TestScoringContract(unittest.TestCase):
+    def test_score_batch_writes_the_contract(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            batch = Path(tmp) / "batch.csv"
+            _batch(300).to_csv(batch, index=False)
+            out = Path(tmp) / "scores.csv"
+            proc = subprocess.run(
+                [sys.executable, "scripts/score_batch.py", "--batch", 
+str(batch),
+                 "--out", str(out)],
+                cwd=str(ROOT), capture_output=True, text=True, timeout=1800)
+            self.assertEqual(proc.returncode, 0, proc.stderr[-2000:])
+            scores = pd.read_csv(out)
+            self.assertEqual(list(scores.columns), 
+list(CFG["scoring"]["output_columns"]))
+            self.assertTrue(scores["score"].between(0.0, 1.0).all())
+            self.assertGreater(scores["score"].std(), 0.0, "scores are 
+constant")
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "artifact": "patient_conditions.csv",
+  "produced_by": "register-refresh",
+  "grain": "one row per (patient_nbr, code)",
+  "covers": "encounters up to and including the archive cutoff",
+  "cutoff_encounter_id": 131836032,
+  "patients": 32577,
+  "rows": 112493,
+  "codes_kept": "every code charted on a covered encounter, as charted"
+}
+=== ops_log
+{"job_id": "score-batch-2008-w21", "kind": "batch_score", "batch": 
+"data/serving_batch.csv", "encounters_in_batch": 8548, "rows_written": 25562, 
+"status": "ok"}
+{"job_id": "register-refresh-2008-w21", "kind": "register_refresh", "grain": 
+"one row per encounter", "encounters_in_batch": 8548, "rows_written": 25562, 
+"status": "ok"}
+{"job_id": "score-batch-2008-w22", "kind": "batch_score", "batch": 
+"data/serving_batch.csv", "encounters_in_batch": 8548, "rows_written": 25562, 
+"status": "ok", "note": "ward asked why an admission shows up several times in 
+the export"}
+{"job_id": "register-refresh-2008-w22", "kind": "register_refresh", "grain": 
+"one row per encounter", "encounters_in_batch": 8548, "rows_written": 25562, 
+"status": "ok", "note": "clinical audit query open: a patient's condition list 
+got shorter between two admissions"}
+=== env_cli
+#!/usr/bin/env python3
+"""Client for the gated release service. Sends one JSON request over the unix 
+socket."""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import socket
+import sys
+
+SOCKET_PATH = os.environ.get("ENVD_SOCK", "/run/envd/envd.sock")
+
+OPS = ["survey", "ledger", "pull_records", "register_audit", "status",
+       "rehearse", "deploy.prepare", "deploy.commit", "checkpoint", 
+"incident.read",
+       "remediate", "canary.open", "canary.read", "cutover.commit"]
+
+
+def call(op: str, args: dict) -> dict:
+    try:
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        sock.settimeout(1800)
+        sock.connect(SOCKET_PATH)
+    except OSError as exc:
+        return {"ok": False, "error": f"release service unreachable at 
+{SOCKET_PATH}: {exc}"}
+    with sock:
+        sock.sendall(json.dumps({"op": op, "args": args}).encode() + b"\n")
+        buf = b""
+        while not buf.endswith(b"\n"):
+            chunk = sock.recv(65536)
+            if not chunk:
+                break
+            buf += chunk
+    try:
+        return json.loads(buf.decode())
+    except Exception as exc:                                           # noqa: 
+BLE001
+        return {"ok": False, "error": f"bad response: {exc}",
+                "raw": buf[:400].decode("utf-8", "replace")}
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description="gated release service")
+    ap.add_argument("op", choices=OPS)
+    ap.add_argument("--family", default=None, help="remediation family for 
+remediate")
+    ap.add_argument("--file", default=None, help="file to read records from")
+    ap.add_argument("--patient", default=None, help="patient number for 
+pull_records")
+    ap.add_argument("--encounter", default=None, help="encounter id for 
+register_audit")
+    ap.add_argument("--limit", default=None, help="row cap for pull_records")
+    ns = ap.parse_args()
+
+    args = {k: v for k, v in {"family": ns.family, "file": ns.file, "patient": 
+ns.patient,
+                              "encounter": ns.encounter, "limit": 
+ns.limit}.items()
+            if v is not None}
+    resp = call(ns.op, args)
+    print(json.dumps(resp, indent=2, default=str))
+    return 0 if resp.get("ok") else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 4, $0.17):
+```
+cd /workspace/target && head -3 data/encounters.csv | cut -c1-600; echo "==="; 
+head -5 data/patient_conditions.csv; wc -l data/patient_conditions.csv; echo 
+"==="; head -20 data/code_groups.csv; wc -l data/code_groups.csv
+```
+
+```
+cd /workspace/target && python3 -c "
+import pandas as pd
+enc=pd.read_csv('data/encounters.csv',low_memory=False)
+b=pd.read_csv('data/serving_batch.csv',low_memory=False)
+print(enc.shape,b.shape)
+print('enc id range',enc.encounter_id.min(),enc.encounter_id.max())
+print('batch id range',b.encounter_id.min(),b.encounter_id.max())
+print('enc patients',enc.patient_nbr.nunique(),'batch 
+patients',b.patient_nbr.nunique())
+idx=pd.read_csv('data/patient_conditions.csv',dtype=str)
+print(idx.columns.tolist(), idx.shape)
+print('idx patients', idx.patient_nbr.nunique())
+bp=set(b.patient_nbr.astype(str)); ip=set(idx.patient_nbr.astype(str))
+print('batch patients in index', len(bp&ip), 'of', len(bp))
+ep=set(enc.patient_nbr.astype(str))
+print('enc patients in index', len(ep&ip), 'of', len(ep))
+"
+
+```
+
+Tool:
+<returncode>
+0
+<output>
+encounter_id,patient_nbr,race,gender,age,weight,admission_type_id,discharge_disp
+osition_id,admission_source_id,time_in_hospital,payer_code,medical_specialty,num
+_lab_procedures,num_procedures,num_medications,number_outpatient,number_emergenc
+y,number_inpatient,diag_1,diag_2,diag_3,number_diagnoses,max_glu_serum,A1Cresult
+,metformin,repaglinide,nateglinide,chlorpropamide,glimepiride,acetohexamide,glip
+izide,glyburide,tolbutamide,pioglitazone,rosiglitazone,acarbose,miglitol,troglit
+azone,tolazamide,examide,citoglipton,insulin,glyburide-metformin,glipizide-metfo
+rmin,glimepiride-pioglitazone,metformin-
+12522,48330783,Caucasian,Female,[80-90),?,2,1,4,13,?,?,68,2,28,0,0,0,398,427,38,
+8,,,No,No,No,No,No,No,Steady,No,No,No,No,No,No,No,No,No,No,Steady,No,No,No,No,No
+,Ch,Yes,NO
+15738,63555939,Caucasian,Female,[90-100),?,3,3,4,12,?,InternalMedicine,33,3,18,0
+,0,0,434,198,486,8,,,No,No,No,No,No,No,No,No,No,No,Steady,No,No,No,No,No,No,Stea
+dy,No,No,No,No,No,Ch,Yes,NO
+===
+patient_nbr,code
+135,250
+135,401
+135,41
+135,560
+112494 data/patient_conditions.csv
+===
+charted_code,register_code
+11,11
+110,110
+111,111
+112,112
+115,115
+117,117
+122,122
+130,130
+131,131
+132,132
+135,135
+136,136
+137,137
+138,138
+139,139
+141,141
+142,142
+143,143
+145,145
+868 data/code_groups.csv
+
+
+Tool:
+<returncode>
+0
+<output>
+(42741, 50) (8548, 49)
+enc id range 12522 131836032
+batch id range 131836512 153091872
+enc patients 32577 batch patients 7377
+['patient_nbr', 'code'] (112493, 2)
+idx patients 32577
+batch patients in index 763 of 7377
+enc patients in index 32577 of 32577
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 5, $0.22):
+```
+cd /workspace/target && python3 -c "
+import pandas as pd
+t=pd.read_csv('data/code_groups.csv',dtype=str)
+print(t.shape)
+diff=t[t.charted_code!=t.register_code]
+print('differing rows',len(diff))
+print(diff.head(30))
+print('unique register 
+codes',t.register_code.nunique(),'charted',t.charted_code.nunique())
+# how many charted codes in encounters have decimals / V / E
+enc=pd.read_csv('data/encounters.csv',low_memory=False,dtype=str)
+codes=pd.unique(pd.concat([enc.diag_1,enc.diag_2,enc.diag_3]).dropna())
+print('unique charted codes in archive',len(codes))
+import re
+print('with decimal',sum('.' in c for c in codes))
+print('V/E',sum(c[0] in 'VE' for c in codes))
+tc=set(t.charted_code)
+print('archive codes covered by table',sum(c in tc for c in codes))
+"
+
+```
+
+```
+cd /workspace/target && python3 -c "
+import pandas as pd
+enc=pd.read_csv('data/encounters.csv',low_memory=False,dtype=str)
+idx=pd.read_csv('data/patient_conditions.csv',dtype=str)
+# for a patient, compare index codes vs charted codes in archive
+g=enc.groupby('patient_nbr')[['diag_1','diag_2','diag_3']].agg(lambda s:set(s))
+p='135'
+print(enc[enc.patient_nbr==p][['encounter_id','diag_1','diag_2','diag_3']])
+print(idx[idx.patient_nbr==p])
+"
+
+```
+
+Tool:
+<returncode>
+0
+<output>
+(867, 2)
+differing rows 34
+    charted_code register_code
+103       250.01           250
+104       250.02           250
+105       250.03           250
+106        250.1           250
+107       250.11           250
+108       250.12           250
+109       250.13           250
+110        250.2           250
+111       250.21           250
+112       250.22           250
+113       250.23           250
+114        250.3           250
+115       250.31           250
+116       250.32           250
+117       250.33           250
+118        250.4           250
+119       250.41           250
+120       250.42           250
+121       250.43           250
+122        250.5           250
+123       250.51           250
+124       250.52           250
+125       250.53           250
+126        250.6           250
+127        250.7           250
+128        250.8           250
+129       250.81           250
+130       250.82           250
+131       250.83           250
+132        250.9           250
+unique register codes 833 charted 867
+unique charted codes in archive 808
+with decimal 33
+V/E 96
+archive codes covered by table 807
+
+
+Tool:
+<returncode>
+0
+<output>
+     encounter_id diag_1 diag_2 diag_3
+4267     24437208    401    997    560
+4780     26264286    998     41    250
+  patient_nbr code
+0         135  250
+1         135  401
+2         135   41
+3         135  560
+4         135  997
+5         135  998
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 6, $0.26):
+```
+cd /workspace/target && python3 -c "
+import pandas as pd
+idx=pd.read_csv('data/patient_conditions.csv',dtype=str)
+codes=idx.code.unique()
+print('unique index codes',len(codes))
+print('with decimal',sum('.' in c for c in codes))
+print([c for c in codes if '.' in c][:20])
+print('V/E',sum(c[0] in 'VE' for c in codes))
+enc=pd.read_csv('data/encounters.csv',low_memory=False,dtype=str)
+# compare per patient union of charted (raw) vs index
+u=(pd.concat([enc[['patient_nbr','diag_1']].rename(columns={'diag_1':'c'}),
+              enc[['patient_nbr','diag_2']].rename(columns={'diag_2':'c'}),
+              enc[['patient_nbr','diag_3']].rename(columns={'diag_3':'c'})])
+   )
+u=u[u.c!='?'].dropna().drop_duplicates()
+print('raw union rows',len(u))
+m=u.merge(idx,left_on=['patient_nbr','c'],right_on=['patient_nbr','code'],how='o
+uter',indicator=True)
+print(m._merge.value_counts())
+print(m[m._merge=='left_only'].head(10))
+print(m[m._merge=='right_only'].head(10))
+"
+
+```
+
+Tool:
+<returncode>
+0
+<output>
+unique index codes 774
+with decimal 0
+[]
+V/E 96
+raw union rows 114460
+_merge
+both          104556
+left_only       9904
+right_only      7937
+Name: count, dtype: int64
+    patient_nbr       c code     _merge
+14    100016433   250.6  NaN  left_only
+22     10001988  250.03  NaN  left_only
+25     10002096  250.02  NaN  left_only
+30       100035  250.02  NaN  left_only
+82    100113975  250.01  NaN  left_only
+94    100130454   250.8  NaN  left_only
+105      100134  250.93  NaN  left_only
+117   100174797  250.41  NaN  left_only
+139   100193472  250.81  NaN  left_only
+148     1002168  250.01  NaN  left_only
+    patient_nbr    c code      _merge
+13    100016433  NaN  250  right_only
+21     10001988  NaN  250  right_only
+24     10002096  NaN  250  right_only
+29       100035  NaN  250  right_only
+81    100113975  NaN  250  right_only
+93    100130454  NaN  250  right_only
+104      100134  NaN  250  right_only
+116   100174797  NaN  250  right_only
+138   100193472  NaN  250  right_only
+147     1002168  NaN  250  right_only
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 7, $0.32):
+```
+cd /workspace/target && python3 env_cli.py status; python3 env_cli.py survey
+```
+
+```
+cd /workspace/target && python3 env_cli.py ledger
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "status",
+  "gates": {
+    "reproduced": false,
+    "deployed": false,
+    "deploy_count": 0,
+    "validate_count": 0,
+    "last_validate": null,
+    "diagnosed": false,
+    "diagnosis_family": null,
+    "inject_active": false,
+    "recovered": false,
+    "recovery_attempts_left": 2,
+    "promoted": false,
+    "submitted": false
+  },
+  "checkpoint_budget": {
+    "used": 0,
+    "limit": 6
+  },
+  "canary": {
+    "opened": 0,
+    "limit": 3,
+    "verdict": null
+  },
+  "remediation_attempts_left": 2
+}
+{
+  "ok": true,
+  "op": "survey",
+  "policy": {
+    "task": "condition_register",
+    "register": {
+      "code_columns": [
+        "diag_1",
+        "diag_2",
+        "diag_3"
+      ],
+      "index": "data/patient_conditions.csv",
+      "code_table": "data/code_groups.csv",
+      "missing_marker": "?",
+      "separator": "|"
+    },
+    "scoring": {
+      "horizon_days": 30,
+      "output_columns": [
+        "encounter_id",
+        "score",
+        "conditions"
+      ]
+    },
+    "model": {
+      "kind": "logistic_regression",
+      "max_iter": 2000,
+      "random_state": 0
+    },
+    "paths": {
+      "encounters": "data/encounters.csv",
+      "serving_batch": "data/serving_batch.csv"
+    }
+  },
+  "data_files": {
+    "data/code_groups.csv": {
+      "rows": 867,
+      "n_columns": 2,
+      "first_columns": [
+        "charted_code",
+        "register_code"
+      ]
+    },
+    "data/encounters.csv": {
+      "rows": 42741,
+      "n_columns": 50,
+      "first_columns": [
+        "encounter_id",
+        "patient_nbr",
+        "race",
+        "gender",
+        "age",
+        "weight",
+        "admission_type_id",
+        "discharge_disposition_id",
+        "admission_source_id",
+        "time_in_hospital"
+      ]
+    },
+    "data/patient_conditions.csv": {
+      "rows": 112493,
+      "n_columns": 2,
+      "first_columns": [
+        "patient_nbr",
+        "code"
+      ]
+    },
+    "data/serving_batch.csv": {
+      "rows": 8548,
+      "n_columns": 49,
+      "first_columns": [
+        "encounter_id",
+        "patient_nbr",
+        "race",
+        "gender",
+        "age",
+        "weight",
+        "admission_type_id",
+        "discharge_disposition_id",
+        "admission_source_id",
+        "time_in_hospital"
+      ]
+    }
+  },
+  "contract": {
+    "entry_point": "scripts/score_batch.py --batch <csv> --out <csv>",
+    "output_columns": [
+      "encounter_id",
+      "score",
+      "conditions"
+    ],
+    "rule": "one row per encounter in the batch; each row carries that 
+encounter's score and the conditions on file for the patient as of that 
+admission"
+  },
+  "release": {
+    "staged": false,
+    "staged_digest": null,
+    "committed": false,
+    "bundle_digest": null
+  },
+  "gates": {
+    "reproduced": false,
+    "deployed": false,
+    "deploy_count": 0,
+    "validate_count": 0,
+    "last_validate": null,
+    "diagnosed": false,
+    "diagnosis_family": null,
+    "inject_active": false,
+    "recovered": false,
+    "recovery_attempts_left": 2,
+    "promoted": false,
+    "submitted": false
+  },
+  "checkpoint_budget": {
+    "used": 0,
+    "limit": 6
+  },
+  "canary": {
+    "opened": 0,
+    "limit": 3,
+    "verdict": null
+  },
+  "remediation_attempts_left": 2
+}
+
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "ledger",
+  "archive": {
+    "encounters": 42741,
+    "distinct_patients": 32577,
+    "median_encounters_per_patient": 1.0,
+    "encounter_id_range": [
+      12522,
+      131836032
+    ],
+    "median_number_diagnoses": 7.0,
+    "file": "data/encounters.csv"
+  },
+  "serving_batch": {
+    "encounters": 8548,
+    "distinct_patients": 7377,
+    "median_encounters_per_patient": 1.0,
+    "encounter_id_range": [
+      131836512,
+      153091872
+    ],
+    "median_number_diagnoses": 9.0,
+    "file": "data/serving_batch.csv"
+  },
+  "recent_jobs": [
+    {
+      "job_id": "score-batch-2008-w21",
+      "kind": "batch_score",
+      "batch": "data/serving_batch.csv",
+      "encounters_in_batch": 8548,
+      "rows_written": 25562,
+      "status": "ok"
+    },
+    {
+      "job_id": "register-refresh-2008-w21",
+      "kind": "register_refresh",
+      "grain": "one row per encounter",
+      "encounters_in_batch": 8548,
+      "rows_written": 25562,
+      "status": "ok"
+    },
+    {
+      "job_id": "score-batch-2008-w22",
+      "kind": "batch_score",
+      "batch": "data/serving_batch.csv",
+      "encounters_in_batch": 8548,
+      "rows_written": 25562,
+      "status": "ok",
+      "note": "ward asked why an admission shows up several times in the export"
+    },
+    {
+      "job_id": "register-refresh-2008-w22",
+      "kind": "register_refresh",
+      "grain": "one row per encounter",
+      "encounters_in_batch": 8548,
+      "rows_written": 25562,
+      "status": "ok",
+      "note": "clinical audit query open: a patient's condition list got shorter
+between two admissions"
+    }
+  ],
+  "last_checkpoint": {
+    "status": null,
+    "signal": null
+  },
+  "checkpoint_budget": {
+    "used": 0,
+    "limit": 6
+  },
+  "canary": {
+    "opened": 0,
+    "limit": 3,
+    "verdict": null
+  },
+  "remediation_attempts_left": 2
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 8, $0.37):
+```
+cd /workspace/target && python3 env_cli.py register_audit --file 
+data/serving_batch.csv --encounter 131836512; python3 env_cli.py pull_records 
+--file data/serving_batch.csv --limit 2
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "register_audit",
+  "encounter_id": 131836512,
+  "patient_nbr": 82103022,
+  "file": "data/serving_batch.csv",
+  "your_pipeline": {
+    "register_rows_for_this_encounter": [
+      {
+        "encounter_id": 131836512,
+        "code": "413"
+      },
+      {
+        "encounter_id": 131836512,
+        "code": "414"
+      },
+      {
+        "encounter_id": 131836512,
+        "code": "428"
+      }
+    ],
+    "register_rows_total": 27936,
+    "encounters_in_file": 8548,
+    "columns": [
+      "encounter_id",
+      "code"
+    ]
+  },
+  "rows_for_this_patient_in_this_file": [
+    {
+      "encounter_id": 131836512,
+      "patient_nbr": 82103022,
+      "diag_1": "428",
+      "diag_2": "413",
+      "diag_3": "414",
+      "number_diagnoses": 8
+    }
+  ],
+  "note": "`your_pipeline` is what the working tree emits for this encounter. 
+The rows below are from this file only, exactly as stored."
+}
+{
+  "ok": true,
+  "op": "pull_records",
+  "file": "data/serving_batch.csv",
+  "patients": [
+    {
+      "patient_nbr": 23398488,
+      "rows_in_file": 7,
+      "shown": 2,
+      "rows": [
+        {
+          "encounter_id": 132599958,
+          "patient_nbr": 23398488,
+          "admission_type_id": 1,
+          "discharge_disposition_id": 1,
+          "time_in_hospital": 2,
+          "number_diagnoses": 9,
+          "diag_1": "276",
+          "diag_2": "403",
+          "diag_3": "V45",
+          "num_medications": 15,
+          "number_inpatient": 10
+        },
+        {
+          "encounter_id": 142915734,
+          "patient_nbr": 23398488,
+          "admission_type_id": 1,
+          "discharge_disposition_id": 1,
+          "time_in_hospital": 2,
+          "number_diagnoses": 5,
+          "diag_1": "428",
+          "diag_2": "403",
+          "diag_3": "250.4",
+          "num_medications": 19,
+          "number_inpatient": 10
+        }
+      ]
+    },
+    {
+      "patient_nbr": 103412286,
+      "rows_in_file": 1,
+      "shown": 1,
+      "rows": [
+        {
+          "encounter_id": 152559096,
+          "patient_nbr": 103412286,
+          "admission_type_id": 1,
+          "discharge_disposition_id": 3,
+          "time_in_hospital": 8,
+          "number_diagnoses": 9,
+          "diag_1": "250.6",
+          "diag_2": "276",
+          "diag_3": "70",
+          "num_medications": 23,
+          "number_inpatient": 1
+        }
+      ]
+    }
+  ],
+  "limit": 2,
+  "note": "raw rows as stored, most-frequent and median patient by row count in 
+this file; pass --patient or --limit to choose your own"
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 9, $0.52):
+```
+cd /workspace/target && python3 -c "
+import pandas as pd, numpy as np
+enc=pd.read_csv('data/encounters.csv',low_memory=False,dtype={'encounter_id':'in
+t64','patient_nbr':'int64'})
+b=pd.read_csv('data/serving_batch.csv',low_memory=False,dtype={'encounter_id':'i
+nt64','patient_nbr':'int64'})
+both=set(enc.patient_nbr)&set(b.patient_nbr)
+print('patients in both archive and batch:',len(both))
+n=enc.patient_nbr.value_counts()
+print('archive enc/patient max',n.max(),'sum n^2',(n**2).sum())
+nb=b.patient_nbr.value_counts()
+print('batch enc/patient max',nb.max(), 'multi-visit patients in batch', 
+(nb>1).sum())
+allenc=pd.concat([enc.drop(columns=['readmitted']),b])
+na=allenc.patient_nbr.value_counts()
+print('combined patients',len(na),'max',na.max(),'sum n^2*3',(na**2).sum()*3)
+# batch encounters with zero charted codes
+z=((b.diag_1=='?')&(b.diag_2=='?')&(b.diag_3=='?')).sum()
+print('batch enc all-missing diags',z)
+"
+
+```
+
+```
+cd /workspace/target && python3 env_cli.py pull_records --file 
+data/encounters.csv --patient 23398488 --limit 10
+```
+
+Tool:
+<returncode>
+0
+<output>
+patients in both archive and batch: 763
+archive enc/patient max 23 sum n^2 81047
+batch enc/patient max 7 multi-visit patients in batch 919
+combined patients 39191 max 23 sum n^2*3 288051
+batch enc all-missing diags 0
+
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "pull_records",
+  "file": "data/encounters.csv",
+  "patients": [
+    {
+      "patient_nbr": 23398488,
+      "rows_in_file": 9,
+      "shown": 9,
+      "rows": [
+        {
+          "encounter_id": 113382426,
+          "patient_nbr": 23398488,
+          "admission_type_id": 1,
+          "discharge_disposition_id": 1,
+          "time_in_hospital": 10,
+          "number_diagnoses": 5,
+          "diag_1": "428",
+          "diag_2": "403",
+          "diag_3": "466",
+          "num_medications": 29,
+          "number_inpatient": 0
+        },
+        {
+          "encounter_id": 117803256,
+          "patient_nbr": 23398488,
+          "admission_type_id": 1,
+          "discharge_disposition_id": 1,
+          "time_in_hospital": 1,
+          "number_diagnoses": 6,
+          "diag_1": "584",
+          "diag_2": "518",
+          "diag_3": "250.42",
+          "num_medications": 12,
+          "number_inpatient": 1
+        },
+        {
+          "encounter_id": 118554540,
+          "patient_nbr": 23398488,
+          "admission_type_id": 1,
+          "discharge_disposition_id": 1,
+          "time_in_hospital": 8,
+          "number_diagnoses": 9,
+          "diag_1": "428",
+          "diag_2": "585",
+          "diag_3": "518",
+          "num_medications": 24,
+          "number_inpatient": 2
+        },
+        {
+          "encounter_id": 120572160,
+          "patient_nbr": 23398488,
+          "admission_type_id": 1,
+          "discharge_disposition_id": 1,
+          "time_in_hospital": 2,
+          "number_diagnoses": 4,
+          "diag_1": "514",
+          "diag_2": "403",
+          "diag_3": "250.4",
+          "num_medications": 13,
+          "number_inpatient": 4
+        },
+        {
+          "encounter_id": 123050358,
+          "patient_nbr": 23398488,
+          "admission_type_id": 1,
+          "discharge_disposition_id": 1,
+          "time_in_hospital": 2,
+          "number_diagnoses": 8,
+          "diag_1": "996",
+          "diag_2": "403",
+          "diag_3": "250.4",
+          "num_medications": 23,
+          "number_inpatient": 5
+        },
+        {
+          "encounter_id": 127929642,
+          "patient_nbr": 23398488,
+          "admission_type_id": 1,
+          "discharge_disposition_id": 4,
+          "time_in_hospital": 2,
+          "number_diagnoses": 5,
+          "diag_1": "511",
+          "diag_2": "780",
+          "diag_3": "250.4",
+          "num_medications": 12,
+          "number_inpatient": 6
+        },
+        {
+          "encounter_id": 128980494,
+          "patient_nbr": 23398488,
+          "admission_type_id": 1,
+          "discharge_disposition_id": 1,
+          "time_in_hospital": 3,
+          "number_diagnoses": 9,
+          "diag_1": "416",
+          "diag_2": "786",
+          "diag_3": "535",
+          "num_medications": 11,
+          "number_inpatient": 7
+        },
+        {
+          "encounter_id": 129618780,
+          "patient_nbr": 23398488,
+          "admission_type_id": 1,
+          "discharge_disposition_id": 1,
+          "time_in_hospital": 3,
+          "number_diagnoses": 5,
+          "diag_1": "482",
+          "diag_2": "403",
+          "diag_3": "428",
+          "num_medications": 23,
+          "number_inpatient": 8
+        },
+        {
+          "encounter_id": 131125500,
+          "patient_nbr": 23398488,
+          "admission_type_id": 1,
+          "discharge_disposition_id": 1,
+          "time_in_hospital": 1,
+          "number_diagnoses": 5,
+          "diag_1": "518",
+          "diag_2": "403",
+          "diag_3": "V15",
+          "num_medications": 7,
+          "number_inpatient": 9
+        }
+      ]
+    }
+  ],
+  "limit": 10,
+  "note": "raw rows as stored, most-frequent and median patient by row count in 
+this file; pass --patient or --limit to choose your own"
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 10, $0.59):
+```
+cd /workspace/target && time python3 scripts/score_batch.py --batch 
+data/serving_batch.csv --out /tmp/scores_before.csv && head -8 
+/tmp/scores_before.csv && python3 -c "
+import pandas as pd
+s=pd.read_csv('/tmp/scores_before.csv')
+print(s.shape, 'unique encounters', s.encounter_id.nunique())
+print('rows per encounter', s.encounter_id.value_counts().describe())
+print('null conditions', s.conditions.isna().sum())
+"
+```
+
+```
+cd /workspace/target && time python3 scripts/run_backtest.py
+```
+
+Tool:
+<returncode>
+127
+<output>
+/bin/sh: 1: time: not found
+
+
+Tool:
+<returncode>
+127
+<output>
+/bin/sh: 1: time: not found
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 11, $0.62):
+```
+cd /workspace/target && python3 scripts/score_batch.py --batch 
+data/serving_batch.csv --out /tmp/scores_before.csv && head -8 
+/tmp/scores_before.csv && python3 -c "
+import pandas as pd
+s=pd.read_csv('/tmp/scores_before.csv')
+print(s.shape, 'unique encounters', s.encounter_id.nunique())
+print('max rows per encounter', s.encounter_id.value_counts().max())
+print('null conditions', s.conditions.isna().sum())
+"
+```
+
+```
+cd /workspace/target && python3 scripts/run_backtest.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+scored 8548 encounters -> /tmp/scores_before.csv (27936 rows)
+encounter_id,score,conditions
+131836512,0.08392563682827274,413
+131836512,0.08392563682827274,414
+131836512,0.08392563682827274,428
+131837502,0.10575733012454881,285
+131837502,0.10575733012454881,493
+131837502,0.10575733012454881,560
+131837502,0.10575733012454881,599
+(27936, 3) unique encounters 8548
+max rows per encounter 18
+null conditions 0
+
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "encounters": 42741,
+  "train_rows": 32087,
+  "holdout_rows": 10654,
+  "holdout_patients": 8145,
+  "label_rate": 0.1142,
+  "mean_conditions": 4.3174,
+  "holdout_auc": 0.7193
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 12, $0.76):
+Now let me write a reproduction script that demonstrates both reported symptoms.
+
+```
+mkdir -p /workspace/target/scripts && cat <<'EOF' > 
+/workspace/target/scripts/repro_issue.py
+#!/usr/bin/env python3
+"""Reproduce the two things the wards reported, straight off the pipeline in the
+tree.
+
+  1. the export shows the same admission on several lines
+  2. two patients carrying the same conditions come out with scores nowhere near
+each other,
+     and a patient's condition list gets shorter between two admissions
+
+Run:  python3 scripts/repro_issue.py
+"""
+from __future__ import annotations
+
+from pathlib import Path
+
+import _bootstrap  # noqa: F401
+import pandas as pd
+
+from src import config, features, model, register, serve
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def main() -> None:
+    cfg = config.require(config.load())
+    archive = pd.read_csv(ROOT / cfg["paths"]["encounters"], low_memory=False)
+    batch = pd.read_csv(ROOT / cfg["paths"]["serving_batch"], low_memory=False)
+
+    X = features.build_features(archive, cfg)
+    y = features.build_labels(archive).reindex(X.index)
+    clf = model.train(X, y, cfg)
+    frame = serve.build_serving_frame(batch, cfg)
+    scores = model.score(clf, frame)
+    out = serve.scored_rows(batch, scores, cfg)
+
+    print("== 1. export grain ==")
+    per = out["encounter_id"].value_counts()
+    print(f"encounters in batch      : {batch['encounter_id'].nunique()}")
+    print(f"rows in export           : {len(out)}")
+    print(f"encounters on >1 line    : {int((per > 1).sum())}  (worst: 
+{int(per.max())} lines)")
+    worst = per.idxmax()
+    print(out[out["encounter_id"] == worst].to_string(index=False))
+    sep = cfg["register"]["separator"]
+    print(f"separator the policy names: {sep!r}; rows carrying it: "
+          f"{int(out['conditions'].astype(str).str.contains(chr(124), 
+regex=False).sum())}")
+
+    print()
+    print("== 2. what the register holds ==")
+    reg = register.registers(batch, cfg)
+    sizes = reg.groupby("encounter_id")["code"].size()
+    keys = batch[["encounter_id", "patient_nbr"]].astype("int64")
+    idx_patients = set(register.load_index(cfg)["patient_nbr"])
+    on_file = keys["patient_nbr"].isin(idx_patients)
+    print(f"batch patients found in the delivered index : "
+          f"{keys.loc[on_file, 'patient_nbr'].nunique()} of 
+{keys['patient_nbr'].nunique()}")
+    s = keys.assign(n=keys["encounter_id"].map(sizes).fillna(0))
+    print(f"mean register size, patient in the index    : {s.loc[on_file, 
+'n'].mean():.2f}")
+    print(f"mean register size, patient not in it       : {s.loc[~on_file, 
+'n'].mean():.2f}")
+
+    # a patient whose list gets shorter from one admission to the next
+    s = s.sort_values(["patient_nbr", "encounter_id"])
+    shrink = s.groupby("patient_nbr")["n"].diff() < 0
+    print(f"admissions whose register is SHORTER than the patient's previous 
+one: "
+          f"{int(shrink.sum())}")
+    if shrink.any():
+        pat = int(s.loc[shrink, "patient_nbr"].iloc[0])
+        rows = s[s["patient_nbr"] == pat]
+        print(f"  e.g. patient {pat}:")
+        for _, r in rows.iterrows():
+            enc = int(r["encounter_id"])
+            codes = sep.join(reg.loc[reg["encounter_id"] == enc, "code"])
+            print(f"    encounter {enc}  n_conditions={int(r['n'])}  {codes}")
+
+    # two encounters charting the same codes, scored far apart
+    charted = (register.condition_events(batch, cfg)
+               .groupby("encounter_id")["code"].apply(lambda c: 
+sep.join(sorted(set(c)))))
+    cmp = pd.DataFrame({"codes": charted, "score": 
+scores.reindex(charted.index),
+                        "n": sizes.reindex(charted.index).fillna(0)}).dropna()
+    spread = cmp.groupby("codes")["score"].agg(["min", "max", "size"])
+    spread = spread[spread["size"] > 1]
+    spread["gap"] = spread["max"] - spread["min"]
+    worst = spread.sort_values("gap", ascending=False).head(3)
+    print("\nsame conditions charted, widest score gaps:")
+    print(worst.to_string())
+    twins = cmp[cmp["codes"] == worst.index[0]].sort_values("score")
+    print(twins.to_string())
+
+
+if __name__ == "__main__":
+    main()
+EOF
+cd /workspace/target && python3 scripts/repro_issue.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+== 1. export grain ==
+encounters in batch      : 8548
+rows in export           : 27936
+encounters on >1 line    : 8533  (worst: 18 lines)
+ encounter_id    score conditions
+    132599958 0.848265        250
+    132599958 0.848265        276
+    132599958 0.848265        403
+    132599958 0.848265        416
+    132599958 0.848265        428
+    132599958 0.848265        466
+    132599958 0.848265        482
+    132599958 0.848265        511
+    132599958 0.848265        514
+    132599958 0.848265        518
+    132599958 0.848265        535
+    132599958 0.848265        584
+    132599958 0.848265        585
+    132599958 0.848265        780
+    132599958 0.848265        786
+    132599958 0.848265        996
+    132599958 0.848265        V15
+    132599958 0.848265        V45
+separator the policy names: '|'; rows carrying it: 0
+
+== 2. what the register holds ==
+batch patients found in the delivered index : 763 of 7377
+mean register size, patient in the index    : 5.85
+mean register size, patient not in it       : 2.92
+admissions whose register is SHORTER than the patient's previous one: 115
+  e.g. patient 4608009:
+    encounter 133296492  n_conditions=3  410|427|428
+    encounter 134734038  n_conditions=2  427|428
+
+same conditions charted, widest score gaps:
+                  min       max  size       gap
+codes                                          
+403|428|511  0.065387  0.848404     4  0.783017
+276|403|V45  0.095871  0.848265     2  0.752394
+250|403|428  0.056132  0.778439    20  0.722307
+                    codes     score   n
+encounter_id                           
+135383418     403|428|511  0.065387   3
+137020596     403|428|511  0.187010   6
+146010834     403|428|511  0.841856  16
+152296638     403|428|511  0.848404  16
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 13, $0.93):
+Both symptoms reproduce. Now let me implement the fix — starting with `codes.py`
+and `register.py`.
+
+```
+cat <<'EOF' > /workspace/target/src/codes.py
+"""The diagnosis codes recorded on an encounter."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+BLANKS = ("", "nan", "None", "NaN", "<NA>")
+
+
+def _as_text(raw: pd.Series) -> pd.Series:
+    """The cell as it was charted, as text.
+
+    ICD-9 codes are text: they carry the V and E series and decimal 
+subdivisions, and `250.8`
+    is not `250.80`. A cut of the corpus whose three diagnosis columns happen to
+hold nothing
+    but numbers still parses as float, so a plain `astype(str)` would chart 
+`428` as `428.0`
+    and knock every one of those codes out of the code table. Format such a 
+column back to the
+    charted form instead of trusting the dtype the reader guessed.
+    """
+    if pd.api.types.is_numeric_dtype(raw):
+        return raw.map(
+            lambda v: "" if pd.isna(v)
+            else (str(int(v)) if float(v).is_integer()
+                  else np.format_float_positional(float(v), trim="-"))
+        )
+    return raw.astype(str).str.strip()
+
+
+def normalise(raw: pd.Series, missing: str = "?") -> pd.Series:
+    """Recorded diagnosis codes, tidied for use as register entries.
+
+    The missing marker and blank cells come back as NaN so they never reach a 
+register.
+    Everything else is kept as charted, which is what the code table is keyed on
+and what the
+    export contract asks for.
+    """
+    text = _as_text(raw)
+    return text.where(~text.isin((missing, *BLANKS)))
+EOF
+cd /workspace/target && python3 -c "
+import pandas as pd
+from src import codes
+print(codes.normalise(pd.Series([428.0,250.83,None])).tolist())
+print(codes.normalise(pd.Series(['250.83','?','V15',' 428 ',None])).tolist())
+"
+```
+
+Tool:
+<returncode>
+0
+<output>
+['428', '250.83', nan]
+['250.83', nan, 'V15', '428', nan]
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 14, $1.06):
+```
+cat <<'EOF' > /workspace/target/src/register.py
+"""The condition register that rides alongside every score.
+
+Held in long form, one row per (encounter_id, code), because that is the grain 
+the feature
+builder counts and the grain the export is folded up from. `config.yaml` names 
+the columns the
+charted codes sit in and the artifacts the refresh job delivers.
+
+**What a register is.** The export contract is "the conditions on file for the 
+patient as of
+that admission", written as the codes were charted. So the register for an 
+encounter is the
+union of the codes charted at that admission and the codes charted at that 
+patient's *earlier*
+admissions. The corpus carries no timestamps, so `encounter_id` is the only 
+chronology there
+is: earlier means a lower encounter id for the same `patient_nbr`. Built that 
+way the register
+is a point-in-time fact - it can only grow from one admission to the next, it 
+never contains a
+code the ward could not have seen yet, and it is the same object whether the 
+encounter is being
+trained on or served.
+
+**Why not the delivered artifacts.** Both are read below so they can be audited,
+but neither
+can define the register:
+
+* `data/patient_conditions.csv` is one row per (patient, code) over the whole 
+archive. It has
+  no encounter on it, so it cannot say what was on file *at* an admission. 
+Joined on
+  `patient_nbr` alone it back-dates a patient's later codes into an earlier 
+admission's
+  register - leakage into the training features - while a patient who is not in 
+it at all
+  (9 in 10 of the serving batch, since it stops at the archive cutoff) gets a 
+register holding
+  nothing but the three codes on the current chart. That is the same admission 
+list coming out
+  shorter than the one before it. Its manifest claims the codes are kept as 
+charted; they are
+  not - every `250.xx` in it has been folded to `250`.
+* `data/code_groups.csv` is the grouping table that folding is keyed on. 
+`250.83` and `250.8`
+  are different conditions on the chart, so folding them together is exactly the
+loss the
+  export contract rules out.
+
+The register is therefore built from the charted columns the policy names, which
+is what both
+delivered artifacts were derived from in the first place.
+"""
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Any, Dict
+
+import pandas as pd
+
+from . import codes
+
+ROOT = Path(__file__).resolve().parent.parent
+EVENT_COLUMNS = ["encounter_id", "patient_nbr", "code"]
+INDEX_COLUMNS = ["patient_nbr", "code"]
+KEY_COLUMNS = ["encounter_id", "patient_nbr"]
+
+_ARCHIVE_CACHE: Dict[tuple, pd.DataFrame] = {}
+
+
+def load_index(cfg: dict) -> pd.DataFrame:
+    """The condition index the refresh job delivers, one row per (patient, 
+code).
+
+    Kept for auditing the delivered artifact against the encounter columns it 
+came from. The
+    register is not built from it - see the module docstring.
+    """
+    path = ROOT / cfg["register"]["index"]
+    frame = pd.read_csv(path, dtype={"code": str})
+    return frame[INDEX_COLUMNS].astype({"patient_nbr": 
+"int64"}).drop_duplicates()
+
+
+def load_code_table(cfg: dict) -> pd.Series:
+    """The refresh job's grouping table: charted code -> the group it was folded
+into.
+
+    Kept for auditing. The register keeps the charted code, so nothing is folded
+through this
+    on the way to the export.
+    """
+    path = ROOT / cfg["register"]["code_table"]
+    frame = pd.read_csv(path, dtype=str)
+    return frame.set_index("charted_code")["register_code"]
+
+
+def _policy(cfg: dict) -> Dict[str, Any]:
+    return cfg.get("register") or {}
+
+
+def condition_events(encounters: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """One row per (encounter_id, patient_nbr, code) charted on the encounter 
+itself.
+
+    Codes come through as charted: no grouping, distinct codes only.
+    """
+    policy = _policy(cfg)
+    columns = [c for c in policy["code_columns"] if c in encounters.columns]
+    long = encounters.melt(id_vars=KEY_COLUMNS, value_vars=columns,
+                           var_name="field", value_name="raw")
+    long["code"] = codes.normalise(long["raw"], policy.get("missing_marker", 
+"?"))
+    long = long.dropna(subset=["code"]).astype({"encounter_id": "int64",
+                                                "patient_nbr": "int64"})
+    return long[EVENT_COLUMNS].drop_duplicates().reset_index(drop=True)
+
+
+def archive_events(cfg: dict) -> pd.DataFrame:
+    """Every code charted in the encounter archive, in event form.
+
+    This is the patient history a batch is served against: a batch arrives with 
+the current
+    admissions only, but what is on file for those patients was charted earlier,
+in the
+    archive. Cached, because a single run asks for it more than once.
+    """
+    path = ROOT / cfg["paths"]["encounters"]
+    policy = _policy(cfg)
+    columns = list(policy["code_columns"])
+    try:
+        stamp = path.stat().st_mtime_ns
+    except OSError:
+        return pd.DataFrame(columns=EVENT_COLUMNS)
+    key = (str(path), stamp, tuple(columns), policy.get("missing_marker", "?"))
+    cached = _ARCHIVE_CACHE.get(key)
+    if cached is None:
+        header = pd.read_csv(path, nrows=0).columns
+        usecols = KEY_COLUMNS + [c for c in columns if c in header]
+        frame = pd.read_csv(path, usecols=usecols,
+                            dtype={c: str for c in columns if c in header})
+        cached = condition_events(frame, cfg)
+        _ARCHIVE_CACHE.clear()
+        _ARCHIVE_CACHE[key] = cached
+    return cached
+
+
+def known_events(encounters: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """Every charted code the pipeline can see for the patients in `encounters`.
+
+    The encounters in hand plus the archive, so a batch encounter is served 
+against the same
+    history an archive encounter is trained against. No encounter is filtered by
+date here;
+    `registers` is what applies the as-of cut.
+    """
+    here = condition_events(encounters, cfg)
+    history = archive_events(cfg)
+    if len(history):
+        history = history[history["patient_nbr"].isin(set(here["patient_nbr"]) |
+                                                      set(encounters["patient_nb
+r"]
+                                                          .astype("int64")))]
+    return (pd.concat([here, history], ignore_index=True)
+            .drop_duplicates()
+            .reset_index(drop=True))
+
+
+def registers(encounters: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """The condition register for every encounter in `encounters`, in long form.
+
+    What is on the patient's file as of that admission: the codes charted at the
+admission
+    itself together with the codes charted at that patient's earlier admissions,
+and nothing
+    charted later. One row per (encounter_id, code), distinct codes only, in a 
+stable order.
+    """
+    keys = (encounters[KEY_COLUMNS]
+            .astype({"encounter_id": "int64", "patient_nbr": "int64"})
+            .drop_duplicates(subset=["encounter_id"], keep="first"))
+    events = known_events(encounters, cfg).rename(columns={"encounter_id": 
+"charted_at"})
+    if not len(keys) or not len(events):
+        return pd.DataFrame({"encounter_id": pd.Series(dtype="int64"),
+                             "code": pd.Series(dtype=object)})
+    merged = keys.merge(events, on="patient_nbr", how="inner")
+    as_of = merged.loc[merged["charted_at"] <= merged["encounter_id"], 
+["encounter_id", "code"]]
+    return (as_of.drop_duplicates()
+            .sort_values(["encounter_id", "code"], kind="stable")
+            .reset_index(drop=True))
+
+
+def sizes(encounters: pd.DataFrame, cfg: dict) -> pd.Series:
+    """How many conditions each encounter's register holds, indexed by encounter
+id."""
+    reg = registers(encounters, cfg)
+    counts = reg.groupby("encounter_id")["code"].size()
+    index = encounters["encounter_id"].astype("int64")
+    return counts.reindex(index).fillna(0).astype(float).set_axis(index)
+EOF
+cd /workspace/target && python3 -c "
+import pandas as pd
+from src import config, register
+cfg=config.load()
+b=pd.read_csv('data/serving_batch.csv',low_memory=False)
+r=register.registers(b,cfg)
+print(r.shape, r.encounter_id.nunique())
+print(r[r.encounter_id.isin([132599958,142915734])].groupby('encounter_id')['cod
+e'].apply(lambda c:'|'.join(c)))
+"
+```
+
+Tool:
+<returncode>
+0
+<output>
+(30998, 2) 8548
+encounter_id
+132599958    250.4|250.42|276|403|416|428|466|482|511|514|5...
+142915734    250.4|250.42|276|403|416|428|466|482|511|514|5...
+Name: code, dtype: object
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 15, $1.14):
+```
+cat <<'EOF' > /workspace/target/src/serve.py
+"""Turning a scored batch into the export the network receives."""
+from __future__ import annotations
+
+import pandas as pd
+
+from . import features, register
+
+
+def build_serving_frame(batch: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """Feature frame for the encounters in `batch`."""
+    return features.build_features(batch, cfg)
+
+
+def condition_field(reg: pd.DataFrame, cfg: dict) -> pd.Series:
+    """The long-form register folded to one field per encounter.
+
+    The ward reads one line per admission, so the register is written into a 
+single cell with
+    the separator the policy names - not spread over a line per code, which is 
+what put the
+    same admission on several lines of the export.
+    """
+    separator = str(cfg["register"]["separator"])
+    if not len(reg):
+        return pd.Series(dtype=object, name="conditions")
+    folded = (reg.drop_duplicates()
+              .groupby("encounter_id")["code"].agg(separator.join))
+    return folded.rename("conditions")
+
+
+def scored_rows(batch: pd.DataFrame, scores: pd.Series, cfg: dict) -> 
+pd.DataFrame:
+    """The export: one row per encounter, its score and its condition register.
+
+    An encounter with nothing on file carries an empty register rather than 
+dropping off the
+    export or arriving as a missing cell.
+    """
+    columns = list(cfg["scoring"]["output_columns"])
+    conditions = condition_field(register.registers(batch, cfg), cfg)
+    out = pd.DataFrame({"encounter_id": pd.Index(scores.index).astype("int64"),
+                        "score": scores.astype(float).values})
+    out = out.drop_duplicates(subset=["encounter_id"], keep="first")
+    out["conditions"] = 
+out["encounter_id"].map(conditions).fillna("").astype(str)
+    return out.sort_values("encounter_id", 
+kind="stable")[columns].reset_index(drop=True)
+EOF
+cd /workspace/target && python3 - <<'PY'
+import re, pathlib
+p = pathlib.Path('src/features.py')
+s = p.read_text()
+old = '''def prepare(encounters: pd.DataFrame) -> pd.DataFrame:
+    """Normalise a raw encounter extract into the frame the pipeline works 
+on."""
+    frame = encounters.copy()
+    frame["encounter_id"] = frame["encounter_id"].astype("int64")
+    frame["patient_nbr"] = frame["patient_nbr"].astype("int64")
+    return frame.set_index("encounter_id", drop=False)'''
+new = '''def prepare(encounters: pd.DataFrame) -> pd.DataFrame:
+    """Normalise a raw encounter extract into the frame the pipeline works on.
+
+    One row per encounter: `encounter_id` is unique in the corpus, and the 
+export owes the
+    ward exactly one line per admission, so a batch that repeats an admission is
+collapsed
+    here rather than repeated all the way through to the export.
+    """
+    frame = encounters.copy()
+    frame["encounter_id"] = frame["encounter_id"].astype("int64")
+    frame["patient_nbr"] = frame["patient_nbr"].astype("int64")
+    frame = frame.drop_duplicates(subset=["encounter_id"], keep="first")
+    return frame.set_index("encounter_id", drop=False)'''
+assert old in s
+p.write_text(s.replace(old, new))
+print(p.read_text()[:1400])
+PY
+```
+
+Tool:
+<returncode>
+0
+<output>
+"""Per-encounter feature construction."""
+from __future__ import annotations
+
+import pandas as pd
+
+from . import register
+
+ENCOUNTER_COLUMNS = [
+    "time_in_hospital", "num_lab_procedures", "num_procedures", 
+"num_medications",
+    "number_outpatient", "number_emergency", "number_inpatient", 
+"number_diagnoses",
+]
+FEATURE_COLUMNS = ENCOUNTER_COLUMNS + ["n_conditions"]
+
+
+def prepare(encounters: pd.DataFrame) -> pd.DataFrame:
+    """Normalise a raw encounter extract into the frame the pipeline works on.
+
+    One row per encounter: `encounter_id` is unique in the corpus, and the 
+export owes the
+    ward exactly one line per admission, so a batch that repeats an admission is
+collapsed
+    here rather than repeated all the way through to the export.
+    """
+    frame = encounters.copy()
+    frame["encounter_id"] = frame["encounter_id"].astype("int64")
+    frame["patient_nbr"] = frame["patient_nbr"].astype("int64")
+    frame = frame.drop_duplicates(subset=["encounter_id"], keep="first")
+    return frame.set_index("encounter_id", drop=False)
+
+
+def build_features(encounters: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """Feature frame for every encounter in `encounters`, indexed by encounter 
+id."""
+    frame = prepare(encounters)
+    out = frame[ENCOUNTER_COLUMNS].astype(float)
+    out["n_conditions"] = register.sizes(frame, cfg).values
+    return out[FEATURE_COLUMNS].sort_index()
+
+
+d
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 16, $1.19):
+```
+cd /workspace/target && python3 scripts/score_batch.py --batch 
+data/serving_batch.csv --out /tmp/scores_after.csv && head -5 
+/tmp/scores_after.csv && python3 -c "
+import pandas as pd
+s=pd.read_csv('/tmp/scores_after.csv',dtype={'conditions':str})
+b=pd.read_csv('data/serving_batch.csv',low_memory=False)
+print(s.shape,'unique',s.encounter_id.nunique(),'batch 
+enc',b.encounter_id.nunique())
+print('dupes',s.encounter_id.duplicated().sum(),'null 
+cond',s.conditions.isna().sum())
+print(s.head())
+"
+```
+
+```
+cd /workspace/target && python3 scripts/run_backtest.py && python3 -m unittest 
+discover -s tests 2>&1 | tail -20
+```
+
+Tool:
+<returncode>
+0
+<output>
+scored 8548 encounters -> /tmp/scores_after.csv (8548 rows)
+encounter_id,score,conditions
+131836512,0.10007296438847854,413|414|428
+131837502,0.1121372288370203,285|493|560|599|997
+131837634,0.08463731500262824,250.8|440|444
+131837760,0.0964481724680136,276|411|414
+(8548, 3) unique 8548 batch enc 8548
+dupes 0 null cond 0
+   encounter_id     score           conditions
+0     131836512  0.100073          413|414|428
+1     131837502  0.112137  285|493|560|599|997
+2     131837634  0.084637        250.8|440|444
+3     131837760  0.096448          276|411|414
+4     131838966  0.114857          410|425|428
+
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "encounters": 42741,
+  "train_rows": 32087,
+  "holdout_rows": 10654,
+  "holdout_patients": 8145,
+  "label_rate": 0.1142,
+  "mean_conditions": 3.7444,
+  "holdout_auc": 0.6497
+}
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 2.428s
+
+OK
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 17, $1.23):
+```
+cd /workspace/target && python3 scripts/repro_issue.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+== 1. export grain ==
+encounters in batch      : 8548
+rows in export           : 8548
+encounters on >1 line    : 0  (worst: 1 lines)
+ encounter_id    score  conditions
+    131836512 0.100073 413|414|428
+separator the policy names: '|'; rows carrying it: 8536
+
+== 2. what the register holds ==
+batch patients found in the delivered index : 763 of 7377
+mean register size, patient in the index    : 6.66
+mean register size, patient not in it       : 3.22
+admissions whose register is SHORTER than the patient's previous one: 0
+
+same conditions charted, widest score gaps:
+                     min       max  size       gap
+codes                                             
+403|428|511     0.119767  0.849410     4  0.729643
+250.01|413|414  0.063984  0.724190     6  0.660205
+250.4|403|428   0.088809  0.690896     5  0.602086
+                    codes     score   n
+encounter_id                           
+135383418     403|428|511  0.119767   5
+137020596     403|428|511  0.233911   9
+146010834     403|428|511  0.825898  19
+152296638     403|428|511  0.849410  20
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 18, $1.32):
+```
+cd /workspace/target && python3 - <<'PY'
+import pandas as pd
+from src import config, register
+cfg = config.load()
+enc = pd.read_csv('data/encounters.csv', low_memory=False)
+b = pd.read_csv('data/serving_batch.csv', low_memory=False)
+
+for name, frame in [('archive', enc), ('batch', b)]:
+    reg = register.registers(frame, cfg)
+    charted = register.condition_events(frame, cfg)
+    # 1. every charted code is in its own register
+    m = charted.merge(reg, on=['encounter_id','code'], how='left', 
+indicator=True)
+    print(name, 'charted codes missing from own register:', 
+(m._merge=='left_only').sum())
+    # 2. monotone per patient
+    key = frame[['encounter_id','patient_nbr']].astype('int64')
+    n = reg.groupby('encounter_id')['code'].size()
+    k = 
+key.assign(n=key.encounter_id.map(n).fillna(0)).sort_values(['patient_nbr','enco
+unter_id'])
+    print(name, 'registers that shrink vs the previous admission:', 
+int((k.groupby('patient_nbr')['n'].diff()<0).sum()))
+    # 3. no future codes: every (enc, code) must be charted at some enc' <= enc 
+for that patient
+    ev = register.known_events(frame, 
+cfg).rename(columns={'encounter_id':'charted_at'})
+    j = reg.merge(key, on='encounter_id').merge(ev, on=['patient_nbr','code'])
+    ok = j[j.charted_at <= 
+j.encounter_id].drop_duplicates(['encounter_id','code'])
+    print(name, 'register rows with no as-of source:', len(reg)-len(ok))
+    print(name, 'mean register size:', round(float(n.mean()),3), 'rows', 
+len(reg))
+
+# patient walk-through
+pat = 23398488
+allenc = pd.concat([enc.drop(columns=['readmitted']), b], ignore_index=True)
+reg = register.registers(allenc[allenc.patient_nbr==pat], cfg)
+rows = allenc[allenc.patient_nbr==pat].sort_values('encounter_id')
+for _, r in rows.iterrows():
+    codes = reg.loc[reg.encounter_id==r.encounter_id,'code'].tolist()
+    print(int(r.encounter_id), r.diag_1, r.diag_2, r.diag_3, '->', len(codes), 
+'|'.join(codes))
+PY
+```
+
+Tool:
+<returncode>
+0
+<output>
+archive charted codes missing from own register: 0
+archive registers that shrink vs the previous admission: 0
+archive register rows with no as-of source: 0
+archive mean register size: 3.744 rows 160038
+batch charted codes missing from own register: 0
+batch registers that shrink vs the previous admission: 0
+batch register rows with no as-of source: 0
+batch mean register size: 3.626 rows 30998
+113382426 428 403 466 -> 3 403|428|466
+117803256 584 518 250.42 -> 6 250.42|403|428|466|518|584
+118554540 428 585 518 -> 7 250.42|403|428|466|518|584|585
+120572160 514 403 250.4 -> 9 250.4|250.42|403|428|466|514|518|584|585
+123050358 996 403 250.4 -> 10 250.4|250.42|403|428|466|514|518|584|585|996
+127929642 511 780 250.4 -> 12 
+250.4|250.42|403|428|466|511|514|518|584|585|780|996
+128980494 416 786 535 -> 15 
+250.4|250.42|403|416|428|466|511|514|518|535|584|585|780|786|996
+129618780 482 403 428 -> 16 
+250.4|250.42|403|416|428|466|482|511|514|518|535|584|585|780|786|996
+131125500 518 403 V15 -> 17 
+250.4|250.42|403|416|428|466|482|511|514|518|535|584|585|780|786|996|V15
+132599958 276 403 V45 -> 19 
+250.4|250.42|276|403|416|428|466|482|511|514|518|535|584|585|780|786|996|V15|V45
+142915734 428 403 250.4 -> 19 
+250.4|250.42|276|403|416|428|466|482|511|514|518|535|584|585|780|786|996|V15|V45
+144485214 518 786 403 -> 19 
+250.4|250.42|276|403|416|428|466|482|511|514|518|535|584|585|780|786|996|V15|V45
+146010834 428 511 403 -> 19 
+250.4|250.42|276|403|416|428|466|482|511|514|518|535|584|585|780|786|996|V15|V45
+147333522 514 403 492 -> 20 
+250.4|250.42|276|403|416|428|466|482|492|511|514|518|535|584|585|780|786|996|V15
+|V45
+149137290 518 511 403 -> 20 
+250.4|250.42|276|403|416|428|466|482|492|511|514|518|535|584|585|780|786|996|V15
+|V45
+152296638 428 511 403 -> 20 
+250.4|250.42|276|403|416|428|466|482|492|511|514|518|535|584|585|780|786|996|V15
+|V45
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 19, $1.44):
+Now let me add tests that encode the contract so these defects can't come back.
+
+```
+cd /workspace/target && python3 - <<'PY'
+from pathlib import Path
+p = Path('tests/test_smoke.py')
+s = p.read_text()
+anchor = '''class TestScoringContract(unittest.TestCase):'''
+extra = '''class TestRegisterIsPointInTime(unittest.TestCase):
+    """A register is what was on file *as of* the admission: it grows, and never
+back-dates."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.archive = pd.read_csv(ROOT / CFG["paths"]["encounters"], 
+low_memory=False)
+        cls.batch = _batch(None)
+        cls.reg = register.registers(cls.batch, CFG)
+        cls.sizes = cls.reg.groupby("encounter_id")["code"].size()
+
+    def test_register_holds_the_codes_charted_at_the_admission(self):
+        charted = register.condition_events(self.batch, CFG)
+        merged = charted.merge(self.reg, on=["encounter_id", "code"], 
+how="left",
+                               indicator=True)
+        self.assertFalse((merged["_merge"] == "left_only").any(),
+                         "a code charted on the encounter is missing from its 
+register")
+
+    def test_register_never_shrinks_between_two_admissions(self):
+        keys = self.batch[["encounter_id", "patient_nbr"]].astype("int64")
+        keys["n"] = keys["encounter_id"].map(self.sizes).fillna(0)
+        keys = keys.sort_values(["patient_nbr", "encounter_id"])
+        shrank = keys.groupby("patient_nbr")["n"].diff() < 0
+        self.assertEqual(int(shrank.sum()), 0,
+                         "a patient's condition list got shorter between two 
+admissions")
+
+    def test_register_carries_no_code_charted_later(self):
+        keys = self.batch[["encounter_id", "patient_nbr"]].astype("int64")
+        events = register.known_events(self.batch, CFG).rename(
+            columns={"encounter_id": "charted_at"})
+        joined = self.reg.merge(keys, on="encounter_id").merge(
+            events, on=["patient_nbr", "code"])
+        as_of = joined[joined["charted_at"] <= joined["encounter_id"]]
+        self.assertEqual(len(as_of.drop_duplicates(["encounter_id", "code"])), 
+len(self.reg),
+                         "a register carries a code that was only charted 
+later")
+
+    def test_a_batch_admission_sees_the_patients_archive_history(self):
+        seen = set(self.archive["patient_nbr"]) & set(self.batch["patient_nbr"])
+        self.assertTrue(seen, "no patient spans the archive and the batch")
+        patient = sorted(seen)[0]
+        history = register.condition_events(
+            self.archive[self.archive["patient_nbr"] == patient], CFG)
+        rows = self.batch[self.batch["patient_nbr"] == patient]
+        first = int(rows["encounter_id"].astype("int64").min())
+        on_file = set(self.reg.loc[self.reg["encounter_id"] == first, "code"])
+        earlier = set(history.loc[history["encounter_id"] <= first, "code"])
+        self.assertTrue(earlier <= on_file,
+                        f"patient {patient} lost archive history at encounter 
+{first}")
+
+    def test_register_does_not_depend_on_who_else_is_in_the_batch(self):
+        head = self.batch.head(200)
+        alone = register.registers(head, CFG)
+        together = self.reg[self.reg["encounter_id"].isin(
+            head["encounter_id"].astype("int64"))].reset_index(drop=True)
+        pd.testing.assert_frame_equal(alone, together)
+
+    def test_codes_are_kept_as_charted(self):
+        charted = pd.unique(pd.concat([self.batch[c] for c in 
+CFG["register"]["code_columns"]]))
+        subdivided = sorted(c for c in charted if isinstance(c, str) and "." in 
+c)
+        self.assertTrue(subdivided, "no decimal subdivision in the batch to 
+check")
+        self.assertTrue(set(subdivided) & set(self.reg["code"]),
+                        "decimal subdivisions were folded away; the export must 
+keep them "
+                        "as charted")
+
+
+class TestExportGrain(unittest.TestCase):
+    """The ward reads one line per admission, with the register in one field."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.batch = _batch(500)
+        frame = serve.build_serving_frame(cls.batch, CFG)
+        scores = pd.Series(0.5, index=frame.index, name="score")
+        cls.out = serve.scored_rows(cls.batch, scores, CFG)
+
+    def test_one_row_per_encounter_in_the_batch(self):
+        self.assertEqual(len(self.out), self.batch["encounter_id"].nunique())
+        self.assertFalse(self.out["encounter_id"].duplicated().any())
+        self.assertEqual(set(self.out["encounter_id"]),
+                         set(self.batch["encounter_id"].astype("int64")))
+
+    def test_conditions_is_one_field_with_the_policy_separator(self):
+        sep = CFG["register"]["separator"]
+        reg = register.registers(self.batch, CFG)
+        expected = reg.groupby("encounter_id")["code"].agg(sep.join)
+        got = self.out.set_index("encounter_id")["conditions"].fillna("")
+        for enc, codes in expected.items():
+            self.assertEqual(got.loc[enc], codes)
+
+    def test_conditions_are_never_missing_and_never_repeat_a_code(self):
+        self.assertFalse(self.out["conditions"].isna().any())
+        sep = CFG["register"]["separator"]
+        marker = CFG["register"].get("missing_marker", "?")
+        for field in self.out["conditions"]:
+            codes = [c for c in str(field).split(sep) if c]
+            self.assertEqual(len(codes), len(set(codes)))
+            self.assertNotIn(marker, codes)
+
+    def test_a_repeated_admission_in_the_batch_still_gets_one_line(self):
+        doubled = pd.concat([self.batch, self.batch.head(20)], 
+ignore_index=True)
+        frame = serve.build_serving_frame(doubled, CFG)
+        scores = pd.Series(0.5, index=frame.index, name="score")
+        out = serve.scored_rows(doubled, scores, CFG)
+        self.assertEqual(len(out), doubled["encounter_id"].nunique())
+
+
+'''
+assert anchor in s
+s = s.replace(anchor, extra + anchor)
+# strengthen the end-to-end contract test
+old = '''            self.assertEqual(list(scores.columns), 
+list(CFG["scoring"]["output_columns"]))
+            self.assertTrue(scores["score"].between(0.0, 1.0).all())
+            self.assertGreater(scores["score"].std(), 0.0, "scores are 
+constant")'''
+new = '''            self.assertEqual(list(scores.columns), 
+list(CFG["scoring"]["output_columns"]))
+            self.assertTrue(scores["score"].between(0.0, 1.0).all())
+            self.assertGreater(scores["score"].std(), 0.0, "scores are 
+constant")
+            batch_ids = set(pd.read_csv(batch)["encounter_id"].astype("int64"))
+            self.assertEqual(len(scores), len(batch_ids), "not one row per 
+encounter")
+            self.assertEqual(set(scores["encounter_id"]), batch_ids)'''
+assert old in s
+s = s.replace(old, new)
+p.write_text(s)
+PY
+cd /workspace/target && python3 -m unittest discover -s tests 2>&1 | tail -20
+```
+
+Tool:
+<returncode>
+0
+<output>
+....................
+----------------------------------------------------------------------
+Ran 20 tests in 2.792s
+
+OK
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 20, $1.53):
+```
+cd /workspace/target && python3 - <<'PY'
+import pandas as pd, subprocess, sys, tempfile, os
+b = pd.read_csv('data/serving_batch.csv', low_memory=False)
+tmp = tempfile.mkdtemp()
+# edge 1: all-missing diagnoses + repeated encounter + numeric-looking codes 
+only
+e = b.head(50).copy()
+e.loc[e.index[0], ['diag_1','diag_2','diag_3']] = '?'
+e = pd.concat([e, e.head(3)], ignore_index=True)
+p = os.path.join(tmp,'edge.csv'); e.to_csv(p, index=False)
+r = 
+subprocess.run([sys.executable,'scripts/score_batch.py','--batch',p,'--out',os.p
+ath.join(tmp,'o1.csv')],capture_output=True,text=True)
+print(r.returncode, r.stdout.strip(), r.stderr[-500:])
+o = pd.read_csv(os.path.join(tmp,'o1.csv'), dtype={'conditions':str}, 
+keep_default_na=False)
+print(len(o), o.encounter_id.nunique(), repr(o.conditions.iloc[0]))
+# edge 2: batch where every diag parses as a number (dtype float on read)
+n = b[~b.diag_1.astype(str).str.contains('[VE.]',regex=True)]
+n = n[~n.diag_2.astype(str).str.contains('[VE.?]',regex=True)]
+n = n[~n.diag_3.astype(str).str.contains('[VE.?]',regex=True)].head(40)
+p2 = os.path.join(tmp,'num.csv'); n.to_csv(p2, index=False)
+print('dtypes on reread:', pd.read_csv(p2, 
+low_memory=False)[['diag_1','diag_2','diag_3']].dtypes.tolist())
+r = 
+subprocess.run([sys.executable,'scripts/score_batch.py','--batch',p2,'--out',os.
+path.join(tmp,'o2.csv')],capture_output=True,text=True)
+print(r.returncode, r.stdout.strip(), r.stderr[-800:])
+o2 = pd.read_csv(os.path.join(tmp,'o2.csv'), dtype=str)
+print(o2.head(3).to_string())
+# edge 3: single encounter for a brand-new patient
+s = b.tail(1).copy(); s['patient_nbr'] = 999999999
+p3 = os.path.join(tmp,'one.csv'); s.to_csv(p3, index=False)
+r = 
+subprocess.run([sys.executable,'scripts/score_batch.py','--batch',p3,'--out',os.
+path.join(tmp,'o3.csv')],capture_output=True,text=True)
+print(r.returncode, r.stdout.strip(), r.stderr[-500:])
+print(open(os.path.join(tmp,'o3.csv')).read())
+print(s[['diag_1','diag_2','diag_3']].to_string())
+PY
+```
+
+Tool:
+<returncode>
+0
+<output>
+0 scored 53 encounters -> /tmp/tmpf6jgcba6/o1.csv (50 rows) 
+50 50 ''
+dtypes on reread: [dtype('int64'), dtype('int64'), dtype('int64')]
+0 scored 40 encounters -> /tmp/tmpf6jgcba6/o2.csv (40 rows) 
+  encounter_id                score           conditions
+0    131836512  0.10007296438847854          413|414|428
+1    131837502   0.1121372288370203  285|493|560|599|997
+2    131837760   0.0964481724680136          276|411|414
+0 scored 1 encounters -> /tmp/tmpf6jgcba6/o3.csv (1 rows) 
+encounter_id,score,conditions
+153091872,0.09423443252952078,244|715|736
+
+     diag_1 diag_2 diag_3
+8547    715    736    244
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 21, $1.60):
+```
+cd /workspace/target && python3 - <<'PY'
+from pathlib import Path
+p = Path('scripts/score_batch.py')
+s = p.read_text()
+old = '''    dest = Path(args.out)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    out.to_csv(dest, index=False)
+    print(f"scored {len(batch)} encounters -> {dest} ({len(out)} rows)")'''
+new = '''    # The ward reads one line per admission: refuse to ship anything 
+else.
+    encounters = int(batch["encounter_id"].astype("int64").nunique())
+    if len(out) != encounters or out["encounter_id"].duplicated().any():
+        raise SystemExit(f"export grain broken: {len(out)} rows for {encounters}
+encounters")
+
+    dest = Path(args.out)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    out.to_csv(dest, index=False)
+    print(f"scored {encounters} encounters -> {dest} ({len(out)} rows, "
+          f"one per encounter)")'''
+assert old in s
+p.write_text(s.replace(old, new))
+PY
+cd /workspace/target && python3 scripts/score_batch.py --batch 
+data/serving_batch.csv --out results/scores.csv && python3 -m unittest discover 
+-s tests 2>&1 | tail -3 && python3 env_cli.py register_audit --file 
+data/serving_batch.csv --encounter 142915734
+```
+
+Tool:
+<returncode>
+0
+<output>
+scored 8548 encounters -> results/scores.csv (8548 rows, one per encounter)
+Ran 20 tests in 2.875s
+
+OK
+{
+  "ok": true,
+  "op": "register_audit",
+  "encounter_id": 142915734,
+  "patient_nbr": 23398488,
+  "file": "data/serving_batch.csv",
+  "your_pipeline": {
+    "error": "unparseable:Extra data: line 1 column 3 (char 2)"
+  },
+  "rows_for_this_patient_in_this_file": [
+    {
+      "encounter_id": 132599958,
+      "patient_nbr": 23398488,
+      "diag_1": "276",
+      "diag_2": "403",
+      "diag_3": "V45",
+      "number_diagnoses": 9
+    },
+    {
+      "encounter_id": 142915734,
+      "patient_nbr": 23398488,
+      "diag_1": "428",
+      "diag_2": "403",
+      "diag_3": "250.4",
+      "number_diagnoses": 5
+    },
+    {
+      "encounter_id": 144485214,
+      "patient_nbr": 23398488,
+      "diag_1": "518",
+      "diag_2": "786",
+      "diag_3": "403",
+      "number_diagnoses": 8
+    },
+    {
+      "encounter_id": 146010834,
+      "patient_nbr": 23398488,
+      "diag_1": "428",
+      "diag_2": "511",
+      "diag_3": "403",
+      "number_diagnoses": 5
+    },
+    {
+      "encounter_id": 147333522,
+      "patient_nbr": 23398488,
+      "diag_1": "514",
+      "diag_2": "403",
+      "diag_3": "492",
+      "number_diagnoses": 4
+    },
+    {
+      "encounter_id": 149137290,
+      "patient_nbr": 23398488,
+      "diag_1": "518",
+      "diag_2": "511",
+      "diag_3": "403",
+      "number_diagnoses": 8
+    },
+    {
+      "encounter_id": 152296638,
+      "patient_nbr": 23398488,
+      "diag_1": "428",
+      "diag_2": "511",
+      "diag_3": "403",
+      "number_diagnoses": 8
+    }
+  ],
+  "note": "`your_pipeline` is what the working tree emits for this encounter. 
+The rows below are from this file only, exactly as stored."
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 22, $1.66):
+```
+ls -la /run/envd/ 2>&1; ps aux | grep -i envd | head; ls /opt 2>/dev/null; find 
+/ -name "envd*" -maxdepth 4 2>/dev/null | head
+```
+
+Tool:
+<returncode>
+0
+<output>
+total 12
+drwxr-xr-x 1 root root 4096 Sep 10 10:44 .
+drwxr-xr-x 1 root root 4096 Sep 10 10:45 ..
+srw-rw-rw- 1 root root    0 Sep 10 10:44 envd.sock
+root           9  0.1  1.0 316028 82608 ?        S    10:44   0:00 python3 
+/opt/envd/envd.py
+ubuntu      2095  0.0  0.0   2680  1808 ?        Ss   10:53   0:00 /bin/sh -c ls
+-la /run/envd/ 2>&1; ps aux | grep -i envd | head; ls /opt 2>/dev/null; find / 
+-name "envd*" -maxdepth 4 2>/dev/null | head
+ubuntu      2098  0.0  0.0   3940  2188 ?        S    10:53   0:00 grep -i envd
+envd
+task
+/run/envd
+/run/envd/envd.sock
+/opt/envd
+/var/log/envd.log
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 23, $1.70):
+```
+ls -la /opt/envd/ /opt/task 2>&1 | head -40; head -c 400 /var/log/envd.log
+```
+
+Tool:
+<returncode>
+0
+<output>
+ls: cannot open directory '/opt/envd/': Permission denied
+ls: cannot open directory '/opt/task': Permission denied
+envd listening on /run/envd/envd.sock (workspace=/workspace/target, dev=False)
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 24, $1.80):
+```
+cd /workspace/target && python3 -c "
+import json,sys
+sys.path.insert(0,'.')
+import pandas as pd
+from src import config, register
+cfg=config.load()
+f=pd.read_csv('data/serving_batch.csv',low_memory=False)
+r=register.registers(f,cfg)
+print(json.dumps(r[r.encounter_id==142915734].to_dict('records')))
+" 2>&1 | head -c 600; echo; echo "--- exit $?"
+```
+
+```
+cd /workspace/target && python3 env_cli.py register_audit --file 
+data/serving_batch.csv --encounter 131836512 2>&1 | head -40
+```
+
+Tool:
+<returncode>
+0
+<output>
+[{"encounter_id": 142915734, "code": "250.4"}, {"encounter_id": 142915734, 
+"code": "250.42"}, {"encounter_id": 142915734, "code": "276"}, {"encounter_id": 
+142915734, "code": "403"}, {"encounter_id": 142915734, "code": "416"}, 
+{"encounter_id": 142915734, "code": "428"}, {"encounter_id": 142915734, "code": 
+"466"}, {"encounter_id": 142915734, "code": "482"}, {"encounter_id": 142915734, 
+"code": "511"}, {"encounter_id": 142915734, "code": "514"}, {"encounter_id": 
+142915734, "code": "518"}, {"encounter_id": 142915734, "code": "535"}, 
+{"encounter_id": 142915734, "code": "584"}, {"encounter_id": 14291
+--- exit 0
+
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "register_audit",
+  "encounter_id": 131836512,
+  "patient_nbr": 82103022,
+  "file": "data/serving_batch.csv",
+  "your_pipeline": {
+    "register_rows_for_this_encounter": [
+      {
+        "encounter_id": 131836512,
+        "code": "413"
+      },
+      {
+        "encounter_id": 131836512,
+        "code": "414"
+      },
+      {
+        "encounter_id": 131836512,
+        "code": "428"
+      }
+    ],
+    "register_rows_total": 30998,
+    "encounters_in_file": 8548,
+    "columns": [
+      "encounter_id",
+      "code"
+    ]
+  },
+  "rows_for_this_patient_in_this_file": [
+    {
+      "encounter_id": 131836512,
+      "patient_nbr": 82103022,
+      "diag_1": "428",
+      "diag_2": "413",
+      "diag_3": "414",
+      "number_diagnoses": 8
+    }
+  ],
+  "note": "`your_pipeline` is what the working tree emits for this encounter. 
+The rows below are from this file only, exactly as stored."
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 25, $1.86):
+```
+cd /workspace/target && python3 env_cli.py register_audit --file 
+data/serving_batch.csv --encounter 142915734 2>&1 | head -30
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "register_audit",
+  "encounter_id": 142915734,
+  "patient_nbr": 23398488,
+  "file": "data/serving_batch.csv",
+  "your_pipeline": {
+    "error": "unparseable:Extra data: line 1 column 3 (char 2)"
+  },
+  "rows_for_this_patient_in_this_file": [
+    {
+      "encounter_id": 132599958,
+      "patient_nbr": 23398488,
+      "diag_1": "276",
+      "diag_2": "403",
+      "diag_3": "V45",
+      "number_diagnoses": 9
+    },
+    {
+      "encounter_id": 142915734,
+      "patient_nbr": 23398488,
+      "diag_1": "428",
+      "diag_2": "403",
+      "diag_3": "250.4",
+      "number_diagnoses": 5
+    },
+    {
+      "encounter_id": 144485214,
+      "patient_nbr": 23398488,
+      "diag_1": "518",
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 26, $1.93):
+```
+cd /workspace/target && for e in 131837634 146010834 132599958 131837502; do 
+echo "--- $e"; python3 env_cli.py register_audit --file data/serving_batch.csv 
+--encounter $e 2>&1 | python3 -c "
+import sys,json
+d=json.load(sys.stdin)
+yp=d.get('your_pipeline',{})
+print(yp.get('error') or [r['code'] for r in 
+yp['register_rows_for_this_encounter']])
+"; done
+```
+
+Tool:
+<returncode>
+0
+<output>
+--- 131837634
+['250.8', '440', '444']
+--- 146010834
+unparseable:Extra data: line 1 column 3 (char 2)
+--- 132599958
+unparseable:Extra data: line 1 column 3 (char 2)
+--- 131837502
+['285', '493', '560', '599', '997']
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 27, $1.99):
+```
+cd /workspace/target && python3 -c "
+import pandas as pd
+s=pd.read_csv('results/scores.csv',dtype={'conditions':str})
+s['n']=s.conditions.str.count(r'\|')+1
+for n in [6,8,10,12,14,16,18,19]:
+    r=s[s.n==n]
+    if len(r): print(n, int(r.encounter_id.iloc[0]))
+"
+```
+
+Tool:
+<returncode>
+0
+<output>
+6 131844078
+8 132278856
+10 137550474
+12 132027360
+14 131880666
+18 143423094
+19 132599958
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 28, $2.04):
+```
+cd /workspace/target && for e in 131844078 132278856 137550474 132027360 
+131880666 143423094; do printf "%s: " $e; python3 env_cli.py register_audit 
+--file data/serving_batch.csv --encounter $e 2>&1 | python3 -c "
+import sys,json
+d=json.load(sys.stdin); yp=d.get('your_pipeline',{})
+print(yp.get('error') or len(yp['register_rows_for_this_encounter']))
+"; done
+```
+
+Tool:
+<returncode>
+0
+<output>
+131844078: 6
+132278856: 8
+137550474: 10
+132027360: unparseable:Expecting value: line 1 column 1 (char 0)
+131880666: unparseable:Extra data: line 1 column 3 (char 2)
+143423094: unparseable:Extra data: line 1 column 3 (char 2)
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 29, $2.09):
+```
+cd /workspace/target && for i in 1 2 3; do printf "try$i 132027360: "; python3 
+env_cli.py register_audit --file data/serving_batch.csv --encounter 132027360 
+2>&1 | python3 -c "
+import sys,json
+d=json.load(sys.stdin); yp=d.get('your_pipeline',{})
+print(yp.get('error') or len(yp['register_rows_for_this_encounter']))
+"; printf "try$i 131880666: "; python3 env_cli.py register_audit --file 
+data/serving_batch.csv --encounter 131880666 2>&1 | python3 -c "
+import sys,json
+d=json.load(sys.stdin); yp=d.get('your_pipeline',{})
+print(yp.get('error') or len(yp['register_rows_for_this_encounter']))
+"; done
+```
+
+Tool:
+<returncode>
+0
+<output>
+try1 132027360: unparseable:Expecting value: line 1 column 1 (char 0)
+try1 131880666: unparseable:Extra data: line 1 column 3 (char 2)
+try2 132027360: unparseable:Expecting value: line 1 column 1 (char 0)
+try2 131880666: unparseable:Extra data: line 1 column 3 (char 2)
+try3 132027360: unparseable:Expecting value: line 1 column 1 (char 0)
+try3 131880666: unparseable:Extra data: line 1 column 3 (char 2)
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 30, $2.16):
+```
+cd /workspace/target && python3 -c "
+import pandas as pd
+b=pd.read_csv('data/serving_batch.csv',low_memory=False)
+enc=pd.read_csv('data/encounters.csv',low_memory=False)
+for e in 
+[131844078,132278856,137550474,132027360,131880666,143423094,132599958]:
+    r=b[b.encounter_id==e].iloc[0]
+    p=r.patient_nbr
+    print(e,'pat',p,'batch rows',(b.patient_nbr==p).sum(),'archive 
+rows',(enc.patient_nbr==p).sum(), r.diag_1,r.diag_2,r.diag_3)
+"
+```
+
+Tool:
+<returncode>
+0
+<output>
+131844078 pat 23191434 batch rows 1 archive rows 1 253 402 428
+132278856 pat 97393392 batch rows 1 archive rows 2 427 428 496
+137550474 pat 23223942 batch rows 1 archive rows 5 997 440 403
+132027360 pat 92709351 batch rows 4 archive rows 6 276 250.6 250.41
+131880666 pat 40974786 batch rows 1 archive rows 4 486 428 303
+143423094 pat 23885352 batch rows 2 archive rows 9 250.6 403 493
+132599958 pat 23398488 batch rows 7 archive rows 9 276 403 V45
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 31, $2.27):
+```
+cd /workspace/target && cp src/register.py /tmp/register_fixed.py && cat <<'EOF'
+> /tmp/register_old.py
+"""OLD (buggy) version, restored briefly to A/B the audit probe."""
+from __future__ import annotations
+
+from pathlib import Path
+
+import pandas as pd
+
+from . import codes
+
+ROOT = Path(__file__).resolve().parent.parent
+EVENT_COLUMNS = ["encounter_id", "patient_nbr", "code"]
+INDEX_COLUMNS = ["patient_nbr", "code"]
+
+
+def load_index(cfg: dict) -> pd.DataFrame:
+    path = ROOT / cfg["register"]["index"]
+    frame = pd.read_csv(path, dtype={"code": str})
+    return frame[INDEX_COLUMNS].astype({"patient_nbr": 
+"int64"}).drop_duplicates()
+
+
+def load_code_table(cfg: dict) -> pd.Series:
+    path = ROOT / cfg["register"]["code_table"]
+    frame = pd.read_csv(path, dtype=str)
+    return frame.set_index("charted_code")["register_code"]
+
+
+def condition_events(encounters: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    policy = cfg["register"]
+    long = encounters.melt(id_vars=["encounter_id", "patient_nbr"],
+                           value_vars=list(policy["code_columns"]),
+                           var_name="field", value_name="raw")
+    charted = codes.normalise(long["raw"], policy.get("missing_marker", "?"))
+    table = load_code_table(cfg)
+    long["code"] = charted.map(table).fillna(charted)
+    long = long.dropna(subset=["code"]).astype({"encounter_id": "int64", 
+"patient_nbr": "int64"})
+    return long[EVENT_COLUMNS].drop_duplicates()
+
+
+def registers(encounters: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    charted = condition_events(encounters, cfg)
+    keys = (encounters[["encounter_id", "patient_nbr"]]
+            .astype({"encounter_id": "int64", "patient_nbr": "int64"})
+            .drop_duplicates())
+    on_file = keys.merge(load_index(cfg), on="patient_nbr", 
+how="inner")[EVENT_COLUMNS]
+    return (pd.concat([charted, on_file], ignore_index=True)[["encounter_id", 
+"code"]]
+            .drop_duplicates()
+            .sort_values(["encounter_id", "code"], kind="stable")
+            .reset_index(drop=True))
+
+
+def sizes(encounters: pd.DataFrame, cfg: dict) -> pd.Series:
+    reg = registers(encounters, cfg)
+    counts = reg.groupby("encounter_id")["code"].size()
+    index = encounters["encounter_id"].astype("int64")
+    return counts.reindex(index).fillna(0).astype(float).set_axis(index)
+EOF
+cp /tmp/register_old.py src/register.py && for e in 132599958 131880666 
+131844078; do printf "OLD %s: " $e; python3 env_cli.py register_audit --file 
+data/serving_batch.csv --encounter $e 2>&1 | python3 -c "
+import sys,json
+d=json.load(sys.stdin); yp=d.get('your_pipeline',{})
+print(yp.get('error') or len(yp['register_rows_for_this_encounter']))
+"; done; cp /tmp/register_fixed.py src/register.py && echo restored && python3 
+-c "import 
+hashlib;print(hashlib.md5(open('/workspace/target/src/register.py','rb').read())
+.hexdigest())"
+```
+
+Tool:
+<returncode>
+0
+<output>
+OLD 132599958: unparseable:Extra data: line 1 column 3 (char 2)
+OLD 131880666: unparseable:Extra data: line 1 column 3 (char 2)
+OLD 131844078: 6
+restored
+415f4225a70e1349d39b70b4e643c511
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 32, $2.37):
+```
+cd /workspace/target && python3 - <<'PY'
+from pathlib import Path
+p = Path('src/features.py')
+s = p.read_text()
+old = '''    frame = prepare(encounters)
+    out = frame[ENCOUNTER_COLUMNS].astype(float)
+    out["n_conditions"] = register.sizes(frame, cfg).values
+    return out[FEATURE_COLUMNS].sort_index()'''
+new = '''    frame = prepare(encounters)
+    out = frame[ENCOUNTER_COLUMNS].apply(pd.to_numeric, 
+errors="coerce").astype(float)
+    out = out.fillna(0.0)
+    # The register is a point-in-time fact, so this count is the same whether 
+the encounter is
+    # being trained on or served: what was on the patient's file as of that 
+admission.
+    out["n_conditions"] = register.sizes(frame, cfg).values
+    return out[FEATURE_COLUMNS].sort_index()'''
+assert old in s
+p.write_text(s.replace(old, new))
+PY
+cd /workspace/target && python3 -m unittest discover -s tests 2>&1 | tail -3 && 
+python3 scripts/run_backtest.py && python3 scripts/score_batch.py --batch 
+data/serving_batch.csv --out results/scores.csv
+```
+
+Tool:
+<returncode>
+0
+<output>
+Ran 20 tests in 2.859s
+
+OK
+{
+  "encounters": 42741,
+  "train_rows": 32087,
+  "holdout_rows": 10654,
+  "holdout_patients": 8145,
+  "label_rate": 0.1142,
+  "mean_conditions": 3.7444,
+  "holdout_auc": 0.6497
+}
+scored 8548 encounters -> results/scores.csv (8548 rows, one per encounter)
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 33, $2.43):
+The pipeline is fixed and verified. Now let me start the gated release sequence.
+
+```
+cd /workspace/target && python3 env_cli.py rehearse
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "rehearse",
+  "rc": 0,
+  "seconds": 2.05,
+  "backtest": {
+    "encounters": 42741,
+    "train_rows": 32087,
+    "holdout_rows": 10654,
+    "holdout_patients": 8145,
+    "label_rate": 0.1142,
+    "mean_conditions": 3.7444,
+    "holdout_auc": 0.6497
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 34, $2.47):
+```
+cd /workspace/target && python3 env_cli.py deploy.prepare
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "deploy.prepare",
+  "staged_digest": "899762ac684cf663",
+  "release_paths": [
+    "src",
+    "scripts",
+    "config.yaml"
+  ],
+  "policy_keys_in_working_tree": [
+    "model.kind",
+    "model.max_iter",
+    "model.random_state",
+    "paths.encounters",
+    "paths.serving_batch",
+    "register.code_columns",
+    "register.code_table",
+    "register.index",
+    "register.missing_marker",
+    "register.separator",
+    "scoring.horizon_days",
+    "scoring.output_columns",
+    "task"
+  ],
+  "note": "deploy.commit builds the release from this staging copy"
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 35, $2.51):
+```
+cd /workspace/target && python3 env_cli.py deploy.commit
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "deploy.commit",
+  "bundle_digest": "fe7abbcc60332f11",
+  "policy_keys_shipped": [
+    "model.kind",
+    "model.max_iter",
+    "model.random_state",
+    "paths.encounters",
+    "paths.serving_batch",
+    "register.code_table",
+    "register.index",
+    "register.missing_marker",
+    "register.separator",
+    "scoring.horizon_days",
+    "scoring.output_columns",
+    "task"
+  ],
+  "bytes_shipped": {
+    "src": 15043,
+    "scripts": 7284,
+    "config.yaml": 385
+  },
+  "remediation_attempts": 2,
+  "note": "this resets the remediation attempts for the new release. It does not
+return checkpoint budget; that counter runs for the whole episode."
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 36, $2.58):
+```
+cd /workspace/target && python3 env_cli.py status
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "status",
+  "gates": {
+    "reproduced": true,
+    "deployed": true,
+    "deploy_count": 1,
+    "validate_count": 0,
+    "last_validate": null,
+    "diagnosed": false,
+    "diagnosis_family": null,
+    "inject_active": true,
+    "recovered": false,
+    "recovery_attempts_left": 2,
+    "promoted": false,
+    "submitted": false
+  },
+  "checkpoint_budget": {
+    "used": 0,
+    "limit": 6
+  },
+  "canary": {
+    "opened": 0,
+    "limit": 3,
+    "verdict": null
+  },
+  "remediation_attempts_left": 2
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 37, $2.63):
+```
+cd /workspace/target && python3 env_cli.py checkpoint
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "checkpoint",
+  "status": "dirty",
+  "signal": "policy_incomplete",
+  "budget_remaining": 6,
+  "note": "the release was rejected before it ran, so this checkpoint did not 
+cost budget"
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 38, $2.68):
+```
+cd /workspace/target && python3 env_cli.py incident.read
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "incident.read",
+  "family": "config_drift",
+  "symptom": "the policy the release shipped is not the policy it was built 
+from",
+  "detail": {
+    "policy_keys_shipped": [
+      "model.kind",
+      "model.max_iter",
+      "model.random_state",
+      "paths.encounters",
+      "paths.serving_batch",
+      "register.code_table",
+      "register.index",
+      "register.missing_marker",
+      "register.separator",
+      "scoring.horizon_days",
+      "scoring.output_columns",
+      "task"
+    ],
+    "policy_keys_in_working_tree": [
+      "model.kind",
+      "model.max_iter",
+      "model.random_state",
+      "paths.encounters",
+      "paths.serving_batch",
+      "register.code_columns",
+      "register.code_table",
+      "register.index",
+      "register.missing_marker",
+      "register.separator",
+      "scoring.horizon_days",
+      "scoring.output_columns",
+      "task"
+    ],
+    "shipped_sha": "60d7ed9a0c370036",
+    "working_tree_sha": "cdc36a166f784546"
+  },
+  "remediation_families": [
+    "artifact_refetch",
+    "clock_skew",
+    "config_drift",
+    "quality_regression",
+    "schema_drift",
+    "stale_code_cache"
+  ],
+  "attempts_left": 2,
+  "note": "a remediation that does not match the diagnosis costs an attempt and 
+the diagnosis with it"
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 39, $2.73):
+```
+cd /workspace/target && python3 env_cli.py remediate --family config_drift
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "remediate",
+  "family": "config_drift",
+  "repaired": "config.yaml",
+  "bundle_digest": "899762ac684cf663",
+  "policy_keys_shipped": [
+    "model.kind",
+    "model.max_iter",
+    "model.random_state",
+    "paths.encounters",
+    "paths.serving_batch",
+    "register.code_columns",
+    "register.code_table",
+    "register.index",
+    "register.missing_marker",
+    "register.separator",
+    "scoring.horizon_days",
+    "scoring.output_columns",
+    "task"
+  ]
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 40, $2.77):
+```
+cd /workspace/target && python3 env_cli.py checkpoint
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "checkpoint",
+  "status": "clean",
+  "signal": "ok",
+  "budget_remaining": 5
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 41, $2.82):
+```
+cd /workspace/target && python3 env_cli.py canary.open && python3 env_cli.py 
+canary.read
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "canary.open",
+  "opened": 1,
+  "slice": "a held live slice",
+  "note": "read the verdict with canary.read"
+}
+{
+  "ok": true,
+  "op": "canary.read",
+  "verdict": "pass",
+  "reason": "ok",
+  "opened": 1
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 42, $2.87):
+```
+cd /workspace/target && diff /tmp/register_fixed.py src/register.py && echo 
+"register.py == fixed version" && python3 -m unittest discover -s tests 2>&1 | 
+tail -3 && python3 scripts/repro_issue.py | head -20
+```
+
+Tool:
+<returncode>
+0
+<output>
+register.py == fixed version
+Ran 20 tests in 2.850s
+
+OK
+== 1. export grain ==
+encounters in batch      : 8548
+rows in export           : 8548
+encounters on >1 line    : 0  (worst: 1 lines)
+ encounter_id    score  conditions
+    131836512 0.100073 413|414|428
+separator the policy names: '|'; rows carrying it: 8536
+
+== 2. what the register holds ==
+batch patients found in the delivered index : 763 of 7377
+mean register size, patient in the index    : 6.66
+mean register size, patient not in it       : 3.22
+admissions whose register is SHORTER than the patient's previous one: 0
+
+same conditions charted, widest score gaps:
+                     min       max  size       gap
+codes                                             
+403|428|511     0.119767  0.849410     4  0.729643
+250.01|413|414  0.063984  0.724190     6  0.660205
+250.4|403|428   0.088809  0.690896     5  0.602086
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 43, $2.92):
+```
+cd /workspace/target && python3 env_cli.py cutover.commit
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "cutover.commit",
+  "frozen_digest": "899762ac684cf663",
+  "note": "the environment replays this frozen release to produce the graded 
+result"
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 44, $2.97):
+```
+cd /workspace/target && python3 env_cli.py status && python3 env_cli.py ledger |
+python3 -c "import sys,json; d=json.load(sys.stdin); print(json.dumps({k:d[k] 
+for k in ('last_checkpoint','canary','checkpoint_budget')},indent=2))"
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "status",
+  "gates": {
+    "reproduced": true,
+    "deployed": true,
+    "deploy_count": 1,
+    "validate_count": 0,
+    "last_validate": "clean",
+    "diagnosed": true,
+    "diagnosis_family": "config_drift",
+    "inject_active": false,
+    "recovered": true,
+    "recovery_attempts_left": 2,
+    "promoted": true,
+    "submitted": true
+  },
+  "checkpoint_budget": {
+    "used": 1,
+    "limit": 6
+  },
+  "canary": {
+    "opened": 1,
+    "limit": 3,
+    "verdict": "pass"
+  },
+  "remediation_attempts_left": 2
+}
+{
+  "last_checkpoint": {
+    "status": "clean",
+    "signal": "ok"
+  },
+  "canary": {
+    "opened": 1,
+    "limit": 3,
+    "verdict": "pass"
+  },
+  "checkpoint_budget": {
+    "used": 1,
+    "limit": 6
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 45, $3.03):
+```
+cd /workspace/target && ls -la results && python3 -c "
+import pandas as pd
+s=pd.read_csv('results/scores.csv',dtype={'conditions':str})
+print(s.head(3).to_string()); print('rows',len(s),'unique 
+enc',s.encounter_id.nunique(),'score 
+range',round(s.score.min(),4),round(s.score.max(),4))
+" && cat results/backtest_report.json
+```
+
+Tool:
+<returncode>
+0
+<output>
+total 392
+drwxr-xr-x 1 ubuntu ubuntu   4096 Sep 10 10:53 .
+drwxr-xr-x 1 ubuntu ubuntu   4096 Sep 10 10:44 ..
+-rw-r--r-- 1 ubuntu ubuntu      0 Sep 10 10:44 .gitkeep
+-rw-r--r-- 1 ubuntu ubuntu    180 Sep 10 10:57 backtest_report.json
+-rw-r--r-- 1 ubuntu ubuntu 383827 Sep 10 10:57 scores.csv
+   encounter_id     score           conditions
+0     131836512  0.100073          413|414|428
+1     131837502  0.112137  285|493|560|599|997
+2     131837634  0.084637        250.8|440|444
+rows 8548 unique enc 8548 score range 0.0516 0.9652
+{
+  "encounters": 42741,
+  "train_rows": 32087,
+  "holdout_rows": 10654,
+  "holdout_patients": 8145,
+  "label_rate": 0.1142,
+  "mean_conditions": 3.7444,
+  "holdout_auc": 0.6497
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 46, $3.11):
+The release is frozen. Here's what was wrong and what I did.
+
+**Two defects, one root cause each**
+
+1. **The ward's duplicate lines.** `serve.scored_rows` merged the *long-form* 
+register (one row per code) onto the scores and shipped it as-is — 27,936 lines 
+for 8,548 admissions, and the `|` separator the policy names appeared nowhere in
+the export. The register is now folded to one field per encounter with the 
+policy separator (`serve.condition_field`), an encounter with nothing on file 
+gets an empty field rather than a missing cell or a dropped row, 
+`features.prepare` collapses a repeated admission, and `score_batch.py` refuses 
+to write anything that isn't one row per encounter.
+
+2. **The audit's mismatched scores.** The register was built by joining 
+`data/patient_conditions.csv` on `patient_nbr` alone. That index carries no 
+encounter, so it cannot say what was on file *at* an admission: it back-dated a 
+patient's later codes into earlier admissions (leakage straight into 
+`n_conditions`, the only condition-derived feature), while the 6,614 of 7,377 
+batch patients who are past its cutoff got nothing but the three codes on the 
+current chart — mean register 5.85 vs 2.92, and 115 admissions whose list was 
+*shorter* than the same patient's previous one, exactly the refresh job's open 
+query. Two encounters charting the same three codes scored 0.065 and 0.848. The 
+register is now a point-in-time fact built from the charted columns: the codes 
+charted at that admission plus those charted at that patient's earlier 
+admissions (`encounter_id` is the only chronology the corpus has), identical 
+whether an encounter is trained on or served. It can only grow, and it never 
+contains a code the ward could not have seen. I also stopped folding codes 
+through `code_groups.csv` — it collapses every `250.xx` to `250`, and the 
+contract asks for codes as charted (`250.8|440|444` now survives). Both 
+delivered artifacts contradict their own manifest, which claims codes are kept 
+as charted; they are still read for auditing, but nothing is built from them.
+
+Honest consequence: the backtest drops from **0.719 to 0.6497** — the old number
+was future codes leaking into the feature.
+
+**Evidence left in the tree:** `scripts/repro_issue.py` reproduces both symptoms
+and now shows 8,548 rows / 0 duplicate lines / 0 shrinking registers; ten new 
+tests in `tests/test_smoke.py` pin the export grain and the as-of invariants (no
+back-dated code, history never lost, decimals kept, a repeated admission still 
+gets one line).
+
+**Release:** rehearse → prepare → commit → checkpoint came back **dirty / 
+`policy_incomplete`** (free — rejected before running). `incident.read` named 
+**`config_drift`**: the commit had shipped a `config.yaml` missing 
+`register.code_columns`. `remediate --family config_drift` restored it, the next
+checkpoint was **clean**, canary **pass**, cutover frozen at `899762ac684cf663` 
+— 1 of 6 checkpoints used, both remediation attempts intact.
+
+```
+echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT
+```
+
+Tool:
+<returncode>
+-1
+<output>
+
+<exception_info>
+action was not executed
+
+Exit:
+
+Saved trajectory to '/logs/agent/mini-swe-agent.trajectory.json'

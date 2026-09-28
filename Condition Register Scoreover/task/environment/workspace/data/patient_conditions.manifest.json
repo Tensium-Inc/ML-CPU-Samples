@@ -1,0 +1,10 @@
+{
+  "artifact": "patient_conditions.csv",
+  "produced_by": "register-refresh",
+  "grain": "one row per (patient_nbr, code)",
+  "covers": "encounters up to and including the archive cutoff",
+  "cutoff_encounter_id": 131836032,
+  "patients": 32577,
+  "rows": 112493,
+  "codes_kept": "every code charted on a covered encounter, as charted"
+}

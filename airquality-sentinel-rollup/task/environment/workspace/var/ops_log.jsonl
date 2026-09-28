@@ -1,0 +1,4 @@
+{"job_id": "alerts-2005-01-14", "kind": "batch_score", "batch": "data/current_batch.csv", "hours_in_batch": 562, "hours_alerted": 375, "status": "ok"}
+{"job_id": "alerts-2005-01-21", "kind": "batch_score", "batch": "data/current_batch.csv", "hours_in_batch": 562, "hours_alerted": 375, "status": "ok"}
+{"job_id": "cabinet-maintenance", "kind": "station_note", "note": "analyser swapped out; logger left running through the changeover"}
+{"job_id": "alerts-2005-01-28", "kind": "batch_score", "batch": "data/current_batch.csv", "hours_in_batch": 562, "hours_alerted": 375, "status": "ok"}

@@ -1,0 +1,4 @@
+Skipping image OS validation for hb__67dfee1fbd8351a38b7664cecf9bab9b: docker inspect returned 1
+Running healthcheck: test -S /run/fundops.sock
+Healthcheck passed
+Collecting main service artifacts

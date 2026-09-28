@@ -1,0 +1,21 @@
+{
+    "job_name": "agent",
+    "agent_setup_timeout_multiplier": 5.0,
+    "n_concurrent_trials": 1,
+    "quiet": true,
+    "agents": [
+        {
+            "name": "mini-swe-agent",
+            "model_name": "xai/grok-4.7",
+            "kwargs": {
+                "reasoning_effort": "xhigh",
+                "max_tokens": 32000
+            }
+        }
+    ],
+    "datasets": [
+        {
+            "path": "/tmp/drydock-ds"
+        }
+    ]
+}

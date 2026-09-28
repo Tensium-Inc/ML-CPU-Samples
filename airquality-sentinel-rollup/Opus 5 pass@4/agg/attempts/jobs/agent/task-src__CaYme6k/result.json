@@ -1,0 +1,120 @@
+{
+    "id": "22c720fe-20e5-45c9-96dd-feb0cc4e4774",
+    "task_name": "airquality-sentinel-rollup",
+    "trial_name": "task-src__CaYme6k",
+    "trial_uri": "file:///home/runner/work/Anvil/Anvil/jobs/agent/task-src__CaYme6k",
+    "task_id": {
+        "path": "/tmp/drydock-ds/task-src"
+    },
+    "source": "drydock-ds",
+    "task_checksum": "68f73e6a0965d99503b6ea2a7d512c5af6de145269303838c3075587df400bc7",
+    "config": {
+        "task": {
+            "path": "/tmp/drydock-ds/task-src",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": "drydock-ds"
+        },
+        "trial_name": "task-src__CaYme6k",
+        "trials_dir": "jobs/agent",
+        "install_only": false,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": 5.0,
+        "environment_build_timeout_multiplier": null,
+        "agent": {
+            "name": "mini-swe-agent",
+            "import_path": null,
+            "model_name": "anthropic/claude-opus-5",
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": null,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {
+                "reasoning_effort": "xhigh",
+                "max_tokens": 32000
+            },
+            "mcp_servers": []
+        },
+        "user_agent": null,
+        "environment": {
+            "type": "docker",
+            "import_path": null,
+            "force_build": false,
+            "delete": true,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "extra_instructions": [],
+        "job_id": "42ad669c-1664-4c24-b17f-803a9d17ae34",
+        "source_trial": null
+    },
+    "agent_info": {
+        "name": "mini-swe-agent",
+        "version": "2.4.6",
+        "model_info": {
+            "name": "claude-opus-5",
+            "provider": "anthropic"
+        }
+    },
+    "agent_result": {
+        "n_input_tokens": 1695584,
+        "n_cache_tokens": 1626375,
+        "n_output_tokens": 35267,
+        "cost_usd": 2.1273287499999993,
+        "rollout_details": null,
+        "metadata": null
+    },
+    "verifier_result": {
+        "rewards": {
+            "reward": 1.0
+        }
+    },
+    "verifier_environment_mode": "shared",
+    "exception_info": null,
+    "started_at": "2026-09-07T21:46:06.659221Z",
+    "finished_at": "2026-09-07T21:58:25.110373Z",
+    "environment_setup": {
+        "started_at": "2026-09-07T21:46:06.745397Z",
+        "finished_at": "2026-09-07T21:46:46.104386Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-09-07T21:46:46.104452Z",
+        "finished_at": "2026-09-07T21:47:12.067047Z"
+    },
+    "agent_execution": {
+        "started_at": "2026-09-07T21:47:12.067220Z",
+        "finished_at": "2026-09-07T21:58:05.562101Z"
+    },
+    "verifier": {
+        "started_at": "2026-09-07T21:58:06.013179Z",
+        "finished_at": "2026-09-07T21:58:13.105176Z"
+    },
+    "step_results": null
+}

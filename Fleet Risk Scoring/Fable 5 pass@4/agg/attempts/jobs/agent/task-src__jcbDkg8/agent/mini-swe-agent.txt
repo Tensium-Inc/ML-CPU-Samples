@@ -1,0 +1,2695 @@
+This is mini-swe-agent version 2.4.6.
+Check the v2 migration guide at https://klieret.short.gy/mini-v2-migration
+Loading global config from '/home/ubuntu/.config/mini-swe-agent/.env'
+Warning: Input is not a terminal (fd=0).
+Building agent config from specs: ['mini', 
+'model.model_kwargs.extra_headers.X-Session-ID=task-src__jcbDkg8__agent', 
+'model.model_kwargs.reasoning_effort=xhigh', 
+'model.model_kwargs.max_tokens=32000']
+
+System:
+You are a helpful assistant that can interact with a computer.
+
+User:
+Please solve this issue: Maintenance control wants the grounding risk scorer 
+back. A migration stripped five modules
+out of `src/fleetrisk/` and never restored them, so every function in those five
+raises
+`NotImplementedError` and nothing runs.
+
+Rebuild them. The service has to reproduce its last accepted run to the last 
+decimal, on
+both of the scheduled configurations:
+
+    python3 run_scoring.py --config configs/reference.yaml --out out/reference
+    python3 run_scoring.py --config configs/current.yaml   --out out/current
+
+`configs/reference.yaml` is the accepted backtest and the only one you can check
+yourself
+against. What it produced before the migration is in `reference/`: the score for
+every
+flight it touched, and the summary the run wrote beside them. 
+`tools/compare_scores.py`
+diffs a pair of score files.
+
+`configs/current.yaml` runs the live scoring period off the same history. It 
+scores flying
+from well after the end of that history, and nothing is published for it, so 
+nothing will
+tell you whether you have that one right.
+
+`SPEC.md` is the contract the desk signed off. It describes every published 
+quantity in the
+terms operations uses and deliberately carries no formulas, so where a 
+definition could go
+more than one way, the published run decides it.
+
+The other modules, the configs and the export are not part of the job. Leave 
+them alone.
+
+
+You can execute bash commands and edit files to implement the necessary changes.
+
+## Recommended Workflow
+
+This workflow should be done step-by-step so that you can iterate on your 
+changes and any possible problems.
+
+1. Analyze the codebase by finding and reading relevant files
+2. Create a script to reproduce the issue
+3. Edit the source code to resolve the issue
+4. Verify your fix works by running your script again
+5. Test edge cases to ensure your fix is robust
+6. Submit your changes and finish your work by issuing the following command: 
+`echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT`.
+   Do not combine it with any other command. <important>After this command, you 
+cannot continue working on this task.</important>
+
+## Command Execution Rules
+
+You are operating in an environment where
+
+1. You issue at least one command
+2. The system executes the command(s) in a subshell
+3. You see the result(s)
+4. You write your next command(s)
+
+Each response should include:
+
+1. **Reasoning text** where you explain your analysis and plan
+2. At least one tool call with your command
+
+**CRITICAL REQUIREMENTS:**
+
+- Your response SHOULD include reasoning text explaining what you're doing
+- Your response MUST include AT LEAST ONE bash tool call
+- Directory or environment variable changes are not persistent. Every action is 
+executed in a new subshell.
+- However, you can prefix any action with `MY_ENV_VAR=MY_VALUE cd 
+/path/to/working/dir && ...` or write/load environment variables from files
+- Submit your changes and finish your work by issuing the following command: 
+`echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT`.
+  Do not combine it with any other command. <important>After this command, you 
+cannot continue working on this task.</important>
+
+Example of a CORRECT response:
+<example_response>
+I need to understand the structure of the repository first. Let me check what 
+files are in the current directory to get a better understanding of the 
+codebase.
+
+[Makes bash tool call with {"command": "ls -la"} as arguments]
+</example_response>
+
+<system_information>
+Linux 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026 x86_64
+</system_information>
+
+## Useful command examples
+
+### Create a new file:
+
+```bash
+cat <<'EOF' > newfile.py
+import numpy as np
+hello = "world"
+print(hello)
+EOF
+```
+
+### Edit files with sed:```bash
+# Replace all occurrences
+sed -i 's/old_string/new_string/g' filename.py
+
+# Replace only first occurrence
+sed -i 's/old_string/new_string/' filename.py
+
+# Replace first occurrence on line 1
+sed -i '1s/old_string/new_string/' filename.py
+
+# Replace all occurrences in lines 1-10
+sed -i '1,10s/old_string/new_string/g' filename.py
+```
+
+### View file content:
+
+```bash
+# View specific lines with numbers
+nl -ba filename.py | sed -n '10,20p'
+```
+
+### Any other command you want to run
+
+```bash
+anything
+```
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 1, $0.03):
+Let me start by exploring the repository structure to understand the codebase.
+
+```
+find / -maxdepth 3 -name "run_scoring.py" 2>/dev/null; ls -la
+```
+
+```
+ls -R /app 2>/dev/null || ls -R ~ 2>/dev/null | head -100
+```
+
+Tool:
+<returncode>
+0
+<output>
+/workspace/target/run_scoring.py
+total 72
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  2 15:03 .
+drwxr-xr-x 1 root   root   4096 Sep  2 15:04 ..
+-rw-r--r-- 1 ubuntu ubuntu 2191 Sep  2 15:03 README.md
+-rw-r--r-- 1 ubuntu ubuntu 4810 Sep  2 15:03 SPEC.md
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  2 15:03 configs
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  2 15:03 data
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  2 15:03 reference
+-rw-r--r-- 1 ubuntu ubuntu  929 Sep  2 15:03 run_scoring.py
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  2 15:03 src
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  2 15:03 tools
+
+
+Tool:
+<returncode>
+0
+<output>
+/home/ubuntu:
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 2, $0.05):
+```
+pwd && ls -R . | head -80
+```
+
+```
+cat /workspace/target/README.md /workspace/target/SPEC.md
+```
+
+Tool:
+<returncode>
+0
+<output>
+/workspace/target
+.:
+README.md
+SPEC.md
+configs
+data
+reference
+run_scoring.py
+src
+tools
+
+./configs:
+current.yaml
+reference.yaml
+
+./data:
+fleet.csv
+flights.csv.gz
+groundings.csv.gz
+stations.csv
+
+./reference:
+run_report.json
+scores_reference.csv
+
+./src:
+fleetrisk
+
+./src/fleetrisk:
+__init__.py
+assemble.py
+calendar_feats.py
+config.py
+deviations.py
+fleet_profile.py
+io_layer.py
+model.py
+observation.py
+pipeline.py
+portfolio.py
+recent.py
+reliability.py
+report.py
+route_feats.py
+schema.py
+station_history.py
+station_profile.py
+tail_history.py
+validate.py
+
+./tools:
+compare_scores.py
+
+
+Tool:
+<returncode>
+0
+<output>
+# Fleet grounding risk service
+
+Maintenance control runs this against the overnight operations export. It puts a
+number on
+every leg that flew: how likely is it that this airframe gets grounded in the 
+next few days.
+Anything over the watch threshold gets pulled forward for a check before it 
+strands a crew.
+
+    python3 run_scoring.py --config configs/reference.yaml --out out/reference
+
+## Layout
+
+    run_scoring.py        nightly entry point
+    SPEC.md               what the service computes, and what each quantity 
+means
+    configs/              run configuration, one file per scheduled run
+    data/                 the overnight export
+    src/fleetrisk/        the service
+    reference/            the published output from the accepted backtest
+    tools/                helper for comparing two runs
+
+## The export
+
+Two feeds, and they do not overlap.
+
+`data/flights.csv.gz` is the flight log: one row per leg that actually operated,
+with the
+schedule, the delays and the airframe that flew it.
+
+`data/groundings.csv.gz` comes off the ops system instead. It records 
+cancellations, with
+the tail number and the time. A cancelled leg never operated, so it is not in 
+the flight log
+at all, and the two feeds have to be matched up before you can say which flights
+turned out
+badly.
+
+`data/fleet.csv` is the airframe register and `data/stations.csv` the airport 
+reference.
+Both are slow moving.
+
+The export is a rolling pull. It starts at a fixed date and stops on whichever 
+day it was
+taken, which is worth keeping in mind when reading anything derived from it.
+
+Airframes join and leave the fleet and stations come and go, so a live run will 
+always
+carry legs whose aircraft or departure station the history has never seen. 
+`SPEC.md` says
+what the desk does with those.
+
+## The two scheduled runs
+
+The backtest, `configs/reference.yaml`, is the one that has been signed off. 
+What it
+produced last time is under `reference/`: the scores themselves and the run 
+summary.
+
+The live run, `configs/current.yaml`, fits on the same history and scores a 
+stretch of flying
+from well after the end of it. Nothing is published for it, so the only run you 
+can check
+yourself is the backtest.
+# Fleet grounding risk: specification
+
+This says what the service is for and what each published quantity means. It is 
+written
+the way the operations desk describes its own model, in business terms.
+
+**It gives no formulas.** Where a definition could reasonably be written more 
+than one way,
+the published backtest settles it: `reference/scores_reference.csv` is what the 
+service
+produced on that run and `reference/run_report.json` is the summary it wrote 
+beside it. A
+correct rebuild reproduces both.
+
+---
+
+## 1. Run shape
+
+A run reads the export, fits on the **fit window** and scores the **score 
+window**, both
+named in the run configuration and inclusive of the last second of their end 
+date.
+
+Flights are processed in `flight_id` order. Everything the service knows about 
+an aircraft,
+a station, a route or an operator is learned from the **fit window only**.
+
+## 2. What the service is predicting
+
+A flight is **at risk** if the aircraft that flew it is grounded within
+`labelling.window_days` days of leaving. Groundings are exported separately, in
+`data/groundings.csv.gz`; they are not in the flight log, because a grounded 
+flight never
+operated.
+
+## 3. What the service fits on
+
+The service does not fit on every flight in the fit window.
+
+A flight is only usable for fitting if its outcome is already settled by the 
+history the
+service is allowed to read. Which flights that leaves out, and on what grounds, 
+is part of
+the rebuild.
+
+## 4. What the features mean
+
+Thirty-eight quantities are published, in the order `src/fleetrisk/assemble.py` 
+declares them.
+
+**Departure.** When the flight was scheduled out: hour, day of week, month, week
+of year,
+whether it fell at a weekend, and how far into the exported period it sits.
+
+**The leg.** What the flight looks like on paper and how it actually ran: 
+distance, block
+time, taxi out, departure and arrival delay, whether it was diverted, and the 
+average speed
+its block time implies.
+
+**The aircraft on paper.** From the fleet register: which operator it belongs 
+to, whether it
+left from its home station, and how many aircraft that operator runs.
+
+**The stations.** From the station reference: the state at each end and whether 
+both ends
+sit in the same state.
+
+**Aircraft record.** What the fit window knows about the airframe: how much it 
+flew, how
+often it was grounded, how often that was per flight, how long since the last 
+grounding,
+how long it has been in the exported fleet, and its usual departure delay.
+
+**Station record.** The same idea for the airports at each end: how much flew 
+from there and
+how often aircraft based there were grounded.
+
+**Reliability.** How often flights of this operator, this route and this 
+departure station
+turned out to be at risk. A rate over thin history is unreliable, so it is 
+pulled toward the
+fleet rate in proportion to how little history stands behind it; 
+`encoding.smoothing` sets
+how hard.
+
+**Recent form.** How the aircraft has been behaving lately rather than over the 
+whole
+window: its grounding rate over the last fortnight, how long since it last flew,
+and its
+departure delay over its last `recent.flights` legs.
+
+**Against the fleet.** How the aircraft, its departure station and its operator 
+sit against
+the fleet rate.
+
+## 5. Rows with no history behind them
+
+Plenty of airframes go the whole fit window without being grounded once. Their 
+"how long
+since the last grounding" is not a large number and it is not zero; there is no 
+such date to
+measure from. The service marks those with **-1** rather than inventing a gap.
+
+A live run also carries legs the fit window has nothing at all on: an airframe 
+that joined
+after the history ends, a station or a route that never appears in it. Those 
+legs are still
+scored. Wherever a quantity is a rate, an average or a span taken over history 
+the leg does
+not have, the service puts the fleet-wide level for that quantity in its place, 
+so the leg
+sits at the fleet average rather than at zero. Counts are the exception. An 
+aircraft the
+history has never seen has flown no flights and been grounded no times, and 
+those are
+recorded as such. Time since the last grounding follows the paragraph above.
+
+## 6. Model
+
+Gradient boosting over the thirty-eight features, fitted on the fit window 
+against the label, using
+`model.seed`, `model.max_iter`, `model.learning_rate` and `model.max_depth`. 
+Values that are
+not finite are treated as zero before fitting.
+
+## 7. Output
+
+One row per scored flight, in `flight_id` order, carrying `flight_id`, 
+`tail_number`,
+`departed_at`, `risk_score` and `watch`.
+
+`risk_score` is the modelled probability that the flight is at risk, rounded to 
+six decimal
+places. `watch` is 1 when the unrounded score is at least 
+`scoring.watch_threshold`.
+
+A run also writes a summary beside the scores. The summary is not graded.
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 3, $0.10):
+```
+cd /workspace/target && cat run_scoring.py configs/reference.yaml 
+configs/current.yaml
+```
+
+```
+cd /workspace/target && for f in src/fleetrisk/*.py; do echo "=== $f ==="; wc -l
+$f; done
+```
+
+Tool:
+<returncode>
+0
+<output>
+#!/usr/bin/env python3
+"""Nightly entry point.
+
+    python3 run_scoring.py --config configs/reference.yaml --out out/
+"""
+import argparse
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
+
+from fleetrisk import config, pipeline, report, validate
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--config", required=True)
+    ap.add_argument("--out", required=True)
+    args = ap.parse_args()
+
+    cfg = config.load(args.config)
+    out_dir = Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    scores, fit_df, score_df = pipeline.run(cfg)
+    validate.check(scores)
+
+    scores.to_csv(out_dir / "scores.csv", index=False)
+    report.write(out_dir / "run_report.json",
+                 report.summarise(scores, cfg))
+    print("scored %d rows, watching %d" % (len(scores), 
+int(scores["watch"].sum())))
+
+
+if __name__ == "__main__":
+    main()
+# Accepted backtest. The published reference scores came from this config.
+paths:
+  data_dir: data
+
+windows:
+  fit:
+    from: "2024-01-01"
+    to: "2024-02-15"
+  score:
+    from: "2024-02-05"
+    to: "2024-02-08"
+
+labelling:
+  window_days: 3
+
+encoding:
+  smoothing: 50.0
+
+recent:
+  flights: 20
+
+model:
+  seed: 5
+  max_iter: 200
+  learning_rate: 0.08
+  max_depth: 6
+
+scoring:
+  watch_threshold: 0.08
+# Live run for the current scoring period.
+paths:
+  data_dir: data
+
+windows:
+  fit:
+    from: "2024-01-01"
+    to: "2024-02-15"
+  score:
+    from: "2024-03-25"
+    to: "2024-03-31"
+
+labelling:
+  window_days: 3
+
+encoding:
+  smoothing: 50.0
+
+recent:
+  flights: 20
+
+model:
+  seed: 5
+  max_iter: 200
+  learning_rate: 0.08
+  max_depth: 6
+
+scoring:
+  watch_threshold: 0.08
+
+
+Tool:
+<returncode>
+0
+<output>
+=== src/fleetrisk/__init__.py ===
+1 src/fleetrisk/__init__.py
+=== src/fleetrisk/assemble.py ===
+18 src/fleetrisk/assemble.py
+=== src/fleetrisk/calendar_feats.py ===
+17 src/fleetrisk/calendar_feats.py
+=== src/fleetrisk/config.py ===
+47 src/fleetrisk/config.py
+=== src/fleetrisk/deviations.py ===
+14 src/fleetrisk/deviations.py
+=== src/fleetrisk/fleet_profile.py ===
+20 src/fleetrisk/fleet_profile.py
+=== src/fleetrisk/io_layer.py ===
+27 src/fleetrisk/io_layer.py
+=== src/fleetrisk/model.py ===
+31 src/fleetrisk/model.py
+=== src/fleetrisk/observation.py ===
+13 src/fleetrisk/observation.py
+=== src/fleetrisk/pipeline.py ===
+85 src/fleetrisk/pipeline.py
+=== src/fleetrisk/portfolio.py ===
+22 src/fleetrisk/portfolio.py
+=== src/fleetrisk/recent.py ===
+11 src/fleetrisk/recent.py
+=== src/fleetrisk/reliability.py ===
+23 src/fleetrisk/reliability.py
+=== src/fleetrisk/report.py ===
+19 src/fleetrisk/report.py
+=== src/fleetrisk/route_feats.py ===
+19 src/fleetrisk/route_feats.py
+=== src/fleetrisk/schema.py ===
+28 src/fleetrisk/schema.py
+=== src/fleetrisk/station_history.py ===
+9 src/fleetrisk/station_history.py
+=== src/fleetrisk/station_profile.py ===
+18 src/fleetrisk/station_profile.py
+=== src/fleetrisk/tail_history.py ===
+13 src/fleetrisk/tail_history.py
+=== src/fleetrisk/validate.py ===
+17 src/fleetrisk/validate.py
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 4, $0.14):
+```
+cd /workspace/target/src/fleetrisk && for f in *.py; do echo "===== $f ====="; 
+cat $f; done
+```
+
+Tool:
+<returncode>
+0
+<output_head>
+===== __init__.py =====
+"""Fleet grounding risk scoring service."""
+===== assemble.py =====
+"""Design matrix assembly."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+try:
+    from .schema import FEATURES
+except ImportError:
+    from schema import FEATURES
+
+
+def matrix(df):
+    """The published features, in the declared order, as a float matrix."""
+    missing = [name for name in FEATURES if name not in df.columns]
+    if missing:
+        raise KeyError("design matrix is missing %s" % ", ".join(missing))
+    return df[list(FEATURES)].astype("float64").to_numpy()
+===== calendar_feats.py =====
+"""When the flight was scheduled to leave."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+def add(df, period_start):
+    out = df.copy()
+    when = out["departed_at"]
+    out["f_hour"] = when.dt.hour.astype("float64")
+    out["f_dow"] = when.dt.dayofweek.astype("float64")
+    out["f_month"] = when.dt.month.astype("float64")
+    out["f_week"] = when.dt.isocalendar().week.astype("float64").to_numpy()
+    out["f_is_weekend"] = (when.dt.dayofweek >= 5).astype("float64")
+    out["f_days_into_period"] = (when - period_start).dt.total_seconds() / 
+86400.0
+    return out
+===== config.py =====
+"""Run configuration."""
+from __future__ import annotations
+
+import copy
+from pathlib import Path
+from typing import Any, Dict
+
+import yaml
+
+ROOT = Path(__file__).resolve().parents[1]
+
+DEFAULTS: Dict[str, Any] = {
+    "paths": {"data_dir": "data"},
+    "labelling": {"window_days": 3},
+    "encoding": {"smoothing": 50.0},
+    "recent": {"flights": 20},
+    "model": {"seed": 5, "max_iter": 200, "learning_rate": 0.08, "max_depth": 
+6},
+    "scoring": {"watch_threshold": 0.25},
+}
+
+
+class ConfigError(RuntimeError):
+    """Raised when the run configuration cannot be used as written."""
+
+
+def _merge(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
+    out = copy.deepcopy(base)
+    for key, value in (override or {}).items():
+        if isinstance(value, dict) and isinstance(out.get(key), dict):
+            out[key] = _merge(out[key], value)
+        else:
+            out[key] = value
+    return out
+
+
+def load(path: str) -> Dict[str, Any]:
+    raw = yaml.safe_load(Path(path).read_text()) or {}
+    cfg = _merge(DEFAULTS, raw)
+    for section in ("windows",):
+        if section not in cfg:
+            raise ConfigError("config is missing the %s section" % section)
+    return cfg
+
+
+def data_path(name: str, cfg: Dict[str, Any] | None = None) -> Path:
+    base = Path((cfg or DEFAULTS)["paths"]["data_dir"])
+    return base / name
+===== deviations.py =====
+"""How this aircraft, station and operator sit against the fleet as a whole."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+def add(df, portfolio):
+    out = df.copy()
+    base = float(portfolio["rate"])
+    out["f_tail_vs_portfolio"] = (out["f_tail_grounding_rate"] - 
+base).astype("float64")
+    out["f_origin_vs_portfolio"] = (out["f_origin_grounding_rate"] - 
+base).astype("float64")
+    out["f_operator_vs_portfolio"] = (out["f_operator_rate"] - 
+base).astype("float64")
+    return out
+===== fleet_profile.py =====
+"""What the register says about the aircraft flying this leg."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+def add(df, fleet):
+    reg = fleet.set_index("tail_number")
+    operators = sorted(fleet["operator"].dropna().unique())
+    codes = {name: float(i) for i, name in enumerate(operators)}
+    sizes = fleet.groupby("operator")["tail_number"].nunique()
+
+    out = df.copy()
+    home = out["tail_number"].map(reg["home_station"])
+    carrier = out["tail_number"].map(reg["operator"]).fillna(out["operator"])
+    out["f_operator"] = carrier.map(codes).fillna(-1.0).astype("float64")
+    out["f_from_home"] = (out["origin"] == home).astype("float64")
+    out["f_fleet_size"] = carrier.map(sizes).fillna(0.0).astype("float64")
+    return out
+===== io_layer.py =====
+"""Reads the nightly operations export."""
+from __future__ import annotations
+
+import pandas as pd
+
+try:
+    from .config import data_path
+except ImportError:
+    from config import data_path
+
+
+def read_flights(cfg):
+    df = pd.read_csv(data_path("flights.csv.gz", cfg), 
+parse_dates=["departed_at"])
+    return df.sort_values("flight_id", kind="stable").reset_index(drop=True)
+
+
+def read_groundings(cfg):
+    df = pd.read_csv(data_path("groundings.csv.gz", cfg), 
+parse_dates=["occurred_at"])
+    return df.sort_values(["occurred_at", "tail_number"], 
+kind="stable").reset_index(drop=True)
+
+
+def read_fleet(cfg):
+    return pd.read_csv(data_path("fleet.csv", cfg))
+
+
+def read_stations(cfg):
+    return pd.read_csv(data_path("stations.csv", cfg))
+===== model.py =====
+"""Estimator."""
+from __future__ import annotations
+
+from typing import Any, Tuple
+
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import HistGradientBoostingClassifier
+
+
+class RiskModel(object):
+
+    def __init__(self, seed, max_iter, l
+<output_tail>
+ and by station.
+
+A rate over thin history says more about the thinness than about the risk, so 
+each one
+is pulled toward the portfolio rate in proportion to how little stands behind 
+it.
+"""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+CATCH_ALL = "__unseen__"
+
+
+def rate_table(fit_df, key, smoothing, prior):
+    raise NotImplementedError
+
+
+def route_key(df):
+    raise NotImplementedError
+
+
+def add(df, operator_rates, route_rates, station_rates):
+    raise NotImplementedError
+===== report.py =====
+"""Run summary written beside the scores."""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+
+def summarise(scores, cfg):
+    return {
+        "fit_window": dict(cfg["windows"]["fit"]),
+        "score_window": dict(cfg["windows"]["score"]),
+        "rows_scored": int(len(scores)),
+        "watch_rate": round(float(scores["watch"].mean()), 6),
+        "mean_score": round(float(scores["risk_score"].mean()), 6),
+    }
+
+
+def write(path, payload):
+    Path(path).write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+===== route_feats.py =====
+"""What the flight itself looks like on paper and how it actually ran."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+def add(df):
+    out = df.copy()
+    block = pd.to_numeric(out["block_minutes"], errors="coerce")
+    distance = pd.to_numeric(out["distance_miles"], errors="coerce")
+    out["f_distance"] = distance.astype("float64")
+    out["f_block_minutes"] = block.astype("float64")
+    out["f_taxi_out"] = pd.to_numeric(out["taxi_out_minutes"], 
+errors="coerce").astype("float64")
+    out["f_departure_delay"] = pd.to_numeric(out["departure_delay"], 
+errors="coerce").astype("float64")
+    out["f_arrival_delay"] = pd.to_numeric(out["arrival_delay"], 
+errors="coerce").astype("float64")
+    out["f_diverted"] = out["diverted"].astype("float64")
+    out["f_block_speed"] = np.where(block > 0, distance / (block / 60.0), 
+0.0).astype("float64")
+    return out
+===== schema.py =====
+"""Column names and the published feature order."""
+from __future__ import annotations
+
+from typing import List
+
+FLIGHT_ID = "flight_id"
+TAIL = "tail_number"
+DEPARTED = "departed_at"
+LABEL = "label"
+
+FEATURES: List[str] = [
+    "f_hour", "f_dow", "f_month", "f_week", "f_is_weekend", 
+"f_days_into_period",
+    "f_distance", "f_block_minutes", "f_taxi_out", "f_departure_delay",
+    "f_arrival_delay", "f_diverted", "f_block_speed",
+    "f_operator", "f_from_home", "f_fleet_size",
+    "f_origin_state", "f_dest_state", "f_same_state",
+    "f_tail_prior_flights", "f_tail_prior_groundings", "f_tail_grounding_rate",
+    "f_tail_days_since_grounding", "f_tail_tenure_days", 
+"f_tail_mean_dep_delay",
+    "f_origin_prior_flights", "f_origin_grounding_rate",
+    "f_dest_prior_flights", "f_dest_grounding_rate",
+    "f_operator_rate", "f_route_rate", "f_station_rate",
+    "f_recent_grounding_rate", "f_days_since_prev_flight", "f_recent_dep_delay",
+    "f_tail_vs_portfolio", "f_origin_vs_portfolio", "f_operator_vs_portfolio",
+]
+
+
+def drop_label(df):
+    return df.drop(columns=[LABEL], errors="ignore")
+===== station_history.py =====
+"""What the fit window knows about the airports at each end."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+def add(df, fit_flights, groundings, fleet, fit_end, portfolio):
+    raise NotImplementedError
+===== station_profile.py =====
+"""Where the leg starts and ends."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+def add(df, stations):
+    ref = stations.set_index("code")
+    states = sorted(stations["state"].dropna().unique())
+    codes = {name: float(i) for i, name in enumerate(states)}
+    out = df.copy()
+    origin_state = out["origin"].map(ref["state"])
+    dest_state = out["destination"].map(ref["state"])
+    out["f_origin_state"] = 
+origin_state.map(codes).fillna(-1.0).astype("float64")
+    out["f_dest_state"] = dest_state.map(codes).fillna(-1.0).astype("float64")
+    out["f_same_state"] = (origin_state == dest_state).astype("float64")
+    return out
+===== tail_history.py =====
+"""What the fit window knows about the aircraft."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+def history(fit_flights, groundings, fit_end):
+    raise NotImplementedError
+
+
+def add(df, hist, portfolio):
+    raise NotImplementedError
+===== validate.py =====
+"""Sanity checks run before the scores are published."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+def check(scores):
+    if scores.empty:
+        raise ValueError("no rows were scored")
+    if scores["flight_id"].duplicated().any():
+        raise ValueError("scored output repeats flight_id")
+    risk = scores["risk_score"]
+    if not np.isfinite(risk).all():
+        raise ValueError("risk_score carries values that are not finite")
+    if (risk < 0.0).any() or (risk > 1.0).any():
+        raise ValueError("risk_score must lie between 0 and 1")
+
+<elided_chars>
+6080
+<warning>
+Output too long.
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 5, $0.23):
+```
+cd /workspace/target/src/fleetrisk && grep -l "NotImplementedError" *.py
+```
+
+```
+cd /workspace/target/src/fleetrisk && cat model.py observation.py pipeline.py 
+portfolio.py recent.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+observation.py
+recent.py
+reliability.py
+station_history.py
+tail_history.py
+
+
+Tool:
+<returncode>
+0
+<output>
+"""Estimator."""
+from __future__ import annotations
+
+from typing import Any, Tuple
+
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import HistGradientBoostingClassifier
+
+
+class RiskModel(object):
+
+    def __init__(self, seed, max_iter, learning_rate, max_depth):
+        self.seed = int(seed)
+        self.max_iter = int(max_iter)
+        self.learning_rate = float(learning_rate)
+        self.max_depth = int(max_depth)
+        self.clf_ = None
+
+    def fit(self, X, y):
+        """Values that are not finite are carried as zero."""
+        self.clf_ = HistGradientBoostingClassifier(
+            max_iter=self.max_iter, learning_rate=self.learning_rate,
+            max_depth=self.max_depth, random_state=self.seed,
+            early_stopping=False)
+        self.clf_.fit(np.nan_to_num(X, nan=0.0, posinf=0.0, neginf=0.0), y)
+        return self
+
+    def score(self, X):
+        return self.clf_.predict_proba(
+            np.nan_to_num(X, nan=0.0, posinf=0.0, neginf=0.0))[:, 1]
+"""Labelling, and the subset of the export the desk fits on."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+def attach_label(flights, groundings, window_days):
+    raise NotImplementedError
+
+
+def observed(df, fit_spec, export_end, window_days):
+    raise NotImplementedError
+"""Fits on the fit window and scores the window the run config names."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+from . import (assemble, calendar_feats, deviations, fleet_profile, io_layer,
+               model, observation, portfolio, recent, reliability, route_feats,
+               station_history, station_profile, tail_history)
+
+
+def _window(df, spec):
+    lo = pd.Timestamp(spec["from"])
+    hi = pd.Timestamp(spec["to"]) + pd.Timedelta(days=1) - 
+pd.Timedelta(seconds=1)
+    return df[(df["departed_at"] >= lo) & (df["departed_at"] <= hi)]
+
+
+def build(cfg):
+    flights = io_layer.read_flights(cfg)
+    groundings = io_layer.read_groundings(cfg)
+    fleet = io_layer.read_fleet(cfg)
+    stations = io_layer.read_stations(cfg)
+
+    window_days = cfg["labelling"]["window_days"]
+    export_end = flights["departed_at"].max()
+    period_start = flights["departed_at"].min()
+
+    labelled = observation.attach_label(flights, groundings, window_days)
+    labelled = labelled.sort_values("flight_id", 
+kind="stable").reset_index(drop=True)
+
+    fit_raw = _window(labelled, cfg["windows"]["fit"])
+    fit_raw = fit_raw[observation.observed(fit_raw, cfg["windows"]["fit"],
+                                          export_end, window_days)]
+    fit_raw = fit_raw.reset_index(drop=True)
+    score_raw = _window(labelled, 
+cfg["windows"]["score"]).reset_index(drop=True)
+
+    fit_end = fit_raw["departed_at"].max()
+    levels = portfolio.levels(fit_raw, groundings, fit_end)
+    hist = tail_history.history(fit_raw, groundings, fit_end)
+
+    def prepare(frame):
+        out = calendar_feats.add(frame, period_start)
+        out = route_feats.add(out)
+        out = fleet_profile.add(out, fleet)
+        out = station_profile.add(out, stations)
+        out = tail_history.add(out, hist, levels)
+        out = station_history.add(out, fit_raw, groundings, fleet, fit_end, 
+levels)
+        out = recent.add(out, fit_raw, groundings, fit_end, levels)
+        return out
+
+    fit_df = prepare(fit_raw)
+    score_df = prepare(score_raw)
+
+    smoothing = cfg["encoding"]["smoothing"]
+    base = levels["rate"]
+    operator_rates = reliability.rate_table(fit_df, "operator", smoothing, base)
+    fit_df = fit_df.assign(_route=reliability.route_key(fit_df))
+    score_df = score_df.assign(_route=reliability.route_key(score_df))
+    route_rates = reliability.rate_table(fit_df, "_route", smoothing, base)
+    station_rates = reliability.rate_table(fit_df, "origin", smoothing, base)
+
+    fit_df = reliability.add(fit_df, operator_rates, route_rates, station_rates)
+    score_df = reliability.add(score_df, operator_rates, route_rates, 
+station_rates)
+    fit_df = deviations.add(fit_df, levels)
+    score_df = deviations.add(score_df, levels)
+    return fit_df.drop(columns=["_route"]), score_df.drop(columns=["_route"])
+
+
+def run(cfg):
+    fit_df, score_df = build(cfg)
+
+    mdl = model.RiskModel(cfg["model"]["seed"], cfg["model"]["max_iter"],
+                          cfg["model"]["learning_rate"], 
+cfg["model"]["max_depth"])
+    mdl.fit(assemble.matrix(fit_df), fit_df["label"].astype("int64").to_numpy())
+
+    risk = mdl.score(assemble.matrix(score_df))
+    threshold = float(cfg["scoring"]["watch_threshold"])
+    out = pd.DataFrame({
+        "flight_id": score_df["flight_id"].astype(str).to_numpy(),
+        "tail_number": score_df["tail_number"].astype(str).to_numpy(),
+        "departed_at": score_df["departed_at"].to_numpy(),
+        "risk_score": np.round(risk, 6),
+        "watch": (risk >= threshold).astype("int64"),
+    })
+    return out, fit_df, score_df
+"""Fleet-wide levels, used wherever a row has no history of its own."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+def levels(fit_flights, groundings, fit_end):
+    """One fallback number per quantity, taken over the whole fit window."""
+    seen = groundings[groundings["occurred_at"] <= pd.Timestamp(fit_end)]
+    per_tail = fit_flights.groupby("tail_number").agg(
+        flights=("flight_id", "size"), first_seen=("departed_at", "min"),
+        last_seen=("departed_at", "max"))
+    tenure = (pd.Timestamp(fit_end) - per_tail["first_seen"]).dt.total_seconds()
+/ 86400.0
+    gap = (pd.Timestamp(fit_end) - per_tail["last_seen"]).dt.total_seconds() / 
+86400.0
+    return {
+        "rate": float(len(seen)) / max(float(len(fit_flights)), 1.0),
+        "tenure": float(tenure.mean()),
+        "gap": float(gap.mean()),
+        "dep_delay": float(pd.to_numeric(fit_flights["departure_delay"],
+                                         errors="coerce").mean()),
+    }
+"""How the aircraft has been behaving lately, rather than over the whole 
+window."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+RECENT_FLIGHTS = 20
+
+
+def add(df, fit_flights, groundings, fit_end, portfolio):
+    raise NotImplementedError
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 6, $0.32):
+The five stripped modules are `observation.py`, `recent.py`, `reliability.py`, 
+`station_history.py`, and `tail_history.py`. Let me examine the data and 
+reference output.
+
+```
+cd /workspace/target && zcat data/flights.csv.gz | head -5 && echo "---" && zcat
+data/flights.csv.gz | wc -l && echo "---" && zcat data/groundings.csv.gz | head 
+-5 && zcat data/groundings.csv.gz | wc -l && echo "---" && head -5 
+data/fleet.csv && wc -l data/fleet.csv && echo "---" && head -5 
+data/stations.csv && wc -l data/stations.csv
+```
+
+```
+cd /workspace/target && head -5 reference/scores_reference.csv && wc -l 
+reference/scores_reference.csv && cat reference/run_report.json && cat 
+tools/compare_scores.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+flight_id,tail_number,operator,origin,destination,departed_at,block_minutes,dist
+ance_miles,taxi_out_minutes,departure_delay,arrival_delay,diverted
+F00000001,N341SV,AA,DEN,MIA,2024-01-01 00:28:00,228.0,1709.0,14.0,-12.0,-35.0,0
+F00000002,N727TW,DL,SLC,ATL,2024-01-01 00:29:00,230.0,1590.0,18.0,-7.0,-33.0,0
+F00000003,N978UY,AA,SFO,CLT,2024-01-01 00:37:00,293.0,2296.0,14.0,-5.0,-16.0,0
+F00000004,N433AN,AA,PHX,DCA,2024-01-01 00:51:00,249.0,1979.0,13.0,-4.0,-25.0,0
+---
+575330
+---
+tail_number,occurred_at,reason_code
+N8329B,2024-01-01 05:35:00,A
+N8301J,2024-01-01 06:30:00,A
+N175SY,2024-01-01 08:00:00,B
+N175SY,2024-01-01 09:00:00,B
+7247
+---
+tail_number,operator,home_station
+N101DQ,DL,ATL
+N101DU,DL,SLC
+N102DN,DL,ATL
+N102DU,DL,SLC
+1907 data/fleet.csv
+---
+code,city,state
+ABE,"Allentown/Bethlehem/Easton, PA",PA
+ABQ,"Albuquerque, NM",NM
+ABR,"Aberdeen, SD",SD
+ABY,"Albany, GA",GA
+276 data/stations.csv
+
+
+Tool:
+<returncode>
+0
+<output>
+flight_id,tail_number,departed_at,risk_score,watch
+F00213457,N991AU,2024-02-05 00:18:00,0.000211,0
+F00213458,N451AN,2024-02-05 00:24:00,0.000306,0
+F00213459,N526DE,2024-02-05 00:40:00,9.4e-05,0
+F00213460,N352PS,2024-02-05 00:43:00,4.9e-05,0
+24818 reference/scores_reference.csv
+{
+  "fit_window": {
+    "from": "2024-01-01",
+    "to": "2024-02-15"
+  },
+  "mean_score": 0.011374,
+  "rows_scored": 24817,
+  "score_window": {
+    "from": "2024-02-05",
+    "to": "2024-02-08"
+  },
+  "watch_rate": 0.027683
+}
+#!/usr/bin/env python3
+"""Diff two score files by flight_id.
+
+    python3 tools/compare_scores.py a/scores.csv b/scores.csv
+"""
+import argparse
+
+import pandas as pd
+
+TOLERANCE = 1e-6
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("left")
+    ap.add_argument("right")
+    args = ap.parse_args()
+    left = pd.read_csv(args.left)
+    right = pd.read_csv(args.right)
+    merged = left[["flight_id", "risk_score"]].merge(
+        right[["flight_id", "risk_score"]], on="flight_id", how="outer",
+        suffixes=("_left", "_right"))
+    diff = (merged["risk_score_left"] - merged["risk_score_right"]).abs()
+    same = (diff <= TOLERANCE).fillna(False)
+    print("rows %d, agree %d (%.6f), max abs diff %.6g"
+          % (len(merged), int(same.sum()), same.mean(), float(diff.max())))
+    worst = merged.assign(diff=diff).sort_values("diff", 
+ascending=False).head(10)
+    print(worst.to_string(index=False))
+
+
+if __name__ == "__main__":
+    main()
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 7, $0.62):
+Now let me examine the data extents and characteristics to understand what I'm 
+dealing with.
+
+```
+cd /workspace/target && python3 -c "
+import pandas as pd
+f = pd.read_csv('data/flights.csv.gz', parse_dates=['departed_at'])
+g = pd.read_csv('data/groundings.csv.gz', parse_dates=['occurred_at'])
+print('flights:', len(f), f['departed_at'].min(), f['departed_at'].max())
+print('groundings:', len(g), g['occurred_at'].min(), g['occurred_at'].max())
+print('tails flights:', f['tail_number'].nunique(), 'tails ground:', 
+g['tail_number'].nunique())
+fl = pd.read_csv('data/fleet.csv'); st = pd.read_csv('data/stations.csv')
+print('fleet tails:', fl['tail_number'].nunique(), 'ops:', 
+fl['operator'].unique())
+print('flights ops:', f['operator'].unique())
+print('tails in flights not in fleet:', 
+len(set(f.tail_number)-set(fl.tail_number)))
+print('tails in ground not in fleet:', 
+len(set(g.tail_number)-set(fl.tail_number)))
+print('origins not in stations:', len(set(f.origin)-set(st.code)), 'dests not in
+stations:', len(set(f.destination)-set(st.code)))
+print(g['reason_code'].value_counts())
+print('dup groundings same tail/time:', 
+g.duplicated(['tail_number','occurred_at']).sum())
+"
+
+```
+
+Tool:
+<returncode>
+0
+<output>
+flights: 575329 2024-01-01 00:28:00 2024-03-31 23:59:00
+groundings: 7246 2024-01-01 05:35:00 2024-03-31 23:45:00
+tails flights: 1906 tails ground: 1327
+fleet tails: 1906 ops: ['DL' 'AA' 'OO' 'WN']
+flights ops: ['AA' 'DL' 'WN' 'OO']
+tails in flights not in fleet: 0
+tails in ground not in fleet: 0
+origins not in stations: 0 dests not in stations: 0
+reason_code
+B    6322
+A     591
+C     333
+Name: count, dtype: int64
+dup groundings same tail/time: 7
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 8, $1.28):
+```
+cd /workspace/target && python3 -c "
+import pandas as pd
+f = pd.read_csv('data/flights.csv.gz', parse_dates=['departed_at'])
+g = pd.read_csv('data/groundings.csv.gz', parse_dates=['occurred_at'])
+print('flight_id unique:', f['flight_id'].is_unique)
+# exact equality collisions: grounding at exactly a departure time of same tail
+m = f[['tail_number','departed_at']].merge(g[['tail_number','occurred_at']], 
+on='tail_number')
+print('groundings at exactly dep time:', 
+(m['departed_at']==m['occurred_at']).sum())
+import numpy as np
+for W in [3]:
+    d = m['occurred_at'] - m['departed_at']
+    print('exactly at dep+3d:', (d == pd.Timedelta(days=3)).sum())
+# how many fit-window flights depart on 2024-02-12 (affects observed boundary)
+fit = 
+f[(f['departed_at']>=pd.Timestamp('2024-01-01'))&(f['departed_at']<=pd.Timestamp
+('2024-02-15 23:59:59'))]
+print('fit rows:', len(fit))
+print('rows dep on 02-12:', 
+((fit['departed_at']>=pd.Timestamp('2024-02-12'))&(fit['departed_at']<pd.Timesta
+mp('2024-02-13'))).sum())
+# stations as origin vs dest in fit
+print('origins:', fit['origin'].nunique(), 'dests:', 
+fit['destination'].nunique(), 'sym diff:', 
+len(set(fit['origin'])^set(fit['destination'])))
+sc = 
+f[(f['departed_at']>=pd.Timestamp('2024-02-05'))&(f['departed_at']<=pd.Timestamp
+('2024-02-08 23:59:59'))]
+print('score rows ref window:', len(sc))
+cur = 
+f[(f['departed_at']>=pd.Timestamp('2024-03-25'))&(f['departed_at']<=pd.Timestamp
+('2024-03-31 23:59:59'))]
+print('score rows current window:', len(cur))
+print('cur tails unseen in fit:', 
+len(set(cur.tail_number)-set(fit.tail_number)))
+print('cur origins unseen in fit:', len(set(cur.origin)-set(fit.origin)))
+"
+
+```
+
+Tool:
+<returncode>
+0
+<output>
+flight_id unique: True
+groundings at exactly dep time: 60
+exactly at dep+3d: 286
+fit rows: 281152
+rows dep on 02-12: 6336
+origins: 273 dests: 272 sym diff: 1
+score rows ref window: 24817
+score rows current window: 47096
+cur tails unseen in fit: 24
+cur origins unseen in fit: 1
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 9, $1.84):
+```
+cd /workspace/target && cat <<'EOF' > src/fleetrisk/observation.py
+"""Labelling, and the subset of the export the desk fits on."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+def attach_label(flights, groundings, window_days):
+    horizon = pd.Timedelta(days=window_days)
+    left = flights[["flight_id", "tail_number", "departed_at"]].sort_values(
+        "departed_at", kind="stable")
+    right = groundings[["tail_number", "occurred_at"]].sort_values(
+        "occurred_at", kind="stable")
+    hit = pd.merge_asof(left, right, left_on="departed_at", 
+right_on="occurred_at",
+                        by="tail_number", direction="forward", 
+tolerance=horizon)
+    flagged = hit.set_index("flight_id")["occurred_at"].notna()
+    out = flights.copy()
+    out["label"] = out["flight_id"].map(flagged).astype("int64")
+    return out
+
+
+def observed(df, fit_spec, export_end, window_days):
+    fit_end = pd.Timestamp(fit_spec["to"]) + pd.Timedelta(days=1) - 
+pd.Timedelta(seconds=1)
+    cutoff = min(fit_end, pd.Timestamp(export_end))
+    return (df["departed_at"] + pd.Timedelta(days=window_days)) <= cutoff
+EOF
+cat <<'EOF' > src/fleetrisk/tail_history.py
+"""What the fit window knows about the aircraft."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+def history(fit_flights, groundings, fit_end):
+    fit_end = pd.Timestamp(fit_end)
+    seen = groundings[groundings["occurred_at"] <= fit_end]
+    hist = fit_flights.assign(
+        _delay=pd.to_numeric(fit_flights["departure_delay"], errors="coerce")
+    ).groupby("tail_number").agg(
+        flights=("flight_id", "size"),
+        first_seen=("departed_at", "min"),
+        dep_delay=("_delay", "mean"))
+    counts = seen.groupby("tail_number").agg(
+        groundings=("occurred_at", "size"),
+        last_grounding=("occurred_at", "max"))
+    hist = hist.join(counts, how="left")
+    hist["groundings"] = hist["groundings"].fillna(0.0)
+    hist["rate"] = hist["groundings"] / hist["flights"]
+    hist["days_since"] = np.where(
+        hist["last_grounding"].notna(),
+        (fit_end - hist["last_grounding"]).dt.total_seconds() / 86400.0,
+        -1.0)
+    hist["tenure"] = (fit_end - hist["first_seen"]).dt.total_seconds() / 86400.0
+    return hist
+
+
+def add(df, hist, portfolio):
+    out = df.copy()
+    tail = out["tail_number"]
+    out["f_tail_prior_flights"] = 
+tail.map(hist["flights"]).fillna(0.0).astype("float64")
+    out["f_tail_prior_groundings"] = 
+tail.map(hist["groundings"]).fillna(0.0).astype("float64")
+    out["f_tail_grounding_rate"] = 
+tail.map(hist["rate"]).fillna(portfolio["rate"]).astype("float64")
+    out["f_tail_days_since_grounding"] = 
+tail.map(hist["days_since"]).fillna(-1.0).astype("float64")
+    out["f_tail_tenure_days"] = 
+tail.map(hist["tenure"]).fillna(portfolio["tenure"]).astype("float64")
+    out["f_tail_mean_dep_delay"] = 
+tail.map(hist["dep_delay"]).fillna(portfolio["dep_delay"]).astype("float64")
+    return out
+EOF
+cat <<'EOF' > src/fleetrisk/station_history.py
+"""What the fit window knows about the airports at each end."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+def add(df, fit_flights, groundings, fleet, fit_end, portfolio):
+    fit_end = pd.Timestamp(fit_end)
+    seen = groundings[groundings["occurred_at"] <= fit_end]
+    home = fleet.set_index("tail_number")["home_station"]
+    flights_from = fit_flights.groupby("origin").size()
+    grounded_based = seen["tail_number"].map(home).value_counts()
+    rate = grounded_based.reindex(flights_from.index, fill_value=0) / 
+flights_from
+
+    out = df.copy()
+    out["f_origin_prior_flights"] = 
+out["origin"].map(flights_from).fillna(0.0).astype("float64")
+    out["f_origin_grounding_rate"] = 
+out["origin"].map(rate).fillna(portfolio["rate"]).astype("float64")
+    out["f_dest_prior_flights"] = 
+out["destination"].map(flights_from).fillna(0.0).astype("float64")
+    out["f_dest_grounding_rate"] = 
+out["destination"].map(rate).fillna(portfolio["rate"]).astype("float64")
+    return out
+EOF
+cat <<'EOF' > src/fleetrisk/recent.py
+"""How the aircraft has been behaving lately, rather than over the whole 
+window."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+RECENT_FLIGHTS = 20
+
+
+def add(df, fit_flights, groundings, fit_end, portfolio):
+    fit_end = pd.Timestamp(fit_end)
+    fortnight = fit_end - pd.Timedelta(days=14)
+
+    last_dep = fit_flights.groupby("tail_number")["departed_at"].max()
+    gap = (fit_end - last_dep).dt.total_seconds() / 86400.0
+
+    seen = groundings[groundings["occurred_at"] <= fit_end]
+    recent_flights = fit_flights[fit_flights["departed_at"] > fortnight]
+    recent_ground = seen[seen["occurred_at"] > fortnight]
+    f14 = recent_flights["tail_number"].value_counts().reindex(last_dep.index, 
+fill_value=0)
+    g14 = recent_ground["tail_number"].value_counts().reindex(last_dep.index, 
+fill_value=0)
+    rate = pd.Series(
+        np.where(f14.to_numpy() > 0,
+                 g14.to_numpy() / np.maximum(f14.to_numpy(), 1), 0.0),
+        index=last_dep.index)
+
+    ordered = fit_flights.assign(
+        _delay=pd.to_numeric(fit_flights["departure_delay"], errors="coerce")
+    ).sort_values("departed_at", kind="stable")
+    recent_delay = ordered.groupby("tail_number").tail(RECENT_FLIGHTS) \
+        .groupby("tail_number")["_delay"].mean()
+
+    out = df.copy()
+    tail = out["tail_number"]
+    out["f_recent_grounding_rate"] = 
+tail.map(rate).fillna(portfolio["rate"]).astype("float64")
+    out["f_days_since_prev_flight"] = 
+tail.map(gap).fillna(portfolio["gap"]).astype("float64")
+    out["f_recent_dep_delay"] = 
+tail.map(recent_delay).fillna(portfolio["dep_delay"]).astype("float64")
+    return out
+EOF
+cat <<'EOF' > src/fleetrisk/reliability.py
+"""How often flights like this one turned out to be at risk: by operator, by 
+route
+and by station.
+
+A rate over thin history says more about the thinness than about the risk, so 
+each one
+is pulled toward the portfolio rate in proportion to how little stands behind 
+it.
+"""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+CATCH_ALL = "__unseen__"
+
+
+def rate_table(fit_df, key, smoothing, prior):
+    smoothing = float(smoothing)
+    prior = float(prior)
+    grouped = fit_df.groupby(key)["label"].agg(["sum", "size"])
+    table = (grouped["sum"] + smoothing * prior) / (grouped["size"] + smoothing)
+    table.loc[CATCH_ALL] = prior
+    return table
+
+
+def route_key(df):
+    return df["origin"].astype(str) + ">" + df["destination"].astype(str)
+
+
+def add(df, operator_rates, route_rates, station_rates):
+    out = df.copy()
+    out["f_operator_rate"] = out["operator"].map(operator_rates) \
+        .fillna(operator_rates[CATCH_ALL]).astype("float64")
+    out["f_route_rate"] = out["_route"].map(route_rates) \
+        .fillna(route_rates[CATCH_ALL]).astype("float64")
+    out["f_station_rate"] = out["origin"].map(station_rates) \
+        .fillna(station_rates[CATCH_ALL]).astype("float64")
+    return out
+EOF
+echo done
+```
+
+Tool:
+<returncode>
+0
+<output>
+done
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 10, $1.98):
+Now let's run the reference config and compare against the published output.
+
+```
+cd /workspace/target && time python3 run_scoring.py --config 
+configs/reference.yaml --out out/reference 2>&1 | tail -3 && python3 
+tools/compare_scores.py out/reference/scores.csv reference/scores_reference.csv 
+&& diff <(python3 -c "import 
+json;print(json.dumps(json.load(open('out/reference/run_report.json')),sort_keys
+=True,indent=2))") <(python3 -c "import 
+json;print(json.dumps(json.load(open('reference/run_report.json')),sort_keys=Tru
+e,indent=2))") && echo REPORT_MATCH
+```
+
+Tool:
+<returncode>
+2
+<output>
+/bin/sh: 1: Syntax error: "(" unexpected
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 11, $2.04):
+```
+cd /workspace/target && time python3 run_scoring.py --config 
+configs/reference.yaml --out out/reference 2>&1 | tail -3
+```
+
+Tool:
+<returncode>
+0
+<output>
+/bin/sh: 1: time: not found
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 12, $2.09):
+```
+cd /workspace/target && python3 -c "
+import time; t=time.time()
+import subprocess
+r = 
+subprocess.run(['python3','run_scoring.py','--config','configs/reference.yaml','
+--out','out/reference'], capture_output=True, text=True)
+print(r.stdout[-500:], r.stderr[-1500:])
+print('elapsed %.1fs' % (time.time()-t))
+"
+```
+
+Tool:
+<returncode>
+0
+<output>
+scored 24817 rows, watching 678
+ 
+elapsed 15.8s
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 13, $2.14):
+```
+cd /workspace/target && python3 tools/compare_scores.py out/reference/scores.csv
+reference/scores_reference.csv && cat out/reference/run_report.json
+```
+
+Tool:
+<returncode>
+0
+<output>
+rows 24817, agree 283 (0.011403), max abs diff 0.190126
+flight_id  risk_score_left  risk_score_right     diff
+F00231144         0.447166          0.637292 0.190126
+F00227203         0.445496          0.265175 0.180321
+F00213655         0.297523          0.466408 0.168885
+F00221796         0.358885          0.201493 0.157392
+F00232464         0.406391          0.562866 0.156475
+F00214976         0.141611          0.292738 0.151127
+F00220946         0.384608          0.235714 0.148894
+F00237754         0.511140          0.368881 0.142259
+F00226861         0.321420          0.179681 0.141739
+F00214021         0.477538          0.615747 0.138209
+{
+  "fit_window": {
+    "from": "2024-01-01",
+    "to": "2024-02-15"
+  },
+  "mean_score": 0.011246,
+  "rows_scored": 24817,
+  "score_window": {
+    "from": "2024-02-05",
+    "to": "2024-02-08"
+  },
+  "watch_rate": 0.02732
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 14, $2.47):
+```
+cd /workspace/target && python3 -c "
+import pandas as pd
+f = pd.read_csv('data/flights.csv.gz', parse_dates=['departed_at'])
+f = f.sort_values('flight_id', kind='stable')
+print('id order == time order:', f['departed_at'].is_monotonic_increasing)
+print('dup (tail, departed_at):', 
+f.duplicated(['tail_number','departed_at']).sum())
+"
+```
+
+Tool:
+<returncode>
+0
+<output>
+id order == time order: True
+dup (tail, departed_at): 70
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 15, $2.75):
+Good — flight_id order is chronological. Now let me add temporary variant 
+switches to the modules and build the experiment runner.
+
+```
+cd /workspace/target && cat <<'EOF' > src/fleetrisk/observation.py
+"""Labelling, and the subset of the export the desk fits on."""
+from __future__ import annotations
+
+import os
+import numpy as np
+import pandas as pd
+
+
+def attach_label(flights, groundings, window_days):
+    variant = os.environ.get("FR_L", "L1")
+    horizon = pd.Timedelta(days=window_days)
+    if variant in ("L3", "L4"):
+        horizon = horizon - pd.Timedelta(seconds=1)
+    exact = variant in ("L1", "L3")
+    left = flights[["flight_id", "tail_number", "departed_at"]].sort_values(
+        "departed_at", kind="stable")
+    right = groundings[["tail_number", "occurred_at"]].sort_values(
+        "occurred_at", kind="stable")
+    hit = pd.merge_asof(left, right, left_on="departed_at", 
+right_on="occurred_at",
+                        by="tail_number", direction="forward", 
+tolerance=horizon,
+                        allow_exact_matches=exact)
+    flagged = hit.set_index("flight_id")["occurred_at"].notna()
+    out = flights.copy()
+    out["label"] = out["flight_id"].map(flagged).astype("int64")
+    return out
+
+
+def observed(df, fit_spec, export_end, window_days):
+    variant = os.environ.get("FR_O", "O1")
+    if variant == "O1":
+        fit_end = pd.Timestamp(fit_spec["to"]) + pd.Timedelta(days=1) - 
+pd.Timedelta(seconds=1)
+        cutoff = min(fit_end, pd.Timestamp(export_end))
+    elif variant == "O2":
+        cutoff = min(pd.Timestamp(fit_spec["to"]), pd.Timestamp(export_end))
+    elif variant == "O5":
+        cutoff = pd.Timestamp(export_end)
+    elif variant == "O6":
+        fit_end = pd.Timestamp(fit_spec["to"]) + pd.Timedelta(days=1)
+        cutoff = min(fit_end, pd.Timestamp(export_end))
+    return (df["departed_at"] + pd.Timedelta(days=window_days)) <= cutoff
+EOF
+cat <<'EOF' > src/fleetrisk/station_history.py
+"""What the fit window knows about the airports at each end."""
+from __future__ import annotations
+
+import os
+import numpy as np
+import pandas as pd
+
+
+def add(df, fit_flights, groundings, fleet, fit_end, portfolio):
+    variant = os.environ.get("FR_S", "S1")
+    fit_end = pd.Timestamp(fit_end)
+    seen = groundings[groundings["occurred_at"] <= fit_end]
+    home = fleet.set_index("tail_number")["home_station"]
+    flights_from = fit_flights.groupby("origin").size()
+    grounded_based = seen["tail_number"].map(home).value_counts()
+    if variant == "S1":
+        rate = grounded_based.reindex(flights_from.index, fill_value=0) / 
+flights_from
+    else:  # S2: per flight flown by aircraft based there
+        based_flights = fit_flights["tail_number"].map(home).value_counts()
+        rate = grounded_based.reindex(based_flights.index, fill_value=0) / 
+based_flights
+
+    out = df.copy()
+    out["f_origin_prior_flights"] = 
+out["origin"].map(flights_from).fillna(0.0).astype("float64")
+    out["f_origin_grounding_rate"] = 
+out["origin"].map(rate).fillna(portfolio["rate"]).astype("float64")
+    if os.environ.get("FR_D", "D1") == "D1":
+        dest_counts = flights_from
+        dest_rate = rate
+    else:  # D2: flights into the destination
+        dest_counts = fit_flights.groupby("destination").size()
+        dest_rate = grounded_based.reindex(dest_counts.index, fill_value=0) / 
+dest_counts
+    out["f_dest_prior_flights"] = 
+out["destination"].map(dest_counts).fillna(0.0).astype("float64")
+    out["f_dest_grounding_rate"] = 
+out["destination"].map(dest_rate).fillna(portfolio["rate"]).astype("float64")
+    return out
+EOF
+cat <<'EOF' > src/fleetrisk/recent.py
+"""How the aircraft has been behaving lately, rather than over the whole 
+window."""
+from __future__ import annotations
+
+import os
+import numpy as np
+import pandas as pd
+
+RECENT_FLIGHTS = 20
+
+
+def add(df, fit_flights, groundings, fit_end, portfolio):
+    fit_end = pd.Timestamp(fit_end)
+    fortnight = fit_end - pd.Timedelta(days=14)
+
+    last_dep = fit_flights.groupby("tail_number")["departed_at"].max()
+    gap = (fit_end - last_dep).dt.total_seconds() / 86400.0
+
+    seen = groundings[groundings["occurred_at"] <= fit_end]
+    recent_flights = fit_flights[fit_flights["departed_at"] > fortnight]
+    recent_ground = seen[seen["occurred_at"] > fortnight]
+    f14 = recent_flights["tail_number"].value_counts().reindex(last_dep.index, 
+fill_value=0)
+    g14 = recent_ground["tail_number"].value_counts().reindex(last_dep.index, 
+fill_value=0)
+    if os.environ.get("FR_R", "R1") == "R1":
+        rate = pd.Series(
+            np.where(f14.to_numpy() > 0,
+                     g14.to_numpy() / np.maximum(f14.to_numpy(), 1), 0.0),
+            index=last_dep.index)
+    else:  # R2: no recent flying -> fleet level
+        rate = pd.Series(
+            np.where(f14.to_numpy() > 0,
+                     g14.to_numpy() / np.maximum(f14.to_numpy(), 1), np.nan),
+            index=last_dep.index)
+
+    ordered = fit_flights.assign(
+        _delay=pd.to_numeric(fit_flights["departure_delay"], errors="coerce")
+    ).sort_values("departed_at", kind="stable")
+    recent_delay = ordered.groupby("tail_number").tail(RECENT_FLIGHTS) \
+        .groupby("tail_number")["_delay"].mean()
+
+    out = df.copy()
+    tail = out["tail_number"]
+    out["f_recent_grounding_rate"] = 
+tail.map(rate).fillna(portfolio["rate"]).astype("float64")
+    if os.environ.get("FR_P", "P1") == "P1":
+        out["f_days_since_prev_flight"] = 
+tail.map(gap).fillna(portfolio["gap"]).astype("float64")
+    else:  # P2: gap to this leg's previous flight in the fit window
+        left = out[["flight_id", "tail_number", "departed_at"]].sort_values(
+            "departed_at", kind="stable")
+        right = fit_flights[["tail_number", "departed_at"]].sort_values(
+            "departed_at", kind="stable").rename(columns={"departed_at": 
+"prev_dep"})
+        prev = pd.merge_asof(left, right, left_on="departed_at", 
+right_on="prev_dep",
+                             by="tail_number", direction="backward",
+                             allow_exact_matches=False)
+        prev_days = ((prev["departed_at"] - prev["prev_dep"]).dt.total_seconds()
+                     / 86400.0)
+        prev = prev.assign(days=prev_days).set_index("flight_id")["days"]
+        out["f_days_since_prev_flight"] = out["flight_id"].map(prev) \
+            .fillna(portfolio["gap"]).astype("float64")
+    out["f_recent_dep_delay"] = 
+tail.map(recent_delay).fillna(portfolio["dep_delay"]).astype("float64")
+    return out
+EOF
+cat <<'EOF' > exp.py
+import os, sys, time
+sys.path.insert(0, 'src')
+import pandas as pd, numpy as np
+from fleetrisk import config, pipeline
+
+cfg = config.load('configs/reference.yaml')
+scores, fit_df, score_df = pipeline.run(cfg)
+ref = pd.read_csv('reference/scores_reference.csv')
+m = scores[['flight_id','risk_score']].merge(ref[['flight_id','risk_score']],
+                                             on='flight_id')
+d = (m.risk_score_x - m.risk_score_y).abs()
+tag = os.environ.get('FRV', 'base')
+print('%s agree %.5f max %.4g mean %.6f watch %d fit_rows %d fit_pos %d' % (
+    tag, (d <= 1e-6).mean(), d.max(), scores.risk_score.mean(),
+    scores.watch.sum(), len(fit_df), fit_df.label.sum()))
+EOF
+echo ok
+```
+
+Tool:
+<returncode>
+0
+<output>
+ok
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 16, $2.86):
+Now run the baseline and single-change variants in parallel:
+
+```
+nproc; free -g | head -2
+```
+
+```
+cd /workspace/target && mkdir -p exp_out && (
+FRV=base python3 exp.py > exp_out/base.txt 2>&1 &
+FRV=L2 FR_L=L2 python3 exp.py > exp_out/L2.txt 2>&1 &
+FRV=L3 FR_L=L3 python3 exp.py > exp_out/L3.txt 2>&1 &
+FRV=L4 FR_L=L4 python3 exp.py > exp_out/L4.txt 2>&1 &
+wait
+) && cat exp_out/*.txt
+```
+
+Tool:
+<returncode>
+0
+<output>
+2
+/bin/sh: 1: free: not found
+
+
+Tool:
+<returncode>
+-1
+<output>
+
+<exception_info>
+An error occurred while executing the command: Command 'cd /workspace/target && 
+mkdir -p exp_out && (
+FRV=base python3 exp.py > exp_out/base.txt 2>&1 &
+FRV=L2 FR_L=L2 python3 exp.py > exp_out/L2.txt 2>&1 &
+FRV=L3 FR_L=L3 python3 exp.py > exp_out/L3.txt 2>&1 &
+FRV=L4 FR_L=L4 python3 exp.py > exp_out/L4.txt 2>&1 &
+wait
+) && cat exp_out/*.txt' timed out after 30 seconds
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 17, $2.96):
+Only 2 cores and a 30s command timeout. I'll launch experiments in the 
+background with nohup and poll for results.
+
+```
+cd /workspace/target && cat <<'EOF' > runq.sh
+#!/bin/bash
+cd /workspace/target
+run() { FRV=$1 env $2 python3 exp.py > exp_out/$1.txt 2>&1; }
+run base ""
+run L2 "FR_L=L2"
+run L3 "FR_L=L3"
+run L4 "FR_L=L4"
+run O2 "FR_O=O2"
+run O5 "FR_O=O5"
+run O6 "FR_O=O6"
+run S2 "FR_S=S2"
+run D2 "FR_D=D2"
+run R2 "FR_R=R2"
+run P2 "FR_P=P2"
+echo ALLDONE > exp_out/DONE.txt
+EOF
+chmod +x runq.sh && rm -f exp_out/*.txt && nohup ./runq.sh > exp_out/runq.log 
+2>&1 & echo launched
+```
+
+Tool:
+<returncode>
+0
+<output>
+launched
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 18, $3.02):
+```
+sleep 25 && cd /workspace/target && ls exp_out/ && cat exp_out/*.txt 2>/dev/null
+```
+
+Tool:
+<returncode>
+0
+<output>
+L2.txt
+base.txt
+runq.log
+base agree 0.01140 max 0.1901 mean 0.011246 watch 678 fit_rows 262881 fit_pos 
+30363
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 19, $3.10):
+Runs take ~13s each; 11 runs queued. Let me wait and poll.
+
+```
+sleep 100 && cd /workspace/target && cat exp_out/*.txt 2>/dev/null
+```
+
+Tool:
+<returncode>
+-1
+<output>
+
+<exception_info>
+An error occurred while executing the command: Command 'sleep 100 && cd 
+/workspace/target && cat exp_out/*.txt 2>/dev/null' timed out after 30 seconds
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 20, $3.16):
+```
+sleep 28; cd /workspace/target && cat exp_out/*.txt 2>/dev/null
+```
+
+Tool:
+<returncode>
+0
+<output>
+L2 agree 0.00665 max 0.2517 mean 0.011347 watch 715 fit_rows 262881 fit_pos 
+30345
+L3 agree 0.00572 max 0.2186 mean 0.011758 watch 710 fit_rows 262881 fit_pos 
+30288
+L4 agree 0.00536 max 0.2852 mean 0.011734 watch 694 fit_rows 262881 fit_pos 
+30270
+O2 agree 0.01890 max 0.3364 mean 0.011087 watch 591 fit_rows 256545 fit_pos 
+30036
+O5 agree 0.01019 max 0.4507 mean 0.011922 watch 1214 fit_rows 281152 fit_pos 
+30728
+base agree 0.01140 max 0.1901 mean 0.011246 watch 678 fit_rows 262881 fit_pos 
+30363
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 21, $3.24):
+```
+sleep 28; cd /workspace/target && cat exp_out/*.txt 2>/dev/null | sort
+```
+
+Tool:
+<returncode>
+0
+<output>
+L2 agree 0.00665 max 0.2517 mean 0.011347 watch 715 fit_rows 262881 fit_pos 
+30345
+L3 agree 0.00572 max 0.2186 mean 0.011758 watch 710 fit_rows 262881 fit_pos 
+30288
+L4 agree 0.00536 max 0.2852 mean 0.011734 watch 694 fit_rows 262881 fit_pos 
+30270
+O2 agree 0.01890 max 0.3364 mean 0.011087 watch 591 fit_rows 256545 fit_pos 
+30036
+O5 agree 0.01019 max 0.4507 mean 0.011922 watch 1214 fit_rows 281152 fit_pos 
+30728
+O6 agree 0.01140 max 0.1901 mean 0.011246 watch 678 fit_rows 262881 fit_pos 
+30363
+S2 agree 0.00612 max 0.1948 mean 0.011298 watch 688 fit_rows 262881 fit_pos 
+30363
+base agree 0.01140 max 0.1901 mean 0.011246 watch 678 fit_rows 262881 fit_pos 
+30363
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 22, $3.31):
+```
+sleep 28; cd /workspace/target && cat exp_out/*.txt 2>/dev/null | sort; ls 
+exp_out/DONE.txt 2>/dev/null
+```
+
+Tool:
+<returncode>
+2
+<output>
+D2 agree 0.00326 max 0.2147 mean 0.011604 watch 683 fit_rows 262881 fit_pos 
+30363
+L2 agree 0.00665 max 0.2517 mean 0.011347 watch 715 fit_rows 262881 fit_pos 
+30345
+L3 agree 0.00572 max 0.2186 mean 0.011758 watch 710 fit_rows 262881 fit_pos 
+30288
+L4 agree 0.00536 max 0.2852 mean 0.011734 watch 694 fit_rows 262881 fit_pos 
+30270
+O2 agree 0.01890 max 0.3364 mean 0.011087 watch 591 fit_rows 256545 fit_pos 
+30036
+O5 agree 0.01019 max 0.4507 mean 0.011922 watch 1214 fit_rows 281152 fit_pos 
+30728
+O6 agree 0.01140 max 0.1901 mean 0.011246 watch 678 fit_rows 262881 fit_pos 
+30363
+R2 agree 0.00669 max 0.1712 mean 0.011413 watch 689 fit_rows 262881 fit_pos 
+30363
+S2 agree 0.00612 max 0.1948 mean 0.011298 watch 688 fit_rows 262881 fit_pos 
+30363
+base agree 0.01140 max 0.1901 mean 0.011246 watch 678 fit_rows 262881 fit_pos 
+30363
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 23, $3.65):
+```
+sleep 15; cd /workspace/target && cat exp_out/P2.txt 2>/dev/null; ls 
+exp_out/DONE.txt 2>/dev/null
+```
+
+Tool:
+<returncode>
+0
+<output>
+P2 agree 0.00226 max 0.2267 mean 0.011377 watch 702 fit_rows 262881 fit_pos 
+30363
+exp_out/DONE.txt
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 24, $3.83):
+P2 gives mean 0.011377 (target 0.011374) but lower agreement. Signals are mixed 
+— multiple dimensions interact. Let me add the censoring-aware O7 variant and 
+queue pairwise combos.
+
+```
+cd /workspace/target && python3 - <<'EOF'
+import re
+src = open('src/fleetrisk/observation.py').read()
+src = src.replace('''    return (df["departed_at"] + 
+pd.Timedelta(days=window_days)) <= cutoff''',
+'''    settled = (df["departed_at"] + pd.Timedelta(days=window_days)) <= cutoff
+    if os.environ.get("FR_O7") == "1":
+        settled = settled | (df["label"] == 1)
+    return settled''')
+open('src/fleetrisk/observation.py','w').write(src)
+EOF
+cat <<'EOF' > runq.sh
+#!/bin/bash
+cd /workspace/target
+run() { FRV=$1 env $2 python3 exp.py > exp_out/$1.txt 2>&1; }
+run O7 "FR_O7=1"
+run S2R2 "FR_S=S2 FR_R=R2"
+run S2P2 "FR_S=S2 FR_P=P2"
+run R2P2 "FR_R=R2 FR_P=P2"
+run S2R2P2 "FR_S=S2 FR_R=R2 FR_P=P2"
+run L2R2 "FR_L=L2 FR_R=R2"
+run L2S2 "FR_L=L2 FR_S=S2"
+echo ALLDONE > exp_out/DONE2.txt
+EOF
+chmod +x runq.sh && rm -f exp_out/DONE.txt && nohup ./runq.sh > exp_out/runq.log
+2>&1 & echo launched
+```
+
+Tool:
+<returncode>
+0
+<output>
+launched
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 25, $3.96):
+While that runs, let me build a diagnostic that correlates the per-row 
+disagreement pattern with candidate feature discrepancies.
+
+```
+cd /workspace/target && cat <<'EOF' > diag.py
+import sys
+sys.path.insert(0, 'src')
+import pandas as pd, numpy as np
+from fleetrisk import config, pipeline
+
+cfg = config.load('configs/reference.yaml')
+fit_df, score_df = pipeline.build(cfg)
+mine = pd.read_csv('out/reference/scores.csv')
+ref = pd.read_csv('reference/scores_reference.csv')
+m = mine[['flight_id','risk_score']].merge(ref[['flight_id','risk_score']], 
+on='flight_id',
+                                           suffixes=('_mine','_ref'))
+sc = score_df.merge(m, on='flight_id')
+sc['sdiff'] = sc['risk_score_mine'] - sc['risk_score_ref']
+sc['adiff'] = sc['sdiff'].abs()
+print('overall mean signed diff %.6f, mean |diff| %.6f' % (sc.sdiff.mean(), 
+sc.adiff.mean()))
+# structure by candidate dimensions
+for key in ['operator']:
+    print(sc.groupby(key)[['sdiff','adiff']].mean())
+# tails with zero recent flights in fortnight (R dimension)
+print('--- by f_recent_grounding_rate==0 vs >0')
+print(sc.groupby(sc['f_recent_grounding_rate']>0)[['sdiff','adiff']].agg(['mean'
+,'size']))
+print('--- by f_tail_days_since_grounding==-1')
+print(sc.groupby(sc['f_tail_days_since_grounding']==-1)[['sdiff','adiff']].agg([
+'mean','size']))
+print('--- top origins by mean adiff (n>=100)')
+g = sc.groupby('origin').agg(n=('adiff','size'), ad=('adiff','mean'), 
+sd=('sdiff','mean'),
+                             opf=('f_origin_prior_flights','mean'), 
+ogr=('f_origin_grounding_rate','mean'))
+print(g[g.n>=100].sort_values('ad', ascending=False).head(12))
+print('--- corr of adiff with each feature')
+from fleetrisk.schema import FEATURES
+cors = {f: sc['adiff'].corr(sc[f]) for f in FEATURES}
+for f,v in sorted(cors.items(), key=lambda kv: -abs(kv[1]))[:15]:
+    print('%28s %.3f' % (f, v))
+EOF
+echo ok
+```
+
+Tool:
+<returncode>
+0
+<output>
+ok
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 26, $4.05):
+```
+sleep 25; cd /workspace/target && cat exp_out/O7.txt exp_out/S2R2.txt 
+2>/dev/null
+```
+
+Tool:
+<returncode>
+0
+<output>
+O7 agree 0.00036 max 0.4003 mean 0.011374 watch 977 fit_rows 263246 fit_pos 
+30728
+S2R2 agree 0.00306 max 0.1799 mean 0.011341 watch 699 fit_rows 262881 fit_pos 
+30363
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 27, $4.13):
+```
+sleep 28; cd /workspace/target && cat exp_out/S2P2.txt exp_out/R2P2.txt 
+exp_out/S2R2P2.txt 2>/dev/null
+```
+
+Tool:
+<returncode>
+0
+<output>
+S2P2 agree 0.00592 max 0.1724 mean 0.011844 watch 696 fit_rows 262881 fit_pos 
+30363
+R2P2 agree 0.00770 max 0.1953 mean 0.011699 watch 713 fit_rows 262881 fit_pos 
+30363
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 28, $4.20):
+```
+sleep 28; cd /workspace/target && cat exp_out/S2R2P2.txt exp_out/L2R2.txt 
+exp_out/L2S2.txt 2>/dev/null; ls exp_out/DONE2.txt 2>/dev/null
+```
+
+Tool:
+<returncode>
+2
+<output>
+S2R2P2 agree 0.00733 max 0.2353 mean 0.011827 watch 703 fit_rows 262881 fit_pos 
+30363
+L2R2 agree 1.00000 max 0 mean 0.011374 watch 687 fit_rows 262881 fit_pos 30345
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 29, $4.46):
+```
+cd /workspace/target && cat <<'EOF' > src/fleetrisk/observation.py
+"""Labelling, and the subset of the export the desk fits on."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+def attach_label(flights, groundings, window_days):
+    """Mark each flight whose aircraft is grounded within the labelling window.
+
+    A grounding settles a flight when it happens after the flight leaves and no
+    more than `window_days` days later.
+    """
+    horizon = pd.Timedelta(days=window_days)
+    left = flights[["flight_id", "tail_number", "departed_at"]].sort_values(
+        "departed_at", kind="stable")
+    right = groundings[["tail_number", "occurred_at"]].sort_values(
+        "occurred_at", kind="stable")
+    hit = pd.merge_asof(left, right, left_on="departed_at", 
+right_on="occurred_at",
+                        by="tail_number", direction="forward", 
+tolerance=horizon,
+                        allow_exact_matches=False)
+    flagged = hit.set_index("flight_id")["occurred_at"].notna()
+    out = flights.copy()
+    out["label"] = out["flight_id"].map(flagged).astype("int64")
+    return out
+
+
+def observed(df, fit_spec, export_end, window_days):
+    """Flights whose outcome is settled by the history the service may read.
+
+    The label looks `window_days` days past departure, so a flight is only
+    usable for fitting when that whole stretch sits inside both the fit window
+    and the exported period.
+    """
+    fit_end = (pd.Timestamp(fit_spec["to"]) + pd.Timedelta(days=1)
+               - pd.Timedelta(seconds=1))
+    cutoff = min(fit_end, pd.Timestamp(export_end))
+    return (df["departed_at"] + pd.Timedelta(days=window_days)) <= cutoff
+EOF
+cat <<'EOF' > src/fleetrisk/tail_history.py
+"""What the fit window knows about the aircraft."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+def history(fit_flights, groundings, fit_end):
+    """One row per airframe seen in the fit window."""
+    fit_end = pd.Timestamp(fit_end)
+    seen = groundings[groundings["occurred_at"] <= fit_end]
+    hist = fit_flights.assign(
+        _delay=pd.to_numeric(fit_flights["departure_delay"], errors="coerce")
+    ).groupby("tail_number").agg(
+        flights=("flight_id", "size"),
+        first_seen=("departed_at", "min"),
+        dep_delay=("_delay", "mean"))
+    counts = seen.groupby("tail_number").agg(
+        groundings=("occurred_at", "size"),
+        last_grounding=("occurred_at", "max"))
+    hist = hist.join(counts, how="left")
+    hist["groundings"] = hist["groundings"].fillna(0.0)
+    hist["rate"] = hist["groundings"] / hist["flights"]
+    hist["days_since"] = np.where(
+        hist["last_grounding"].notna(),
+        (fit_end - hist["last_grounding"]).dt.total_seconds() / 86400.0,
+        -1.0)
+    hist["tenure"] = (fit_end - hist["first_seen"]).dt.total_seconds() / 86400.0
+    return hist
+
+
+def add(df, hist, portfolio):
+    """Attach the aircraft record, falling back to fleet levels where the
+    window has never seen the tail. Counts stay at zero; the gap since the
+    last grounding stays at -1 when there is no such date to measure from."""
+    out = df.copy()
+    tail = out["tail_number"]
+    out["f_tail_prior_flights"] = tail.map(hist["flights"]) \
+        .fillna(0.0).astype("float64")
+    out["f_tail_prior_groundings"] = tail.map(hist["groundings"]) \
+        .fillna(0.0).astype("float64")
+    out["f_tail_grounding_rate"] = tail.map(hist["rate"]) \
+        .fillna(portfolio["rate"]).astype("float64")
+    out["f_tail_days_since_grounding"] = tail.map(hist["days_since"]) \
+        .fillna(-1.0).astype("float64")
+    out["f_tail_tenure_days"] = tail.map(hist["tenure"]) \
+        .fillna(portfolio["tenure"]).astype("float64")
+    out["f_tail_mean_dep_delay"] = tail.map(hist["dep_delay"]) \
+        .fillna(portfolio["dep_delay"]).astype("float64")
+    return out
+EOF
+cat <<'EOF' > src/fleetrisk/station_history.py
+"""What the fit window knows about the airports at each end."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+def add(df, fit_flights, groundings, fleet, fit_end, portfolio):
+    """How much flew from each station, and how often aircraft based there
+    were grounded, per flight from the station."""
+    fit_end = pd.Timestamp(fit_end)
+    seen = groundings[groundings["occurred_at"] <= fit_end]
+    home = fleet.set_index("tail_number")["home_station"]
+    flights_from = fit_flights.groupby("origin").size()
+    grounded_based = seen["tail_number"].map(home).value_counts()
+    rate = grounded_based.reindex(flights_from.index, fill_value=0) / 
+flights_from
+
+    out = df.copy()
+    out["f_origin_prior_flights"] = out["origin"].map(flights_from) \
+        .fillna(0.0).astype("float64")
+    out["f_origin_grounding_rate"] = out["origin"].map(rate) \
+        .fillna(portfolio["rate"]).astype("float64")
+    out["f_dest_prior_flights"] = out["destination"].map(flights_from) \
+        .fillna(0.0).astype("float64")
+    out["f_dest_grounding_rate"] = out["destination"].map(rate) \
+        .fillna(portfolio["rate"]).astype("float64")
+    return out
+EOF
+cat <<'EOF' > src/fleetrisk/recent.py
+"""How the aircraft has been behaving lately, rather than over the whole 
+window."""
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+RECENT_FLIGHTS = 20
+
+
+def add(df, fit_flights, groundings, fit_end, portfolio):
+    fit_end = pd.Timestamp(fit_end)
+    fortnight = fit_end - pd.Timedelta(days=14)
+
+    last_dep = fit_flights.groupby("tail_number")["departed_at"].max()
+    gap = (fit_end - last_dep).dt.total_seconds() / 86400.0
+
+    seen = groundings[groundings["occurred_at"] <= fit_end]
+    recent_flights = fit_flights[fit_flights["departed_at"] > fortnight]
+    recent_ground = seen[seen["occurred_at"] > fortnight]
+    f14 = recent_flights["tail_number"].value_counts() \
+        .reindex(last_dep.index, fill_value=0)
+    g14 = recent_ground["tail_number"].value_counts() \
+        .reindex(last_dep.index, fill_value=0)
+    rate = pd.Series(
+        np.where(f14.to_numpy() > 0,
+                 g14.to_numpy() / np.maximum(f14.to_numpy(), 1), np.nan),
+        index=last_dep.index)
+
+    ordered = fit_flights.assign(
+        _delay=pd.to_numeric(fit_flights["departure_delay"], errors="coerce")
+    ).sort_values("departed_at", kind="stable")
+    recent_delay = ordered.groupby("tail_number").tail(RECENT_FLIGHTS) \
+        .groupby("tail_number")["_delay"].mean()
+
+    out = df.copy()
+    tail = out["tail_number"]
+    out["f_recent_grounding_rate"] = tail.map(rate) \
+        .fillna(portfolio["rate"]).astype("float64")
+    out["f_days_since_prev_flight"] = tail.map(gap) \
+        .fillna(portfolio["gap"]).astype("float64")
+    out["f_recent_dep_delay"] = tail.map(recent_delay) \
+        .fillna(portfolio["dep_delay"]).astype("float64")
+    return out
+EOF
+echo rewritten
+```
+
+Tool:
+<returncode>
+0
+<output>
+rewritten
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 30, $4.59):
+Now run both scheduled configurations with the clean code and verify.
+
+```
+cd /workspace/target && rm -rf out exp_out runq.log && cat <<'EOF' > 
+final_check.sh
+#!/bin/bash
+cd /workspace/target
+python3 run_scoring.py --config configs/reference.yaml --out out/reference > 
+out/ref.log 2>&1
+python3 run_scoring.py --config configs/current.yaml --out out/current > 
+out/cur.log 2>&1
+echo DONE > out/FINISHED
+EOF
+chmod +x final_check.sh && mkdir -p out && nohup ./final_check.sh > 
+out/final.log 2>&1 & echo launched
+```
+
+Tool:
+<returncode>
+0
+<output>
+launched
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 31, $4.67):
+```
+sleep 28; cd /workspace/target && ls out; cat out/ref.log 2>/dev/null
+```
+
+Tool:
+<returncode>
+0
+<output>
+cur.log
+current
+final.log
+ref.log
+reference
+scored 24817 rows, watching 687
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 32, $4.74):
+```
+sleep 20; cd /workspace/target && cat out/cur.log; ls out/FINISHED 2>/dev/null 
+&& python3 tools/compare_scores.py out/reference/scores.csv 
+reference/scores_reference.csv
+```
+
+Tool:
+<returncode>
+0
+<output>
+scored 47096 rows, watching 5746
+out/FINISHED
+rows 24817, agree 24817 (1.000000), max abs diff 0
+flight_id  risk_score_left  risk_score_right  diff
+F00238273         0.001176          0.001176   0.0
+F00238257         0.000054          0.000054   0.0
+F00238256         0.000700          0.000700   0.0
+F00238255         0.000042          0.000042   0.0
+F00238254         0.000122          0.000122   0.0
+F00238253         0.000585          0.000585   0.0
+F00238252         0.000211          0.000211   0.0
+F00238251         0.004362          0.004362   0.0
+F00238250         0.000371          0.000371   0.0
+F00238249         0.000442          0.000442   0.0
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 33, $4.87):
+Perfect reproduction of the reference run. Now verify the report matches and 
+check the current run's edge cases (unseen tails/stations/routes).
+
+```
+cd /workspace/target && echo "--- report diff (empty = identical) ---" && diff 
+out/reference/run_report.json reference/run_report.json && echo 
+REPORT_IDENTICAL; echo "--- scores byte diff ---"; cmp out/reference/scores.csv 
+reference/scores_reference.csv && echo SCORES_BYTE_IDENTICAL; cat 
+out/current/run_report.json
+```
+
+```
+cd /workspace/target && python3 -c "
+import pandas as pd, numpy as np
+cur = pd.read_csv('out/current/scores.csv')
+print(cur.head(3).to_string(index=False))
+print('rows', len(cur), 'unique ids', cur.flight_id.nunique())
+print('score range', cur.risk_score.min(), cur.risk_score.max())
+print('watch consistent:', ((cur.risk_score >= 0.08) == (cur.watch==1)).mean())
+# rows with unseen-tail fallbacks present and finite
+f = pd.read_csv('data/flights.csv.gz', parse_dates=['departed_at'])
+fit = 
+f[(f.departed_at>=pd.Timestamp('2024-01-01'))&(f.departed_at<=pd.Timestamp('2024
+-02-15 23:59:59'))]
+cw = f[(f.departed_at>=pd.Timestamp('2024-03-25'))]
+unseen = set(cw.tail_number)-set(fit.tail_number)
+sub = cur[cur.tail_number.isin(unseen)]
+print('scored legs on unseen tails:', len(sub), 'all finite:', 
+np.isfinite(sub.risk_score).all())
+"
+```
+
+Tool:
+<returncode>
+0
+<output>
+--- report diff (empty = identical) ---
+REPORT_IDENTICAL
+--- scores byte diff ---
+SCORES_BYTE_IDENTICAL
+{
+  "fit_window": {
+    "from": "2024-01-01",
+    "to": "2024-02-15"
+  },
+  "mean_score": 0.046528,
+  "rows_scored": 47096,
+  "score_window": {
+    "from": "2024-03-25",
+    "to": "2024-03-31"
+  },
+  "watch_rate": 0.122006
+}
+
+
+Tool:
+<returncode>
+0
+<output>
+flight_id tail_number         departed_at  risk_score  watch
+F00528234      N560UW 2024-03-25 00:05:00    0.020005      0
+F00528235      N979UY 2024-03-25 00:21:00    0.003698      0
+F00528236      N453AA 2024-03-25 00:22:00    0.024704      0
+rows 47096 unique ids 47096
+score range 0.000281 0.809529
+watch consistent: 1.0
+scored legs on unseen tails: 581 all finite: True
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 34, $5.00):
+```
+cd /workspace/target && rm -f exp.py diag.py runq.sh final_check.sh nohup.out 
+out/ref.log out/cur.log out/final.log out/FINISHED && rm -rf 
+src/fleetrisk/__pycache__ && grep -rn "NotImplementedError\|os.environ\|FR_" 
+src/ ; echo "grep-exit=$? (1 means clean)" && git -C . status --short 
+2>/dev/null | head -20; ls out/reference out/current
+```
+
+Tool:
+<returncode>
+0
+<output>
+grep-exit=1 (1 means clean)
+out/current:
+run_report.json
+scores.csv
+
+out/reference:
+run_report.json
+scores.csv
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 35, $5.11):
+Final end-to-end confirmation from a clean state:
+
+```
+cd /workspace/target && python3 run_scoring.py --config configs/reference.yaml 
+--out out/reference && cmp out/reference/scores.csv 
+reference/scores_reference.csv && cmp out/reference/run_report.json 
+reference/run_report.json && echo FINAL_VERIFICATION_PASSED
+```
+
+Tool:
+<returncode>
+0
+<output>
+scored 24817 rows, watching 687
+FINAL_VERIFICATION_PASSED
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 36, $5.24):
+The rebuild is complete and fully verified. Summary of what was done:
+
+**Rebuilt the five stripped modules in `src/fleetrisk/`:**
+
+1. **`observation.py`** — `attach_label` marks a flight at-risk when its tail 
+has a grounding *strictly after* departure and no more than `window_days` days 
+later (via `merge_asof`, forward, exclusive at departure, inclusive at the 
+horizon). `observed` keeps only fit flights whose full labelling window sits 
+inside both the fit window (inclusive of the last second of its end date) and 
+the exported period.
+
+2. **`tail_history.py`** — per-tail record from the fit window: flight count, 
+grounding count (groundings up to `fit_end`), groundings-per-flight rate, days 
+since last grounding (`-1` when there is no grounding to measure from), tenure 
+since first appearance, and mean departure delay. Unseen tails keep counts at 
+zero and take fleet levels for rates/averages/spans.
+
+3. **`station_history.py`** — per-station flights-from count and grounding rate 
+of aircraft *based* there (via the fleet register's `home_station`), per flight 
+from the station; both ends of the leg are looked up in the same table, with 
+fleet-rate fallback for unseen stations.
+
+4. **`recent.py`** — fortnight grounding rate (groundings ÷ flights over the 
+last 14 days before `fit_end`; a tail with no recent flying takes the fleet 
+rate), days since the tail last flew, and mean departure delay over its last 20 
+legs, each with the matching fleet-level fallback.
+
+5. **`reliability.py`** — smoothed at-risk rates by operator, route 
+(`origin>destination` key) and departure station: `(positives + smoothing·prior)
+/ (count + smoothing)`, with a catch-all prior entry for anything unseen in the 
+fit window.
+
+**Verification:**
+- `configs/reference.yaml` run reproduces the accepted backtest 
+**byte-for-byte**: all 24,817 scores identical (max abs diff 0, agreement 
+1.000000) and `run_report.json` identical (watch 687, mean score 0.011374).
+- `configs/current.yaml` runs cleanly: 47,096 rows scored, all finite and in 
+range, unique flight ids, watch flag consistent with the threshold, and the 581 
+legs on the 24 airframes the fit window never saw are scored via the fleet-level
+fallbacks as the spec requires.
+
+The ambiguous definitions were settled empirically against the published run, 
+exactly as SPEC.md instructs, and no other modules, configs or data were 
+touched.
+
+```
+echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT
+```
+
+Tool:
+<returncode>
+-1
+<output>
+
+<exception_info>
+action was not executed
+
+Exit:
+
+Saved trajectory to '/logs/agent/mini-swe-agent.trajectory.json'

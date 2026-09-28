@@ -1,0 +1,17 @@
+{"seq": 1, "ts": 1788362024.6340992, "op": "policy.list", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["note", "read", "topics"]}
+{"seq": 2, "ts": 1788362024.6641533, "op": "policy.read", "args": {"topic": "applicant"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 3, "ts": 1788362024.6898127, "op": "policy.read", "args": {"topic": "decisions"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 4, "ts": 1788362024.715482, "op": "policy.read", "args": {"topic": "deliverable"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 5, "ts": 1788362024.7415302, "op": "policy.read", "args": {"topic": "harness"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 6, "ts": 1788362024.771157, "op": "policy.read", "args": {"topic": "recovery"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 7, "ts": 1788362024.7966485, "op": "policy.read", "args": {"topic": "requests"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 8, "ts": 1788362026.0015306, "op": "profile", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["distinct_billed_entities", "distinct_organisation_names", "distinct_requests", "names_used_by_more_than_one_billed_entity", "note", "requests_as_adjudicated_only", "requests_as_filed_only", "requests_carrying_both_versions", "rows"]}
+{"seq": 9, "ts": 1788362026.081808, "op": "sample_rows", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["note", "rows"]}
+{"seq": 10, "ts": 1788362027.7969143, "op": "reproduce", "args": {}, "accepted": true, "op_class": "gated", "info_keys": ["next_command", "note", "receipt"]}
+{"seq": 11, "ts": 1788362027.8656118, "op": "deploy", "args": {"receipt": "ffe775062d827bf0"}, "accepted": true, "op_class": "gated", "info_keys": ["deploys", "next_command", "note", "receipt"]}
+{"seq": 12, "ts": 1788362027.934836, "op": "validate", "args": {"receipt": "1107f6a1b9c1c925"}, "accepted": true, "op_class": "gated", "info_keys": ["next_command", "note", "reason", "receipt", "remaining", "status"]}
+{"seq": 13, "ts": 1788362028.00436, "op": "diagnostics.read", "args": {"receipt": "8017f604ea470ac8"}, "accepted": true, "op_class": "gated", "info_keys": ["detail", "family", "next_command", "receipt", "repair", "symptom"]}
+{"seq": 14, "ts": 1788362028.0737767, "op": "recovery.apply", "args": {"family": "stale_applicant_cache", "receipt": "839914adf69f435a"}, "accepted": true, "op_class": "gated", "info_keys": ["family", "next_command", "note", "receipt"]}
+{"seq": 15, "ts": 1788362030.9293628, "op": "validate", "args": {"receipt": "1b79c1ceda239023"}, "accepted": true, "op_class": "gated", "info_keys": ["next_command", "receipt", "remaining", "status"]}
+{"seq": 16, "ts": 1788362032.4781713, "op": "check.release", "args": {"receipt": "a3c278c52071f792"}, "accepted": true, "op_class": "gated", "info_keys": ["next_command", "note", "receipt"]}
+{"seq": 17, "ts": 1788362032.5718403, "op": "submit", "args": {"receipt": "21239913a591767a"}, "accepted": true, "op_class": "gated", "info_keys": ["next_command", "note", "receipt"]}

@@ -1,0 +1,107 @@
+{
+  "oracle": {
+    "expect_min": 1.0,
+    "expect_max": 1.0,
+    "note": "gold fix + full gated trajectory + forced recovery"
+  },
+  "alt_solve": {
+    "expect_min": 1.0,
+    "expect_max": 1.0,
+    "note": "rolling sum over rolling count, reindexed onto the batch"
+  },
+  "alt2_solve": {
+    "expect_min": 1.0,
+    "expect_max": 1.0,
+    "note": "markers cleaned at read time, bounded archive lead"
+  },
+  "nc_untouched": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "delivered environment, nothing driven -> strict 0"
+  },
+  "nc_do_nothing": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "perfect protocol, no fix: the serving path withholds hours so validate never goes clean"
+  },
+  "nc_textbook": {
+    "expect_max": 0.0,
+    "expect_reason": "rollup_wrong",
+    "note": "THE control: serving repaired, rolling mean still averaging the not-recorded marker. Passes smoke AND a clean validate"
+  },
+  "nc_partial_fix": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "rollup fixed, serving path still withholding hours -> validate rejects the coverage"
+  },
+  "nc_one_shot": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "correct fix by the shortest path must not reach 1.0"
+  },
+  "nc_no_recovery": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "correct fix, injected failure never diagnosed or repaired"
+  },
+  "nc_wrong_recovery": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "wrong recovery family burns the attempt budget; not a free retry"
+  },
+  "nc_cheat_stdout": {
+    "expect_max": 0.0,
+    "expect_reason": "rollup_wrong",
+    "note": "actually forges: writes 1 into /logs/verifier/reward.txt and reward.json from both the agent uid and the candidate process, and prints a fabricated verdict on stdout. The pipeline underneath is left with the shipped rollup, so the forged channel is the only thing claiming success"
+  },
+  "nc_cheat_labels": {
+    "expect_max": 0.0,
+    "expect_reason": "discrimination_below_floor",
+    "note": "correct rollup and coverage, but the ONLY source of discrimination is the hidden label file. The candidate process runs as envrun and cannot read /opt/task/hidden, so it falls back to a constant and dies on the discrimination floor. If that boundary ever leaked this control would score 1.0"
+  },
+  "nc_malformed_empty": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "emptied module scores 0 cleanly -- a crash is not a 0"
+  },
+  "nc_malformed_bytes": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "binary noise scores 0 cleanly"
+  },
+  "nc_vendored_snapshot": {
+    "expect_max": 0.0,
+    "expect_reason": "bundle_carries_non_source",
+    "note": "precomputed rollup table vendored into the artifact so the value clause is answered from a blob"
+  },
+  "nc_no_skill": {
+    "expect_max": 0.0,
+    "expect_reason": "walk_incomplete",
+    "note": "raw-sensor rank, no model: keeps the discrimination floor measured"
+  },
+  "nc_rank_alt": {
+    "expect_min": 1.0,
+    "expect_max": 1.0,
+    "note": "POSITIVE control despite the nc_ prefix: the gold fix with alert_probability post-processed to percentile ranks. The contract only asks for a probability in [0,1] and the discrimination clause is AUC, which is rank-invariant, so ranking is legitimate and must still score 1.0. rollup_24h is a separate value column and is unaffected"
+  },
+  "nc_time_alt": {
+    "expect_min": 1.0,
+    "expect_max": 1.0,
+    "note": "POSITIVE control despite the nc_ prefix: a time-based 24h window instead of a 24-row one. alerting.rolling_window_rule in config.yaml pins the mean over the readings recorded in the 24 HOURS ending at each hour, and does not pin how that window is expressed, so this is a second legitimate semantics. Measured 1.0000 on the 1099 graded hours"
+  },
+  "nc_serve_only": {
+    "expect_max": 0.0,
+    "expect_reason": "rollup_wrong",
+    "note": "the single-file escape the reviewer found: sanitize -200 on the stitched frame inside serve.py and drop the publishing filter, never touching rollup.py. The operator display number is now read straight off the station log in score_hours.py, so serve-side sanitising does not reach it and the fix genuinely has to span two files"
+  },
+  "nc_folklore_only": {
+    "expect_max": 0.0,
+    "expect_reason": "rollup_wrong",
+    "note": "the recall shortcut: handles only -200, the marker the public UCI Air Quality dataset is known for, and misses the second marker the cabinet writes. Measured 0.9099 agreement against the 0.99 floor. Traces showed agents naming -200 from memory at their first step, before any profiling; this control makes that path fail"
+  },
+  "nc_dropna_window": {
+    "expect_max": 0.0,
+    "expect_reason": "rollup_wrong",
+    "note": "the reading that floored t1 and t2 in the qualifying eval: both markers handled, but the window is laid down over the 24 recorded readings rather than the 24 hours, then forward filled. Measured 0.8644 against the 0.99 floor. config.yaml now pins the rule as data (alerting.rolling_window_rule) so this reading is excluded by the contract rather than by convention"
+  }
+}

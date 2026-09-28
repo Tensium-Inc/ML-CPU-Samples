@@ -1,0 +1,15 @@
+{
+  "alt": {"expect": 1},
+  "alt2": {"expect": 1},
+  "gold": {"expect": 1},
+  "revision": {"expect": 1},
+  "nc_do_nothing": {"expect": 0},
+  "nc_hang": {"expect": 0},
+  "nc_one_shot_forged_log": {"expect": 0},
+  "nc_secret_exfil": {"expect": 0, "docker_only": true},
+  "nc_single_file": {"expect": 0},
+  "nc_state_tamper": {"expect": 0, "docker_only": true},
+  "nc_stdout_forge": {"expect": 0},
+  "nc_textbook": {"expect": 0},
+  "nc_wrong_recovery": {"expect": 0}
+}

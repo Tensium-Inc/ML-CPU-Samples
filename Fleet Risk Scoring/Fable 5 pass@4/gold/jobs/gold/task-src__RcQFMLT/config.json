@@ -1,0 +1,9 @@
+{
+    "task": {
+        "path": "/tmp/drydock-ds/task-src",
+        "source": "drydock-ds"
+    },
+    "trial_name": "task-src__RcQFMLT",
+    "trials_dir": "jobs/gold",
+    "job_id": "b1479f64-63ee-4c99-8406-5abe1b21c030"
+}

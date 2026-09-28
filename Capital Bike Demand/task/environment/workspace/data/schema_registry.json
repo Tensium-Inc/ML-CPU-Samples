@@ -1,0 +1,88 @@
+{
+  "canonical_columns": [
+    "instant",
+    "dteday",
+    "season",
+    "yr",
+    "mnth",
+    "hr",
+    "holiday",
+    "weekday",
+    "workingday",
+    "weathersit",
+    "temp",
+    "atemp",
+    "hum",
+    "windspeed",
+    "casual",
+    "registered",
+    "cnt"
+  ],
+  "expected_unique_history_rows": 11539,
+  "exports": [
+    {
+      "delimiter": ",",
+      "expected_raw_rows": 4250,
+      "expected_unique_rows": 4250,
+      "file": "history/2011_h1.csv",
+      "rename": {},
+      "scale_to_canonical": {}
+    },
+    {
+      "delimiter": ";",
+      "expected_raw_rows": 4395,
+      "expected_unique_rows": 4395,
+      "file": "history/2011_h2_semicolon.csv",
+      "rename": {
+        "casual_count": "casual",
+        "date": "dteday",
+        "demand": "cnt",
+        "feels_like_norm": "atemp",
+        "hour": "hr",
+        "humidity_norm": "hum",
+        "is_holiday": "holiday",
+        "is_working_day": "workingday",
+        "member_count": "registered",
+        "month": "mnth",
+        "row_id": "instant",
+        "season_code": "season",
+        "temperature_norm": "temp",
+        "weather_code": "weathersit",
+        "weekday_index": "weekday",
+        "wind_norm": "windspeed",
+        "year_index": "yr"
+      },
+      "scale_to_canonical": {}
+    },
+    {
+      "delimiter": "|",
+      "expected_raw_rows": 1433,
+      "expected_unique_rows": 1433,
+      "file": "history/2012_jan_feb_pipe.csv",
+      "rename": {
+        "atemp_pct": "atemp",
+        "hum_pct": "hum",
+        "temp_pct": "temp",
+        "total_count": "cnt",
+        "windspeed_pct": "windspeed"
+      },
+      "scale_to_canonical": {
+        "atemp": 0.01,
+        "hum": 0.01,
+        "temp": 0.01,
+        "windspeed": 0.01
+      }
+    },
+    {
+      "deduplicate_on": "instant",
+      "delimiter": ",",
+      "expected_raw_rows": 1533,
+      "expected_unique_rows": 1461,
+      "file": "history/2012_mar_apr_duplicates.csv",
+      "rename": {},
+      "scale_to_canonical": {}
+    }
+  ],
+  "history_end": "2012-04-30",
+  "history_start": "2011-01-01"
+}

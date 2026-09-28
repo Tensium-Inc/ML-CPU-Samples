@@ -1,0 +1,71 @@
+{
+  "label": "mini-swe-agent / anthropic/claude-opus-5 (pass@4)",
+  "reasoning_effort": "xhigh",
+  "k": 4,
+  "trials_produced": 4,
+  "trials_missing": 0,
+  "avg_at_k": 0.75,
+  "pass_at_k": true,
+  "solves": 3,
+  "model": "claude-opus-5",
+  "provider": "anthropic",
+  "total_cost_usd": 9.2629,
+  "cost_estimated": false,
+  "prompt_tokens": 7597417,
+  "completion_tokens": 153133,
+  "cached_tokens": 7312854,
+  "trials": [
+    {
+      "trial": "task-src__CaYme6k",
+      "reward": 1.0,
+      "exception": null,
+      "model": "mini-swe-agent / claude-opus-5",
+      "cost_usd": 2.1273287499999993,
+      "prompt_tokens": 1695584,
+      "completion_tokens": 35267,
+      "cached_tokens": 1626375,
+      "steps": 38,
+      "reasoning_tokens": 16084,
+      "reasoning_in_trace": true
+    },
+    {
+      "trial": "task-src__PR65JvA",
+      "reward": 1.0,
+      "exception": null,
+      "model": "mini-swe-agent / claude-opus-5",
+      "cost_usd": 3.4476625000000003,
+      "prompt_tokens": 3013835,
+      "completion_tokens": 55348,
+      "cached_tokens": 2916935,
+      "steps": 54,
+      "reasoning_tokens": 31230,
+      "reasoning_in_trace": true
+    },
+    {
+      "trial": "task-src__fbfVvYA",
+      "reward": 1.0,
+      "exception": null,
+      "model": "mini-swe-agent / claude-opus-5",
+      "cost_usd": 2.0584795000000002,
+      "prompt_tokens": 1640299,
+      "completion_tokens": 34649,
+      "cached_tokens": 1575569,
+      "steps": 39,
+      "reasoning_tokens": 16622,
+      "reasoning_in_trace": true
+    },
+    {
+      "trial": "task-src__irorHko",
+      "reward": 0.0,
+      "exception": null,
+      "model": "mini-swe-agent / claude-opus-5",
+      "cost_usd": 1.6294025000000003,
+      "prompt_tokens": 1247699,
+      "completion_tokens": 27869,
+      "cached_tokens": 1193975,
+      "steps": 36,
+      "reasoning_tokens": 13424,
+      "reasoning_in_trace": true
+    }
+  ]
+}

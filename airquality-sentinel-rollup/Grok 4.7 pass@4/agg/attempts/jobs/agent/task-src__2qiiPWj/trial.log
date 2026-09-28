@@ -1,0 +1,42 @@
+Building Docker image harbor-prebuilt:harbor-docker-egress-control-sidecar--b1e6760734a9e6f6 from /home/runner/work/Anvil/Anvil/.venv/lib/python3.13/site-packages/harbor/environments/docker/harbor-docker-egress-control-sidecar using /home/runner/work/Anvil/Anvil/.venv/lib/python3.13/site-packages/harbor/environments/docker/harbor-docker-egress-control-sidecar/Dockerfile at 2026-09-26 21:33:48.340306+00:00
+Skipping image OS validation for hb__210859540a360c8a37f0bfa98fc294ee: docker inspect returned 1
+Running command: apt-get update && apt-get install -y curl bash build-essential git python3 python3-pip
+Command outputs captured
+Running command: set -euo pipefail; if ! command -v uv >/dev/null 2>&1; then  curl -LsSf https://astral.sh/uv/install.sh | sh; fi && if ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' "$HOME/.bashrc" 2>/dev/null; then  echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"; fi && if [ -f "$HOME/.local/bin/env" ]; then source "$HOME/.local/bin/env"; fi && export PATH="$HOME/.local/bin:$PATH" && uv tool install mini-swe-agent --with litellm --with orjson --with fastapi && mini-swe-agent --help
+Command outputs captured
+Running command: if [ -f "$HOME/.local/bin/env" ]; then . "$HOME/.local/bin/env"; else export PATH="$HOME/.local/bin:$PATH"; fi; mini-swe-agent --yolo --model=xai/grok-4.7 --task='Roadside station 01 pushes an hourly exceedance alert to the control room. The model calls whether the next hour will breach the benzene threshold, and the duty officer decides from that whether a public advisory goes out. The engineer who built it has left. Two tickets came across with the handover and neither has an answer on it.
+
+AQ-118, short batches: The control room submits a block of hours and gets back fewer alert rows than it sent. Which hours went missing is not recorded anywhere; the duty log just shows the two counts not matching.
+
+AQ-124, the display disagrees: Each alert is shown beside a 24-hour mean of the CO sensor. An operator recomputed that mean from the station'"'"'s own log for a handful of alerts and got a different number on some of them. She could not say which ones, and most of the time it agrees.
+
+Releases
+
+Nothing reaches the control room straight out of this directory. Releases go through `python3 env_cli.py <op>`, which talks to the environment daemon. What the daemon keeps, where you are in the sequence, the ledger of what it accepted, the packaged artifact -- it keeps to itself. None of it is reachable from here, and nothing you write locally substitutes for it.
+
+The order is fixed, and each step is refused until the one before it has passed:
+
+1. `reproduce`
+2. `deploy`
+3. `validate`
+4. `diagnostics.read`, then `recovery.apply --family F`, when validate came back dirty
+5. `validate` again
+6. `promote`
+7. `submit`
+
+`deploy` packages code and configuration out of your working tree, not data, and it is that package rather than your tree that gets validated and that the environment runs at the end. Builds have been unreliable lately. Read back what the build actually shipped.
+
+`validate` runs the packaged artifact over hours you do not have. You get one bit, clean or dirty, and a coarse signal with it. It will not tell you which hours. Four calls for the whole session, and that is the lot.
+
+`recovery.apply` is refused unless `diagnostics.read` ran first and `--family` matches what came back. Guess the family wrong and you are down one attempt, and the diagnosis is discarded too.
+
+Neither `promote` nor `submit` will open while anything ahead of it is outstanding.
+
+Done
+
+`scripts/score_hours.py --batch <csv> --out <csv>` is what the alerting service calls: one row per hour handed to it, columns `timestamp,alert_probability,rollup_24h`. That third column is the number on the operator'"'"'s screen and the number she checks against the station log, so it has to be one the log supports.
+
+Work out what those two tickets are actually describing. Correct it in the pipeline, leave CI passing, and ship it down the release path. What counts is the artifact frozen at `submit` and the trajectory that got it there, not a patch left sitting in your working tree and not a writeup.
+' --output=/logs/agent/mini-swe-agent.trajectory.json --cost-limit 0 -c mini -c model.model_kwargs.extra_headers.X-Session-ID=task-src__2qiiPWj__agent -c model.model_kwargs.reasoning_effort=xhigh -c model.model_kwargs.max_tokens=32000 --exit-immediately 2>&1 </dev/null | tee /logs/agent/mini-swe-agent.txt
+Command outputs captured
+Collecting main service artifacts

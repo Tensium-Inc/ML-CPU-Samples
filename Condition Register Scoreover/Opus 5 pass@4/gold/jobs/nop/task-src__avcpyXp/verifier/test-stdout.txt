@@ -1,0 +1,24 @@
+Final score: 0
+{
+  "strict_pass": false,
+  "terminal_correct": false,
+  "terminal_reason": "no_frozen_artifact",
+  "terminal": {},
+  "gate_walk_ok": false,
+  "gate_reason": "walk_incomplete:0/10:",
+  "forced_recovery_ok": false,
+  "recovery_reason": "injected_failure_never_observed",
+  "depth_ok": false,
+  "depth_reason": "too_few_accepted_actions:0<12",
+  "counts": {
+    "accepted_actions": 0,
+    "rejected_actions": 0,
+    "observations": 0,
+    "releases_committed": 0,
+    "checkpoints": 0,
+    "canaries": 0,
+    "wrong_remediations": 0
+  },
+  "rejections": [],
+  "frozen_digest": null
+}

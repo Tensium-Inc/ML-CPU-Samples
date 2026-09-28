@@ -1,0 +1,33 @@
+Final score: 1
+{
+  "strict_pass": true,
+  "terminal_correct": true,
+  "terminal_reason": "ok",
+  "terminal": {
+    "owed": 1123,
+    "coverage": 1.0,
+    "graded_hours": 1099,
+    "rollup_agreement": 1.0,
+    "auc": 0.9498,
+    "alert_std": 0.250136
+  },
+  "gate_walk_ok": true,
+  "gate_reason": "ok",
+  "forced_recovery_ok": true,
+  "recovery_reason": "ok",
+  "depth_ok": true,
+  "depth_reason": "ok",
+  "counts": {
+    "accepted_actions": 61,
+    "rejected_actions": 2,
+    "observations": 36,
+    "deploys": 15,
+    "validates": 3,
+    "wrong_recoveries": 0
+  },
+  "rejections": [
+    "diagnostics.read:dirty_validate_required",
+    "recovery.apply:family_required"
+  ],
+  "frozen_digest": "20ad7992803e5056"
+}

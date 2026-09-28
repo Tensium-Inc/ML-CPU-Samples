@@ -1,0 +1,39 @@
+{
+    "id": "79029637-8b46-4da1-9b6e-6c1d535647c7",
+    "started_at": "2026-09-07T21:46:00.434953",
+    "updated_at": "2026-09-07T21:55:11.915366",
+    "finished_at": "2026-09-07T21:55:11.915366",
+    "n_total_trials": 1,
+    "stats": {
+        "n_completed_trials": 1,
+        "n_errored_trials": 0,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "mini-swe-agent__claude-opus-5__drydock-ds": {
+                "n_trials": 1,
+                "n_errors": 0,
+                "metrics": [
+                    {
+                        "mean": 0.0
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "reward": {
+                        "0.0": [
+                            "task-src__irorHko"
+                        ]
+                    }
+                },
+                "exception_stats": {}
+            }
+        },
+        "n_input_tokens": 1247699,
+        "n_cache_tokens": 1193975,
+        "n_output_tokens": 27869,
+        "cost_usd": 1.6294025000000003
+    }
+}

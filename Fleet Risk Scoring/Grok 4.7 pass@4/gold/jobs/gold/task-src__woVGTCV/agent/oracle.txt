@@ -1,0 +1,3 @@
+scored 24817 rows, watching 687
+scored 47096 rows, watching 5746
+rebuild complete

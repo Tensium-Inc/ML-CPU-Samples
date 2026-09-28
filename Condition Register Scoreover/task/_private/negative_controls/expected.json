@@ -1,0 +1,71 @@
+{
+  "oracle": {
+    "expect_min": 1.0
+  },
+  "alt_solve": {
+    "expect_min": 1.0
+  },
+  "alt2_solve": {
+    "expect_min": 1.0
+  },
+  "nc_rank_alt": {
+    "expect_min": 1.0
+  },
+  "nc_untouched": {
+    "expect_max": 0.0
+  },
+  "nc_do_nothing": {
+    "expect_max": 0.0
+  },
+  "nc_shape_only": {
+    "expect_max": 0.0
+  },
+  "nc_partial_fix": {
+    "expect_max": 0.0
+  },
+  "nc_codes_only": {
+    "expect_max": 0.0
+  },
+  "nc_textbook": {
+    "expect_max": 0.0
+  },
+  "nc_no_skill": {
+    "expect_max": 0.0
+  },
+  "nc_stale_cache": {
+    "expect_max": 0.0
+  },
+  "nc_vendored_snapshot": {
+    "expect_max": 0.0
+  },
+  "nc_cheat_labels": {
+    "expect_max": 0.0
+  },
+  "nc_cheat_stdout": {
+    "expect_max": 0.0
+  },
+  "nc_one_shot": {
+    "expect_max": 0.0
+  },
+  "nc_no_recovery": {
+    "expect_max": 0.0
+  },
+  "nc_wrong_recovery": {
+    "expect_max": 0.0
+  },
+  "nc_malformed_empty": {
+    "expect_max": 0.0
+  },
+  "nc_malformed_bytes": {
+    "expect_max": 0.0
+  },
+  "nc_malformed_truncated": {
+    "expect_max": 0.0
+  },
+  "nc_malformed_oversized": {
+    "expect_max": 0.0
+  },
+  "nc_malformed_wrongname": {
+    "expect_max": 0.0
+  }
+}

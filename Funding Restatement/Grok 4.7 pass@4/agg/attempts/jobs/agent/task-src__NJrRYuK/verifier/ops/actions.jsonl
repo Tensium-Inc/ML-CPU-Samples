@@ -1,0 +1,186 @@
+{"seq": 1, "ts": 1790448503.8541028, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 2, "ts": 1790448505.1389313, "op": "profile", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["distinct_billed_entities", "distinct_organisation_names", "distinct_requests", "names_used_by_more_than_one_billed_entity", "note", "requests_as_adjudicated_only", "requests_as_filed_only", "requests_carrying_both_versions", "rows"]}
+{"seq": 3, "ts": 1790448507.0934682, "op": "policy.list", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["note", "read", "topics"]}
+{"seq": 4, "ts": 1790448507.1232712, "op": "reproduce", "args": {}, "accepted": true, "op_class": "gated", "info_keys": ["next_command", "note", "receipt"]}
+{"seq": 5, "ts": 1790448510.03058, "op": "policy.read", "args": {"topic": "applicant"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 6, "ts": 1790448510.0583963, "op": "policy.read", "args": {"topic": "decisions"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 7, "ts": 1790448510.087359, "op": "policy.read", "args": {"topic": "deliverable"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 8, "ts": 1790448510.1154618, "op": "policy.read", "args": {"topic": "harness"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 9, "ts": 1790448510.1444805, "op": "policy.read", "args": {"topic": "recovery"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 10, "ts": 1790448510.1740878, "op": "policy.read", "args": {"topic": "requests"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 11, "ts": 1790448515.590191, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 12, "ts": 1790448515.6163151, "op": "inspect", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate", "check_release", "objective", "receipts", "recovery", "validate", "where_the_rules_are", "your_data"]}
+{"seq": 13, "ts": 1790448621.1035407, "op": "help", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 14, "ts": 1790448621.1054094, "op": "ops", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 15, "ts": 1790448621.1071162, "op": "policy.topics", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 16, "ts": 1790448621.1088104, "op": "adjudicate", "args": {}, "accepted": false, "op_class": "observation", "info_keys": ["error"]}
+{"seq": 17, "ts": 1790448621.1104362, "op": "diagnostics.read", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 18, "ts": 1790448638.7236302, "op": "adjudicate", "args": {"request": "2499003144"}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget_left", "label", "note", "request"]}
+{"seq": 19, "ts": 1790448638.7513995, "op": "adjudicate", "args": {"request": "2499033235"}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget_left", "label", "note", "request"]}
+{"seq": 20, "ts": 1790448638.7782223, "op": "adjudicate", "args": {"request": "2499057916"}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget_left", "label", "note", "request"]}
+{"seq": 21, "ts": 1790448638.8050387, "op": "adjudicate", "args": {"request": "2499044171"}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget_left", "label", "note", "request"]}
+{"seq": 22, "ts": 1790448638.8323305, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 23, "ts": 1790448641.4412498, "op": "adjudicate", "args": {"request": "2499045423"}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget_left", "label", "note", "request"]}
+{"seq": 24, "ts": 1790448641.4695354, "op": "adjudicate", "args": {"request": "2499021025"}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget_left", "label", "note", "request"]}
+{"seq": 25, "ts": 1790448641.4971218, "op": "adjudicate", "args": {"request": "2499038839"}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget_left", "label", "note", "request"]}
+{"seq": 26, "ts": 1790448641.5246203, "op": "adjudicate", "args": {"request": "2499057455"}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget_left", "label", "note", "request"]}
+{"seq": 27, "ts": 1790448641.55202, "op": "adjudicate", "args": {"request": "2499045052"}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget_left", "label", "note", "request"]}
+{"seq": 28, "ts": 1790448656.9838295, "op": "adjudicate", "args": {"request": "2499022438"}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget_left", "label", "note", "request"]}
+{"seq": 29, "ts": 1790448657.0114772, "op": "adjudicate", "args": {"request": "2499010590"}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget_left", "label", "note", "request"]}
+{"seq": 30, "ts": 1790448657.0378342, "op": "adjudicate", "args": {"request": "2499059160"}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget_left", "label", "note", "request"]}
+{"seq": 31, "ts": 1790448657.0636342, "op": "adjudicate", "args": {"request": "2499059226"}, "accepted": false, "op_class": "observation", "info_keys": ["error"]}
+{"seq": 32, "ts": 1790448731.705575, "op": "deploy", "args": {"receipt": "4f15146eb2cc9560"}, "accepted": true, "op_class": "gated", "info_keys": ["deploys", "next_command", "note", "receipt"]}
+{"seq": 33, "ts": 1790448731.7514808, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 34, "ts": 1790448733.600375, "op": "diagnostics.read", "args": {"receipt": "d39d878dce3928f3"}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 35, "ts": 1790448736.7503796, "op": "validate", "args": {"receipt": "d39d878dce3928f3"}, "accepted": true, "op_class": "gated", "info_keys": ["next_command", "note", "reason", "receipt", "remaining", "status"]}
+{"seq": 36, "ts": 1790448736.7799916, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 37, "ts": 1790448739.0566888, "op": "diagnostics.read", "args": {"receipt": "44666447ef837e32"}, "accepted": true, "op_class": "gated", "info_keys": ["detail", "family", "next_command", "receipt", "repair", "symptom"]}
+{"seq": 38, "ts": 1790448740.7884445, "op": "recovery.apply", "args": {"family": "stale_applicant_cache", "receipt": "86af266e964ced98"}, "accepted": true, "op_class": "gated", "info_keys": ["family", "next_command", "note", "receipt"]}
+{"seq": 39, "ts": 1790448740.8181427, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 40, "ts": 1790448745.465214, "op": "validate", "args": {"receipt": "cb62846405616b3b"}, "accepted": true, "op_class": "gated", "info_keys": ["next_command", "receipt", "remaining", "status"]}
+{"seq": 41, "ts": 1790448745.496829, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 42, "ts": 1790448748.9837413, "op": "diagnostics.read", "args": {"receipt": "b679211d3501a4b2"}, "accepted": true, "op_class": "gated", "info_keys": ["detail", "family", "next_command", "receipt", "repair", "symptom"]}
+{"seq": 43, "ts": 1790448748.9895656, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 44, "ts": 1790448753.485201, "op": "validate", "args": {"receipt": "b52b5878a2199056"}, "accepted": true, "op_class": "gated", "info_keys": ["next_command", "receipt", "remaining", "status"]}
+{"seq": 45, "ts": 1790448760.0174758, "op": "validate", "args": {"receipt": "d91c322c32d0982a", "verbose": "true"}, "accepted": true, "op_class": "gated", "info_keys": ["next_command", "receipt", "remaining", "status"]}
+{"seq": 46, "ts": 1790448760.0230362, "op": "validate.detail", "args": {"receipt": "d91c322c32d0982a"}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 47, "ts": 1790448760.0283253, "op": "check.release", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 48, "ts": 1790448760.0336144, "op": "check.release", "args": {"receipt": "d91c322c32d0982a"}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 49, "ts": 1790448760.0388544, "op": "inspect", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate", "check_release", "objective", "receipts", "recovery", "validate", "where_the_rules_are", "your_data"]}
+{"seq": 50, "ts": 1790448760.0442235, "op": "policy.list", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["note", "read", "topics"]}
+{"seq": 51, "ts": 1790448765.6682057, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 52, "ts": 1790448765.7260065, "op": "sample_rows", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["note", "rows"]}
+{"seq": 53, "ts": 1790448813.0596719, "op": "policy.read", "args": {"topic": "requests"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 54, "ts": 1790448813.0915046, "op": "policy.read", "args": {"topic": "decisions"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 55, "ts": 1790448813.1239336, "op": "policy.read", "args": {"topic": "deliverable"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 56, "ts": 1790449042.548887, "op": "profile", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["distinct_billed_entities", "distinct_organisation_names", "distinct_requests", "names_used_by_more_than_one_billed_entity", "note", "requests_as_adjudicated_only", "requests_as_filed_only", "requests_carrying_both_versions", "rows"]}
+{"seq": 57, "ts": 1790449042.614513, "op": "sample_rows", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["note", "rows"]}
+{"seq": 58, "ts": 1790449042.620263, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 59, "ts": 1790449042.6255455, "op": "check.release", "args": {"receipt": "da7e3866b1b1f118"}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 60, "ts": 1790449120.3500185, "op": "validate.status", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 61, "ts": 1790449120.3566182, "op": "validate.reason", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 62, "ts": 1790449120.3621132, "op": "last", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 63, "ts": 1790449120.367473, "op": "log", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 64, "ts": 1790449120.3726697, "op": "actions", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 65, "ts": 1790449120.3778677, "op": "explain", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 66, "ts": 1790449120.3831043, "op": "diff", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 67, "ts": 1790449120.3883035, "op": "grade", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 68, "ts": 1790449120.3935666, "op": "report", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 69, "ts": 1790449120.3988001, "op": "fields", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 70, "ts": 1790449120.4040835, "op": "why", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 71, "ts": 1790449120.4092982, "op": "dirty", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 72, "ts": 1790449120.4146025, "op": "result", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 73, "ts": 1790449120.419984, "op": "verdict", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 74, "ts": 1790449120.4254975, "op": "audit", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 75, "ts": 1790449120.4318259, "op": "schema", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 76, "ts": 1790449120.437111, "op": "contract", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 77, "ts": 1790449120.4447708, "op": "release", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 78, "ts": 1790449120.450037, "op": "submit", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 79, "ts": 1790449120.455293, "op": "policy.read", "args": {"topic": "harness"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 80, "ts": 1790449120.487567, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 81, "ts": 1790449127.9567814, "op": "help", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 82, "ts": 1790449127.9624374, "op": "ops", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 83, "ts": 1790449127.9679096, "op": "commands", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 84, "ts": 1790449127.97327, "op": "policy.list", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["note", "read", "topics"]}
+{"seq": 85, "ts": 1790449127.9786816, "op": "policy.read", "args": {}, "accepted": false, "op_class": "observation", "info_keys": ["error"]}
+{"seq": 86, "ts": 1790449127.9839306, "op": "profile", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["distinct_billed_entities", "distinct_organisation_names", "distinct_requests", "names_used_by_more_than_one_billed_entity", "note", "requests_as_adjudicated_only", "requests_as_filed_only", "requests_carrying_both_versions", "rows"]}
+{"seq": 87, "ts": 1790449128.0526073, "op": "sample_rows", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["note", "rows"]}
+{"seq": 88, "ts": 1790449128.058458, "op": "inspect", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate", "check_release", "objective", "receipts", "recovery", "validate", "where_the_rules_are", "your_data"]}
+{"seq": 89, "ts": 1790449128.0657341, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 90, "ts": 1790449128.071333, "op": "reproduce", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 91, "ts": 1790449128.0769103, "op": "deploy", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 92, "ts": 1790449128.0823827, "op": "validate", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 93, "ts": 1790449128.0877771, "op": "diagnostics.read", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 94, "ts": 1790449128.0932162, "op": "diagnostics", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 95, "ts": 1790449128.0987275, "op": "recovery.apply", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 96, "ts": 1790449128.1041918, "op": "recovery", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 97, "ts": 1790449128.1096754, "op": "check.release", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 98, "ts": 1790449128.1152394, "op": "check", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 99, "ts": 1790449128.1205783, "op": "release.request", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 100, "ts": 1790449128.1258476, "op": "submit", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 101, "ts": 1790449128.1312566, "op": "adjudicate", "args": {}, "accepted": false, "op_class": "observation", "info_keys": ["error"]}
+{"seq": 102, "ts": 1790449128.1364412, "op": "grade.check", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 103, "ts": 1790449128.1417606, "op": "selfcheck", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 104, "ts": 1790449128.1470196, "op": "build", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 105, "ts": 1790449128.153051, "op": "run", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 106, "ts": 1790449128.158345, "op": "harness", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 107, "ts": 1790449128.163686, "op": "table", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 108, "ts": 1790449128.169197, "op": "compare", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 109, "ts": 1790449128.1791322, "op": "score", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 110, "ts": 1790449128.184334, "op": "auc", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 111, "ts": 1790449128.1898086, "op": "holdout", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 112, "ts": 1790449128.195053, "op": "desk", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 113, "ts": 1790449128.200273, "op": "notes", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 114, "ts": 1790449128.2054849, "op": "note", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 115, "ts": 1790449128.2107108, "op": "policy", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 116, "ts": 1790449128.2160108, "op": "policies", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 117, "ts": 1790449128.2213757, "op": "list", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 118, "ts": 1790449128.2267096, "op": "read", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 119, "ts": 1790449128.2319868, "op": "repair", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 120, "ts": 1790449128.2372165, "op": "fault", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 121, "ts": 1790449128.2424557, "op": "cache", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 122, "ts": 1790449128.2476842, "op": "clear", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 123, "ts": 1790449128.2539623, "op": "reset", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 124, "ts": 1790449128.2592397, "op": "abort", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 125, "ts": 1790449128.2645411, "op": "cancel", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 126, "ts": 1790449128.2697148, "op": "version", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 127, "ts": 1790449128.2749975, "op": "ping", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 128, "ts": 1790449128.280276, "op": "health", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 129, "ts": 1790449128.2865715, "op": "ready", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 130, "ts": 1790449128.291981, "op": "meta", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 131, "ts": 1790449128.2972395, "op": "schema.contract", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 132, "ts": 1790449128.3028631, "op": "requests.audit", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 133, "ts": 1790449128.3081229, "op": "audit.rows", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 134, "ts": 1790449128.3133626, "op": "validate.skip", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 135, "ts": 1790449128.318652, "op": "force_validate", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 136, "ts": 1790449128.323967, "op": "revalidate", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 137, "ts": 1790449128.3291962, "op": "candidate", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 138, "ts": 1790449128.334457, "op": "snapshot", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 139, "ts": 1790449128.3396547, "op": "workspace", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 140, "ts": 1790449128.345021, "op": "field", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 141, "ts": 1790449128.3502665, "op": "fields.check", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 142, "ts": 1790449128.3565106, "op": "check.fields", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 143, "ts": 1790449128.361768, "op": "check.table", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 144, "ts": 1790449128.3671868, "op": "preview", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 145, "ts": 1790449128.372434, "op": "dry_run", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 146, "ts": 1790449128.3776336, "op": "dry-run", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 147, "ts": 1790449128.382859, "op": "explain_validate", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 148, "ts": 1790449128.3881598, "op": "validate_reason", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 149, "ts": 1790449128.3933976, "op": "last_validate", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 150, "ts": 1790449128.3996546, "op": "history", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 151, "ts": 1790449128.4050124, "op": "actions.tail", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 152, "ts": 1790449128.4103043, "op": "tail", "args": {}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 153, "ts": 1790449128.4158447, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 154, "ts": 1790449133.292033, "op": "diagnostics.read", "args": {"receipt": "da7e3866b1b1f118"}, "accepted": true, "op_class": "gated", "info_keys": ["detail", "family", "next_command", "receipt", "repair", "symptom"]}
+{"seq": 155, "ts": 1790449133.3220243, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 156, "ts": 1790449138.341322, "op": "validate", "args": {"receipt": "6f972ce4fe3ec36f"}, "accepted": true, "op_class": "gated", "info_keys": ["next_command", "receipt", "remaining", "status"]}
+{"seq": 157, "ts": 1790449138.3729637, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 158, "ts": 1790449154.9231699, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 159, "ts": 1790449154.955762, "op": "deploy", "args": {"receipt": "f99d86d66ac739d2"}, "accepted": true, "op_class": "gated", "info_keys": ["deploys", "next_command", "note", "receipt"]}
+{"seq": 160, "ts": 1790449158.9203086, "op": "validate", "args": {"receipt": "3a374dc041a13318"}, "accepted": true, "op_class": "gated", "info_keys": ["next_command", "receipt", "remaining", "status"]}
+{"seq": 161, "ts": 1790449161.3710177, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 162, "ts": 1790449161.403665, "op": "diagnostics.read", "args": {"receipt": "459282cb162112e5"}, "accepted": true, "op_class": "gated", "info_keys": ["detail", "family", "next_command", "receipt", "repair", "symptom"]}
+{"seq": 163, "ts": 1790449163.1706161, "op": "recovery.apply", "args": {"family": "stale_applicant_cache", "receipt": "5d68921ce34a15b9"}, "accepted": true, "op_class": "gated", "info_keys": ["family", "next_command", "note", "receipt"]}
+{"seq": 164, "ts": 1790449163.2119167, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 165, "ts": 1790449167.8627133, "op": "validate", "args": {"receipt": "a9254cc65a2b4230"}, "accepted": true, "op_class": "gated", "info_keys": ["next_command", "receipt", "remaining", "status"]}
+{"seq": 166, "ts": 1790449167.8949723, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 167, "ts": 1790449170.985069, "op": "policy.read", "args": {"topic": "applicant"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 168, "ts": 1790449171.01468, "op": "policy.read", "args": {"topic": "recovery"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 169, "ts": 1790449171.0440686, "op": "policy.read", "args": {"topic": "harness"}, "accepted": true, "op_class": "observation", "info_keys": ["note", "topic"]}
+{"seq": 170, "ts": 1790449224.8250253, "op": "check.release", "args": {"receipt": "3a3bf0032ea4c367"}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 171, "ts": 1790449224.8567371, "op": "submit", "args": {"receipt": "3a3bf0032ea4c367"}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 172, "ts": 1790449224.8870864, "op": "diagnostics.read", "args": {"receipt": "3a3bf0032ea4c367"}, "accepted": true, "op_class": "gated", "info_keys": ["detail", "family", "next_command", "receipt", "repair", "symptom"]}
+{"seq": 173, "ts": 1790449227.6166296, "op": "recovery.apply", "args": {"family": "stale_applicant_cache", "receipt": "2c4ced5e610dedcc"}, "accepted": true, "op_class": "gated", "info_keys": ["family", "next_command", "note", "receipt"]}
+{"seq": 174, "ts": 1790449227.646178, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 175, "ts": 1790449253.4122407, "op": "validate", "args": {"receipt": "a5b175383fae134f"}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 176, "ts": 1790449253.4426947, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 177, "ts": 1790449266.8295965, "op": "check.release", "args": {"receipt": "a5b175383fae134f"}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 178, "ts": 1790449266.8621573, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 179, "ts": 1790449268.8974555, "op": "deploy", "args": {"receipt": "a5b175383fae134f"}, "accepted": true, "op_class": "gated", "info_keys": ["deploys", "next_command", "note", "receipt"]}
+{"seq": 180, "ts": 1790449268.9273193, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 181, "ts": 1790449270.7482347, "op": "diagnostics.read", "args": {"receipt": "cb72a221bc184767"}, "accepted": true, "op_class": "gated", "info_keys": ["detail", "family", "next_command", "receipt", "repair", "symptom"]}
+{"seq": 182, "ts": 1790449273.2839825, "op": "recovery.apply", "args": {"family": "stale_applicant_cache", "receipt": "b50ebd1e8662eb5f"}, "accepted": true, "op_class": "gated", "info_keys": ["family", "next_command", "note", "receipt"]}
+{"seq": 183, "ts": 1790449273.3146148, "op": "status", "args": {}, "accepted": true, "op_class": "observation", "info_keys": ["adjudicate_budget", "fault_active", "next_command", "next_expected", "notes_outstanding", "policies_read", "receipt", "recovered", "released", "repair_budget", "submitted", "validate_budget"]}
+{"seq": 184, "ts": 1790449273.3472311, "op": "check.release", "args": {"receipt": "b50ebd1e8662eb5f"}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 185, "ts": 1790449275.9326758, "op": "check.release", "args": {"receipt": "acb7cf19b35066ae"}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}
+{"seq": 186, "ts": 1790449275.9625733, "op": "validate", "args": {"receipt": "acb7cf19b35066ae"}, "accepted": false, "op_class": "gated", "info_keys": ["error"]}

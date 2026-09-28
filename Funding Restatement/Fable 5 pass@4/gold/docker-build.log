@@ -1,0 +1,165 @@
+===== docker build: task-src =====
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 3.42kB 0.0s done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 ...
+
+#3 [auth] docker/dockerfile:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 0.9s
+
+#4 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#4 resolve docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32 done
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 0B / 14.14MB 0.1s
+#4 sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32 9.08kB / 9.08kB done
+#4 sha256:34b128e419449565adc5ed7f487a6f503a73f1077012cfed86354c731338c44f 1.13kB / 1.13kB done
+#4 sha256:c844dc65644b70ea8b391444db20ff38537384d800ea9896d46ab8f3ce897f51 1.33kB / 1.33kB done
+#4 extracting sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 14.14MB / 14.14MB 0.2s done
+#4 extracting sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 0.2s done
+#4 DONE 0.4s
+
+#5 [internal] load metadata for docker.io/library/python:3.12-slim
+#5 ...
+
+#6 [auth] library/python:pull token for registry-1.docker.io
+#6 DONE 0.0s
+
+#5 [internal] load metadata for docker.io/library/python:3.12-slim
+#5 DONE 0.8s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 2B done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 6.37MB 0.0s done
+#8 DONE 0.1s
+
+#9 [ 1/11] FROM docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea
+#9 resolve docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea done
+#9 sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea 10.37kB / 10.37kB done
+#9 sha256:2fe5997d249a808b8eeea52c58a1dbffbba28754dc11699ef5c029f2d818ce79 1.75kB / 1.75kB done
+#9 sha256:ec7d6c95cd3692a2e2d228a8b1ca74e4025b54121fcc4c5da6f09cfa473315ad 5.66kB / 5.66kB done
+#9 sha256:6310eb16bf4251731feab01e8f633bf5e2d75a657ccad97f420b1f83cce457be 0B / 29.79MB 0.1s
+#9 sha256:dbd0b7849e6c06b61e1fa6b7ffe053f246ce0075890620e3db64b47bb662433a 0B / 4.27MB 0.1s
+#9 sha256:1560cfed01dc4c72c07f789d860078d74466a1f9a26b33a2e35d887b5f90dd3f 0B / 12.12MB 0.1s
+#9 sha256:6310eb16bf4251731feab01e8f633bf5e2d75a657ccad97f420b1f83cce457be 5.24MB / 29.79MB 0.2s
+#9 sha256:6310eb16bf4251731feab01e8f633bf5e2d75a657ccad97f420b1f83cce457be 29.79MB / 29.79MB 0.2s done
+#9 sha256:1560cfed01dc4c72c07f789d860078d74466a1f9a26b33a2e35d887b5f90dd3f 11.53MB / 12.12MB 0.3s
+#9 sha256:56235e4245636e401a28cf88944d543b29ee028ae3b6c27e03d6b43e7b4eac5f 0B / 249B 0.3s
+#9 sha256:dbd0b7849e6c06b61e1fa6b7ffe053f246ce0075890620e3db64b47bb662433a 4.27MB / 4.27MB 0.4s done
+#9 sha256:1560cfed01dc4c72c07f789d860078d74466a1f9a26b33a2e35d887b5f90dd3f 12.12MB / 12.12MB 0.3s done
+#9 sha256:56235e4245636e401a28cf88944d543b29ee028ae3b6c27e03d6b43e7b4eac5f 249B / 249B 0.3s done
+#9 extracting sha256:6310eb16bf4251731feab01e8f633bf5e2d75a657ccad97f420b1f83cce457be 0.1s
+#9 extracting sha256:6310eb16bf4251731feab01e8f633bf5e2d75a657ccad97f420b1f83cce457be 1.1s done
+#9 extracting sha256:dbd0b7849e6c06b61e1fa6b7ffe053f246ce0075890620e3db64b47bb662433a 0.1s
+#9 extracting sha256:dbd0b7849e6c06b61e1fa6b7ffe053f246ce0075890620e3db64b47bb662433a 0.2s done
+#9 extracting sha256:1560cfed01dc4c72c07f789d860078d74466a1f9a26b33a2e35d887b5f90dd3f
+#9 extracting sha256:1560cfed01dc4c72c07f789d860078d74466a1f9a26b33a2e35d887b5f90dd3f 0.6s done
+#9 extracting sha256:56235e4245636e401a28cf88944d543b29ee028ae3b6c27e03d6b43e7b4eac5f
+#9 extracting sha256:56235e4245636e401a28cf88944d543b29ee028ae3b6c27e03d6b43e7b4eac5f done
+#9 DONE 2.6s
+
+#10 [ 2/11] RUN apt-get update -y   && apt-get install -y --no-install-recommends bash ca-certificates util-linux   && rm -rf /var/lib/apt/lists/*   && pip install --no-cache-dir numpy==2.1.3 pandas==2.2.3 scipy==1.14.1        scikit-learn==1.5.2
+#10 0.194 Hit:1 http://deb.debian.org/debian trixie InRelease
+#10 0.194 Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+#10 0.200 Hit:3 http://deb.debian.org/debian-security trixie-security InRelease
+#10 0.215 Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9673 kB]
+#10 0.295 Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [4412 B]
+#10 0.296 Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [251 kB]
+#10 0.928 Fetched 9975 kB in 1s (13.2 MB/s)
+#10 0.928 Reading package lists...
+#10 1.387 Reading package lists...
+#10 1.831 Building dependency tree...
+#10 1.933 Reading state information...
+#10 2.072 bash is already the newest version (5.2.37-2+b9).
+#10 2.072 bash set to manually installed.
+#10 2.072 ca-certificates is already the newest version (20250419).
+#10 2.072 util-linux is already the newest version (2.41.5-0+deb13u1).
+#10 2.072 util-linux set to manually installed.
+#10 2.072 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+#10 3.569 Collecting numpy==2.1.3
+#10 3.599   Downloading numpy-2.1.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (62 kB)
+#10 3.730 Collecting pandas==2.2.3
+#10 3.737   Downloading pandas-2.2.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (89 kB)
+#10 3.882 Collecting scipy==1.14.1
+#10 3.889   Downloading scipy-1.14.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (60 kB)
+#10 3.970 Collecting scikit-learn==1.5.2
+#10 3.976   Downloading scikit_learn-1.5.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (13 kB)
+#10 4.004 Collecting python-dateutil>=2.8.2 (from pandas==2.2.3)
+#10 4.011   Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+#10 4.046 Collecting pytz>=2020.1 (from pandas==2.2.3)
+#10 4.052   Downloading pytz-2026.3.post1-py2.py3-none-any.whl.metadata (22 kB)
+#10 4.067 Collecting tzdata>=2022.7 (from pandas==2.2.3)
+#10 4.073   Downloading tzdata-2026.3-py2.py3-none-any.whl.metadata (1.4 kB)
+#10 4.114 Collecting joblib>=1.2.0 (from scikit-learn==1.5.2)
+#10 4.120   Downloading joblib-1.6.0-py3-none-any.whl.metadata (6.5 kB)
+#10 4.133 Collecting threadpoolctl>=3.1.0 (from scikit-learn==1.5.2)
+#10 4.139   Downloading threadpoolctl-3.6.0-py3-none-any.whl.metadata (13 kB)
+#10 4.156 Collecting cloudpickle>=3.0 (from joblib>=1.2.0->scikit-learn==1.5.2)
+#10 4.162   Downloading cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+#10 4.176 Collecting six>=1.5 (from python-dateutil>=2.8.2->pandas==2.2.3)
+#10 4.182   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+#10 4.192 Downloading numpy-2.1.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (16.0 MB)
+#10 4.262    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.0/16.0 MB 255.3 MB/s eta 0:00:00
+#10 4.269 Downloading pandas-2.2.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.7 MB)
+#10 4.296    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.7/12.7 MB 521.1 MB/s eta 0:00:00
+#10 4.305 Downloading scipy-1.14.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (40.8 MB)
+#10 4.499    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.8/40.8 MB 211.7 MB/s eta 0:00:00
+#10 4.510 Downloading scikit_learn-1.5.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.9 MB)
+#10 4.562    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.9/12.9 MB 257.0 MB/s eta 0:00:00
+#10 4.569 Downloading joblib-1.6.0-py3-none-any.whl (306 kB)
+#10 4.575 Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+#10 4.582 Downloading pytz-2026.3.post1-py2.py3-none-any.whl (508 kB)
+#10 4.589 Downloading threadpoolctl-3.6.0-py3-none-any.whl (18 kB)
+#10 4.596 Downloading tzdata-2026.3-py2.py3-none-any.whl (348 kB)
+#10 4.603 Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+#10 4.609 Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+#10 4.780 Installing collected packages: pytz, tzdata, threadpoolctl, six, numpy, cloudpickle, scipy, python-dateutil, joblib, scikit-learn, pandas
+#10 15.96 Successfully installed cloudpickle-3.1.2 joblib-1.6.0 numpy-2.1.3 pandas-2.2.3 python-dateutil-2.9.0.post0 pytz-2026.3.post1 scikit-learn-1.5.2 scipy-1.14.1 six-1.17.0 threadpoolctl-3.6.0 tzdata-2026.3
+#10 15.96 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#10 16.03 
+#10 16.03 [notice] A new release of pip is available: 25.0.1 -> 26.2.1
+#10 16.03 [notice] To update, run: pip install --upgrade pip
+#10 DONE 17.4s
+
+#11 [ 3/11] RUN groupadd --gid 1000 ubuntu && useradd --uid 1000 --gid 1000 -m ubuntu
+#11 DONE 0.2s
+
+#12 [ 4/11] COPY backend/ /opt/task/
+#12 DONE 0.0s
+
+#13 [ 5/11] RUN chown -R root:root /opt/task   && chmod 755 /opt/task   && chmod 700 /opt/task/policies.py /opt/task/reference.py /opt/task/grading.py        /opt/task/broker.py /opt/task/sandbox.py /opt/task/corpus.py   && chmod 755 /opt/task/daemon.py /opt/task/task-entrypoint.sh   && mkdir -p /var/lib/fundops   && chown root:root /var/lib/fundops   && chmod 700 /var/lib/fundops
+#13 DONE 0.1s
+
+#14 [ 6/11] COPY trusted/ /opt/task/data/
+#14 DONE 0.0s
+
+#15 [ 7/11] RUN chown -R root:root /opt/task/data && chmod -R 700 /opt/task/data
+#15 DONE 0.2s
+
+#16 [ 8/11] WORKDIR /workspace/target
+#16 DONE 0.0s
+
+#17 [ 9/11] COPY workspace/ /workspace/target/
+#17 DONE 0.0s
+
+#18 [10/11] RUN chown -R ubuntu:ubuntu /workspace/target   && mkdir -p /workspace/target/.ops /logs/verifier/ops /logs/agent /logs/artifacts   && chown -R root:root /workspace/target/.ops /logs/verifier   && chmod 755 /logs /logs/artifacts /workspace/target/.ops   && chmod 777 /logs/agent   && chmod 700 /logs/verifier /logs/verifier/ops   && chmod 1755 /workspace/target
+#18 DONE 0.2s
+
+#19 [11/11] RUN set -e;   for d in _private gold oracle alt alt2 backend trusted negative_controls; do     if [ -e "/workspace/target/$d" ]; then echo "REFUSAL: reference dir in workspace ($d)" >&2; exit 1; fi;   done;   for f in solve.sh alt_solve.sh alt2_solve.sh grade.py reference.py policies.py broker.py grading.py sandbox.py corpus.py; do     if [ -e "/workspace/target/$f" ]; then echo "REFUSAL: verifier material in workspace ($f)" >&2; exit 1; fi;   done;   if grep -rIn -E "form_version.*==.*Original|Original.*==.*form_version|row\[.ben.\]|"ben"\]|Cancelled.*not_funded|not_funded.*Cancelled"        /workspace/target --include='*.py' 2>/dev/null; then     echo "REFUSAL: a shipped answer leaked into the workspace" >&2; exit 1;   fi;   true
+#19 DONE 0.2s
+
+#20 exporting to image
+#20 exporting layers
+#20 exporting layers 5.6s done
+#20 writing image sha256:046d28aaa85a8fa825bec6e092da9d680793c4645470d7253b86652505cd6edd done
+#20 naming to docker.io/drydock-evidence/task-src:built done
+#20 DONE 5.6s

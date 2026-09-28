@@ -1,0 +1,111 @@
+===== docker build: task-src =====
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.07kB done
+#1 DONE 0.0s
+
+#2 [auth] library/python:pull token for registry-1.docker.io
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.12-slim
+#3 DONE 0.5s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 81B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 12.71MB 0.1s done
+#5 DONE 0.1s
+
+#6 [1/7] FROM docker.io/library/python:3.12-slim@sha256:f77ac9e44ae96ef2c90b8053ea08c31f8be030f824196b0ae4db6d462c84e51f
+#6 resolve docker.io/library/python:3.12-slim@sha256:f77ac9e44ae96ef2c90b8053ea08c31f8be030f824196b0ae4db6d462c84e51f done
+#6 sha256:f77ac9e44ae96ef2c90b8053ea08c31f8be030f824196b0ae4db6d462c84e51f 10.37kB / 10.37kB done
+#6 sha256:44ff437bba879d4941b710a369a8f19266aea34b29002807f0c487fabc9eec9b 1.75kB / 1.75kB done
+#6 sha256:9e87977b867847e186d066f531ef783b006d582a985c341c269446088d90f2c4 5.65kB / 5.65kB done
+#6 sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 29.83MB / 29.83MB 0.2s done
+#6 sha256:3764a9a7d1e8a98213ab2201a41dbf3da9c60240ea35a5ea96ab994555070a70 1.29MB / 1.29MB 0.1s done
+#6 sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0 12.12MB / 12.12MB 0.1s done
+#6 sha256:06ad939ed42b51caafb25b14810875d14e0ee0c441d3e2e5e46475fb8c150bca 249B / 249B 0.1s done
+#6 extracting sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8
+#6 extracting sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 1.0s done
+#6 extracting sha256:3764a9a7d1e8a98213ab2201a41dbf3da9c60240ea35a5ea96ab994555070a70
+#6 extracting sha256:3764a9a7d1e8a98213ab2201a41dbf3da9c60240ea35a5ea96ab994555070a70 0.1s done
+#6 extracting sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0
+#6 extracting sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0 0.6s done
+#6 extracting sha256:06ad939ed42b51caafb25b14810875d14e0ee0c441d3e2e5e46475fb8c150bca
+#6 extracting sha256:06ad939ed42b51caafb25b14810875d14e0ee0c441d3e2e5e46475fb8c150bca done
+#6 DONE 3.3s
+
+#7 [2/7] RUN pip install --no-cache-dir       "pandas==2.3.3"       "numpy==2.2.6"       "scikit-learn==1.7.2"       "PyYAML==6.0.3"
+#7 1.614 Collecting pandas==2.3.3
+#7 1.635   Downloading pandas-2.3.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (91 kB)
+#7 1.840 Collecting numpy==2.2.6
+#7 1.843   Downloading numpy-2.2.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (62 kB)
+#7 1.915 Collecting scikit-learn==1.7.2
+#7 1.920   Downloading scikit_learn-1.7.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (11 kB)
+#7 1.952 Collecting PyYAML==6.0.3
+#7 1.955   Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+#7 1.970 Collecting python-dateutil>=2.8.2 (from pandas==2.3.3)
+#7 1.973   Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+#7 2.003 Collecting pytz>=2020.1 (from pandas==2.3.3)
+#7 2.006   Downloading pytz-2026.4-py2.py3-none-any.whl.metadata (22 kB)
+#7 2.017 Collecting tzdata>=2022.7 (from pandas==2.3.3)
+#7 2.020   Downloading tzdata-2026.4-py2.py3-none-any.whl.metadata (1.4 kB)
+#7 2.119 Collecting scipy>=1.8.0 (from scikit-learn==1.7.2)
+#7 2.122   Downloading scipy-1.18.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+#7 2.152 Collecting joblib>=1.2.0 (from scikit-learn==1.7.2)
+#7 2.155   Downloading joblib-1.6.0-py3-none-any.whl.metadata (6.5 kB)
+#7 2.164 Collecting threadpoolctl>=3.1.0 (from scikit-learn==1.7.2)
+#7 2.167   Downloading threadpoolctl-3.7.0-py3-none-any.whl.metadata (24 kB)
+#7 2.179 Collecting cloudpickle>=3.0 (from joblib>=1.2.0->scikit-learn==1.7.2)
+#7 2.182   Downloading cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+#7 2.191 Collecting six>=1.5 (from python-dateutil>=2.8.2->pandas==2.3.3)
+#7 2.194   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+#7 2.210 Downloading pandas-2.3.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (12.4 MB)
+#7 2.245    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 415.3 MB/s eta 0:00:00
+#7 2.249 Downloading numpy-2.2.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (16.5 MB)
+#7 2.281    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.5/16.5 MB 550.9 MB/s eta 0:00:00
+#7 2.285 Downloading scikit_learn-1.7.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (9.5 MB)
+#7 2.307    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.5/9.5 MB 476.2 MB/s eta 0:00:00
+#7 2.311 Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+#7 2.314    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 740.3 MB/s eta 0:00:00
+#7 2.318 Downloading joblib-1.6.0-py3-none-any.whl (306 kB)
+#7 2.321 Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+#7 2.325 Downloading pytz-2026.4-py2.py3-none-any.whl (506 kB)
+#7 2.330 Downloading scipy-1.18.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.3 MB)
+#7 2.397    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.3/35.3 MB 539.8 MB/s eta 0:00:00
+#7 2.401 Downloading threadpoolctl-3.7.0-py3-none-any.whl (26 kB)
+#7 2.404 Downloading tzdata-2026.4-py2.py3-none-any.whl (347 kB)
+#7 2.408 Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+#7 2.411 Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+#7 2.587 Installing collected packages: pytz, tzdata, threadpoolctl, six, PyYAML, numpy, cloudpickle, scipy, python-dateutil, joblib, scikit-learn, pandas
+#7 15.09 Successfully installed PyYAML-6.0.3 cloudpickle-3.1.2 joblib-1.6.0 numpy-2.2.6 pandas-2.3.3 python-dateutil-2.9.0.post0 pytz-2026.4 scikit-learn-1.7.2 scipy-1.18.1 six-1.17.0 threadpoolctl-3.7.0 tzdata-2026.4
+#7 15.09 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#7 15.16 
+#7 15.16 [notice] A new release of pip is available: 25.0.1 -> 26.2.1
+#7 15.16 [notice] To update, run: pip install --upgrade pip
+#7 DONE 15.9s
+
+#8 [3/7] RUN useradd -m ubuntu
+#8 DONE 0.2s
+
+#9 [4/7] WORKDIR /workspace/target
+#9 DONE 0.0s
+
+#10 [5/7] COPY workspace/ /workspace/target/
+#10 DONE 0.0s
+
+#11 [6/7] RUN set -e;     for d in _private solution tests oracle skeleton; do       if [ -e "/workspace/target/$d" ]; then         echo "REFUSAL: verifier material inside the workspace ($d)" >&2; exit 1;       fi;     done;     if [ -e "/workspace/target/out" ]; then       echo "REFUSAL: a completed run left in the workspace (out/)" >&2; exit 1;     fi;     for f in grade.py solve.sh alt_solve.sh alt2_solve.sh expected_current.csv.gz              expected_reference.csv.gz; do       if find /workspace/target -name "$f" -print -quit | grep -q .; then         echo "REFUSAL: verifier material inside the workspace ($f)" >&2; exit 1;       fi;     done
+#11 DONE 0.1s
+
+#12 [7/7] RUN chown -R ubuntu:ubuntu /workspace/target
+#12 DONE 0.2s
+
+#13 exporting to image
+#13 exporting layers
+#13 exporting layers 3.9s done
+#13 writing image sha256:77924e4cedd4f7ce6cf50738ca3b355418e93b0de0fda5ca803db73d5de024f9 done
+#13 naming to docker.io/drydock-evidence/task-src:built done
+#13 DONE 3.9s

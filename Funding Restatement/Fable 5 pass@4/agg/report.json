@@ -1,0 +1,65 @@
+{
+  "label": "mini-swe-agent / anthropic/claude-fable-5 (pass@4)",
+  "reasoning_effort": "xhigh",
+  "k": 4,
+  "trials_produced": 4,
+  "trials_missing": 0,
+  "avg_at_k": 1.0,
+  "pass_at_k": true,
+  "solves": 4,
+  "total_cost_usd": 26.9155,
+  "trials": [
+    {
+      "trial": "task-src__2aHEkR3",
+      "reward": 1.0,
+      "exception": null,
+      "model": "mini-swe-agent / claude-fable-5",
+      "cost_usd": 5.138869499999999,
+      "prompt_tokens": 1732718,
+      "completion_tokens": 50237,
+      "cached_tokens": 1654937,
+      "steps": 38,
+      "reasoning_tokens": 33076,
+      "reasoning_in_trace": true
+    },
+    {
+      "trial": "task-src__36owxTV",
+      "reward": 1.0,
+      "exception": null,
+      "model": "mini-swe-agent / claude-fable-5",
+      "cost_usd": 5.844482,
+      "prompt_tokens": 2369705,
+      "completion_tokens": 51087,
+      "cached_tokens": 2289647,
+      "steps": 49,
+      "reasoning_tokens": 35170,
+      "reasoning_in_trace": true
+    },
+    {
+      "trial": "task-src__XoQVSpw",
+      "reward": 1.0,
+      "exception": null,
+      "model": "mini-swe-agent / claude-fable-5",
+      "cost_usd": 6.673382999999999,
+      "prompt_tokens": 2656929,
+      "completion_tokens": 59987,
+      "cached_tokens": 2568463,
+      "steps": 51,
+      "reasoning_tokens": 41062,
+      "reasoning_in_trace": true
+    },
+    {
+      "trial": "task-src__vishxsz",
+      "reward": 1.0,
+      "exception": null,
+      "model": "mini-swe-agent / claude-fable-5",
+      "cost_usd": 9.258768000000003,
+      "prompt_tokens": 3553480,
+      "completion_tokens": 86575,
+      "cached_tokens": 3433758,
+      "steps": 55,
+      "reasoning_tokens": 64689,
+      "reasoning_in_trace": true
+    }
+  ]
+}

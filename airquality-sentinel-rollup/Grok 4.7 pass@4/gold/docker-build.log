@@ -1,0 +1,189 @@
+===== docker build: task-src =====
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.47kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12-slim
+#2 ...
+
+#3 [auth] library/python:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12-slim
+#2 DONE 0.9s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 729.12kB 0.0s done
+#5 DONE 0.0s
+
+#6 [ 1/14] FROM docker.io/library/python:3.12-slim@sha256:f77ac9e44ae96ef2c90b8053ea08c31f8be030f824196b0ae4db6d462c84e51f
+#6 resolve docker.io/library/python:3.12-slim@sha256:f77ac9e44ae96ef2c90b8053ea08c31f8be030f824196b0ae4db6d462c84e51f done
+#6 sha256:9e87977b867847e186d066f531ef783b006d582a985c341c269446088d90f2c4 5.65kB / 5.65kB done
+#6 sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 0B / 29.83MB 0.1s
+#6 sha256:3764a9a7d1e8a98213ab2201a41dbf3da9c60240ea35a5ea96ab994555070a70 1.29MB / 1.29MB 0.1s done
+#6 sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0 0B / 12.12MB 0.1s
+#6 sha256:06ad939ed42b51caafb25b14810875d14e0ee0c441d3e2e5e46475fb8c150bca 0B / 249B 0.1s
+#6 sha256:f77ac9e44ae96ef2c90b8053ea08c31f8be030f824196b0ae4db6d462c84e51f 10.37kB / 10.37kB done
+#6 sha256:44ff437bba879d4941b710a369a8f19266aea34b29002807f0c487fabc9eec9b 1.75kB / 1.75kB done
+#6 sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 29.83MB / 29.83MB 0.2s
+#6 sha256:06ad939ed42b51caafb25b14810875d14e0ee0c441d3e2e5e46475fb8c150bca 249B / 249B 0.2s
+#6 sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0 12.12MB / 12.12MB 0.4s
+#6 sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 29.83MB / 29.83MB 0.6s done
+#6 sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0 12.12MB / 12.12MB 0.6s done
+#6 sha256:06ad939ed42b51caafb25b14810875d14e0ee0c441d3e2e5e46475fb8c150bca 249B / 249B 0.6s done
+#6 extracting sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 0.1s
+#6 extracting sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 0.8s done
+#6 extracting sha256:3764a9a7d1e8a98213ab2201a41dbf3da9c60240ea35a5ea96ab994555070a70
+#6 extracting sha256:3764a9a7d1e8a98213ab2201a41dbf3da9c60240ea35a5ea96ab994555070a70 0.3s done
+#6 extracting sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0
+#6 extracting sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0 0.5s done
+#6 extracting sha256:06ad939ed42b51caafb25b14810875d14e0ee0c441d3e2e5e46475fb8c150bca
+#6 extracting sha256:06ad939ed42b51caafb25b14810875d14e0ee0c441d3e2e5e46475fb8c150bca done
+#6 DONE 9.4s
+
+#7 [ 2/14] RUN apt-get update -y  && apt-get install -y --no-install-recommends bash ca-certificates procps util-linux  && rm -rf /var/lib/apt/lists/*  && pip install --no-cache-dir       "numpy==2.4.2" "pandas==2.3.3" "scikit-learn==1.7.2" "scipy==1.17.0" "PyYAML==6.0.3"
+#7 0.205 Hit:1 http://deb.debian.org/debian trixie InRelease
+#7 0.206 Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+#7 0.216 Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+#7 0.227 Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9678 kB]
+#7 0.349 Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [4412 B]
+#7 0.350 Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [263 kB]
+#7 0.893 Fetched 10.0 MB in 1s (13.8 MB/s)
+#7 0.893 Reading package lists...
+#7 1.358 Reading package lists...
+#7 1.777 Building dependency tree...
+#7 1.902 Reading state information...
+#7 2.021 bash is already the newest version (5.2.37-2+b10).
+#7 2.021 bash set to manually installed.
+#7 2.021 ca-certificates is already the newest version (20250419).
+#7 2.021 util-linux is already the newest version (2.41.5-0+deb13u1).
+#7 2.021 util-linux set to manually installed.
+#7 2.021 The following additional packages will be installed:
+#7 2.022   libproc2-0
+#7 2.023 Recommended packages:
+#7 2.023   psmisc linux-sysctl-defaults
+#7 2.047 The following NEW packages will be installed:
+#7 2.048   libproc2-0 procps
+#7 2.069 0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+#7 2.069 Need to get 948 kB of archives.
+#7 2.069 After this operation, 2695 kB of additional disk space will be used.
+#7 2.069 Get:1 http://deb.debian.org/debian trixie/main amd64 libproc2-0 amd64 2:4.0.4-9 [65.6 kB]
+#7 2.074 Get:2 http://deb.debian.org/debian trixie/main amd64 procps amd64 2:4.0.4-9 [882 kB]
+#7 2.182 debconf: unable to initialize frontend: Dialog
+#7 2.182 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#7 2.182 debconf: falling back to frontend: Readline
+#7 2.182 debconf: unable to initialize frontend: Readline
+#7 2.182 debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC entries checked: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.40.1 /usr/local/share/perl/5.40.1 /usr/lib/x86_64-linux-gnu/perl5/5.40 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl-base /usr/lib/x86_64-linux-gnu/perl/5.40 /usr/share/perl/5.40 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 8, <STDIN> line 2.)
+#7 2.182 debconf: falling back to frontend: Teletype
+#7 2.186 debconf: unable to initialize frontend: Teletype
+#7 2.186 debconf: (This frontend requires a controlling tty.)
+#7 2.186 debconf: falling back to frontend: Noninteractive
+#7 2.725 Fetched 948 kB in 0s (31.5 MB/s)
+#7 2.736 Selecting previously unselected package libproc2-0:amd64.
+#7 2.736 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 5660 files and directories currently installed.)
+#7 2.743 Preparing to unpack .../libproc2-0_2%3a4.0.4-9_amd64.deb ...
+#7 2.744 Unpacking libproc2-0:amd64 (2:4.0.4-9) ...
+#7 2.760 Selecting previously unselected package procps.
+#7 2.761 Preparing to unpack .../procps_2%3a4.0.4-9_amd64.deb ...
+#7 2.766 Unpacking procps (2:4.0.4-9) ...
+#7 2.808 Setting up libproc2-0:amd64 (2:4.0.4-9) ...
+#7 2.810 Setting up procps (2:4.0.4-9) ...
+#7 2.823 Processing triggers for libc-bin (2.41-12+deb13u4) ...
+#7 4.392 Collecting numpy==2.4.2
+#7 4.430   Downloading numpy-2.4.2-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+#7 4.513 Collecting pandas==2.3.3
+#7 4.523   Downloading pandas-2.3.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (91 kB)
+#7 4.610 Collecting scikit-learn==1.7.2
+#7 4.620   Downloading scikit_learn-1.7.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (11 kB)
+#7 4.701 Collecting scipy==1.17.0
+#7 4.712   Downloading scipy-1.17.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+#7 4.743 Collecting PyYAML==6.0.3
+#7 4.753   Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+#7 4.765 Collecting python-dateutil>=2.8.2 (from pandas==2.3.3)
+#7 4.775   Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+#7 4.799 Collecting pytz>=2020.1 (from pandas==2.3.3)
+#7 4.809   Downloading pytz-2026.4-py2.py3-none-any.whl.metadata (22 kB)
+#7 4.819 Collecting tzdata>=2022.7 (from pandas==2.3.3)
+#7 4.829   Downloading tzdata-2026.4-py2.py3-none-any.whl.metadata (1.4 kB)
+#7 4.851 Collecting joblib>=1.2.0 (from scikit-learn==1.7.2)
+#7 4.862   Downloading joblib-1.6.0-py3-none-any.whl.metadata (6.5 kB)
+#7 4.870 Collecting threadpoolctl>=3.1.0 (from scikit-learn==1.7.2)
+#7 4.880   Downloading threadpoolctl-3.7.0-py3-none-any.whl.metadata (24 kB)
+#7 4.895 Collecting cloudpickle>=3.0 (from joblib>=1.2.0->scikit-learn==1.7.2)
+#7 4.905   Downloading cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+#7 4.913 Collecting six>=1.5 (from python-dateutil>=2.8.2->pandas==2.3.3)
+#7 4.923   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+#7 4.937 Downloading numpy-2.4.2-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.6 MB)
+#7 5.045    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.6/16.6 MB 185.0 MB/s eta 0:00:00
+#7 5.056 Downloading pandas-2.3.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (12.4 MB)
+#7 5.074    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 764.4 MB/s eta 0:00:00
+#7 5.085 Downloading scikit_learn-1.7.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (9.5 MB)
+#7 5.113    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.5/9.5 MB 353.5 MB/s eta 0:00:00
+#7 5.124 Downloading scipy-1.17.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.0 MB)
+#7 5.188    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.0/35.0 MB 562.4 MB/s eta 0:00:00
+#7 5.198 Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+#7 5.201    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 1.1 GB/s eta 0:00:00
+#7 5.212 Downloading joblib-1.6.0-py3-none-any.whl (306 kB)
+#7 5.222 Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+#7 5.232 Downloading pytz-2026.4-py2.py3-none-any.whl (506 kB)
+#7 5.243 Downloading threadpoolctl-3.7.0-py3-none-any.whl (26 kB)
+#7 5.253 Downloading tzdata-2026.4-py2.py3-none-any.whl (347 kB)
+#7 5.263 Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+#7 5.273 Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+#7 5.406 Installing collected packages: pytz, tzdata, threadpoolctl, six, PyYAML, numpy, cloudpickle, scipy, python-dateutil, joblib, scikit-learn, pandas
+#7 15.71 Successfully installed PyYAML-6.0.3 cloudpickle-3.1.2 joblib-1.6.0 numpy-2.4.2 pandas-2.3.3 python-dateutil-2.9.0.post0 pytz-2026.4 scikit-learn-1.7.2 scipy-1.17.0 six-1.17.0 threadpoolctl-3.7.0 tzdata-2026.4
+#7 15.71 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#7 15.76 
+#7 15.76 [notice] A new release of pip is available: 25.0.1 -> 26.2.1
+#7 15.76 [notice] To update, run: pip install --upgrade pip
+#7 DONE 19.8s
+
+#8 [ 3/14] RUN useradd --uid 1000 --create-home --shell /bin/bash ubuntu  && useradd --uid 1002 --create-home --shell /usr/sbin/nologin envrun
+#8 DONE 0.2s
+
+#9 [ 4/14] COPY envd/envd.py /opt/envd/envd.py
+#9 DONE 0.0s
+
+#10 [ 5/14] COPY hidden/ /opt/task/hidden/
+#10 DONE 0.0s
+
+#11 [ 6/14] COPY derive_fixtures.py /opt/task/derive_fixtures.py
+#11 DONE 0.0s
+
+#12 [ 7/14] RUN python3 /opt/task/derive_fixtures.py
+#12 0.191 hidden fixtures present: sanity_batch.csv, sanity_labels.csv, terminal_batch.csv, terminal_labels.csv
+#12 DONE 0.3s
+
+#13 [ 8/14] COPY probe/ /opt/task/probe/
+#13 DONE 0.2s
+
+#14 [ 9/14] COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+#14 DONE 0.0s
+
+#15 [10/14] RUN chown -R root:root /opt/envd /opt/task /usr/local/bin/entrypoint.sh  && chmod 700 /opt/envd && chmod 600 /opt/envd/envd.py  && chmod 700 /opt/task /opt/task/hidden /opt/task/probe  && chmod 600 /opt/task/hidden/* /opt/task/probe/*  && chmod 755 /usr/local/bin/entrypoint.sh  && mkdir -p /var/lib/envstate /run/envd && chmod 700 /var/lib/envstate
+#15 DONE 0.5s
+
+#16 [11/14] COPY workspace/ /workspace/target/
+#16 DONE 0.2s
+
+#17 [12/14] RUN chown -R ubuntu:ubuntu /workspace/target  && find /workspace/target -name '__pycache__' -prune -exec rm -rf {} + || true
+#17 DONE 0.2s
+
+#18 [13/14] RUN set -e;   for d in _private gold oracle solution alt alt2 hidden probe; do     if [ -e "/workspace/target/$d" ]; then echo "REFUSAL: reference dir in workspace ($d)" >&2; exit 1; fi;   done;   for f in solve.sh alt_solve.sh grade.py terminal_probe.py envd.py            terminal_labels.csv terminal_batch.csv            sanity_labels.csv sanity_batch.csv; do     if [ -e "/workspace/target/$f" ] || [ -e "/workspace/target/data/$f" ]; then       echo "REFUSAL: verifier material in workspace ($f)" >&2; exit 1; fi;   done;   if grep -R -I -n -E "rollup_wrong|terminal_labels|NOT_RECORDED|GOLD FIX|alt2_solve"        /workspace/target 2>/dev/null; then     echo "REFUSAL: answer-like leakage in workspace" >&2; exit 1;   fi;   for p in /opt/task/hidden /opt/task/probe; do     if [ "$(stat -c '%U %a' $p)" != "root 700" ]; then       echo "REFUSAL: $p is not root-only" >&2; exit 1; fi;   done;   true
+#18 DONE 0.2s
+
+#19 [14/14] WORKDIR /workspace/target
+#19 DONE 0.0s
+
+#20 exporting to image
+#20 exporting layers
+#20 exporting layers 6.0s done
+#20 writing image sha256:28f655dc0cf8444e9b939a2d74c9bcce38809c5a9a45126e46f0f94a3911b3f0 done
+#20 naming to docker.io/drydock-evidence/task-src:built done
+#20 DONE 6.0s

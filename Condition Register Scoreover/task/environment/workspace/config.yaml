@@ -1,0 +1,27 @@
+# Condition-register scoring policy.
+# Owned by the analytics team; the pipeline under src/ is expected to honour it.
+task: condition_register
+
+register:
+  # Where the charted codes live, how a missing cell is marked, and how the register is
+  # written into one field. The register itself is delivered by the refresh job.
+  code_columns: [diag_1, diag_2, diag_3]
+  index: data/patient_conditions.csv
+  code_table: data/code_groups.csv
+  missing_marker: "?"
+  separator: "|"
+
+scoring:
+  # A score is the probability that the encounter is followed by an unplanned readmission
+  # within 30 days of discharge. One row per encounter in the batch.
+  horizon_days: 30
+  output_columns: [encounter_id, score, conditions]
+
+model:
+  kind: logistic_regression
+  max_iter: 2000
+  random_state: 0
+
+paths:
+  encounters: data/encounters.csv
+  serving_batch: data/serving_batch.csv

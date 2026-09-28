@@ -1,0 +1,5 @@
+_private/source/
+__pycache__/
+environment/hidden/archive_full.csv
+environment/hidden/archive_trimmed.csv
+environment/workspace/results/*.json

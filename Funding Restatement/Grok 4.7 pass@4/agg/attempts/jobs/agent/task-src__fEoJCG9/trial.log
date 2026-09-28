@@ -1,0 +1,86 @@
+Building Docker image harbor-prebuilt:harbor-docker-egress-control-sidecar--b1e6760734a9e6f6 from /home/runner/work/Anvil/Anvil/.venv/lib/python3.13/site-packages/harbor/environments/docker/harbor-docker-egress-control-sidecar using /home/runner/work/Anvil/Anvil/.venv/lib/python3.13/site-packages/harbor/environments/docker/harbor-docker-egress-control-sidecar/Dockerfile at 2026-09-26 18:47:09.000502+00:00
+Skipping image OS validation for hb__67dfee1fbd8351a38b7664cecf9bab9b: docker inspect returned 1
+Running healthcheck: test -S /run/fundops.sock
+Healthcheck passed
+Running command: set -euo pipefail; if ! command -v uv >/dev/null 2>&1; then  curl -LsSf https://astral.sh/uv/install.sh | sh; fi && if ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' "$HOME/.bashrc" 2>/dev/null; then  echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"; fi && if [ -f "$HOME/.local/bin/env" ]; then source "$HOME/.local/bin/env"; fi && export PATH="$HOME/.local/bin:$PATH" && uv tool install mini-swe-agent --with litellm --with orjson --with fastapi && mini-swe-agent --help
+Command outputs captured
+Running command: if [ -f "$HOME/.local/bin/env" ]; then . "$HOME/.local/bin/env"; else export PATH="$HOME/.local/bin:$PATH"; fi; mini-swe-agent --yolo --model=xai/grok-4.7 --task='# Funding requests: the harness table
+
+The desk scores E-Rate funding requests for whether they will be funded. The
+local check reports a held-out AUC of **1.0**. The team consuming the scores says
+they are worthless in production and has stopped using them.
+
+Rebuild the table the harness stands on and get a release through.
+
+## The deliverable
+
+`workspace/harness.py`, run as:
+
+```
+python3 harness.py --data-root <DIR> --out <FILE>
+```
+
+It writes csv with one row for every distinct funding request:
+
+```
+funding_request_number,label,applicant_key,committed_cents,filed_months,
+filed_commitment_cents,filed_pre_discount_cents,filed_discount_pct
+```
+
+`committed_cents` and `filed_commitment_cents` are the same money column of the
+extract read off two different versions of the request. They are not the same
+number, and neither is a spelling of the other.
+
+Grading is by value against every request in the extract and **per field**. The
+seven graded fields are scored separately, each against a tolerance band, and
+getting one right does not carry the others. A field with nothing to report is
+the empty string, never a zero — those are different facts.
+
+## Where the rules live
+
+They are not in this file. They are ops notes held by the incident service:
+
+```
+python3 env_cli.py policy.list
+python3 env_cli.py policy.read --topic <name>
+```
+
+**Read all of them — `submit` is refused until you have.** Everything the
+deliverable is graded on is specified there. There is no hidden rule in this task
+and no oracle to ration: the difficulty is not that something is being withheld
+from you, it is that the extract is not shaped the way it looks and the desk'"'"'s own
+check gets *better* as the table gets worse.
+
+`python3 env_cli.py profile` describes the shape of the extract for free, as often
+as you like. `sample_rows` shows you two real rows. Both cost nothing.
+
+## What you have
+
+Your workspace carries the **whole extract** — every row, every column. The same
+bytes the service validates against and the same bytes grading scores against.
+Nothing is held back.
+
+What it does not carry is the corrected table. So local testing tells you about
+your code and never about your table.
+
+`check_report.py` runs the desk'"'"'s check and prints the number quoted in a release
+request. Read it before you believe it.
+
+## Getting a release through
+
+The service gates the work and expects the steps in order. `status` always tells
+you which one it wants next **and prints the exact command line to run**:
+
+```
+python3 env_cli.py status
+python3 env_cli.py inspect
+```
+
+Every gated step returns a receipt and the next one has to carry it — `status`
+fills it in for you under `next_command`. Deploying a build arms a serving fault
+that must be diagnosed and repaired before release; `diagnostics.read` names the
+family and prints the repair command. Budgets for validates and repairs are
+visible in `status` and neither refills.
+' --output=/logs/agent/mini-swe-agent.trajectory.json --cost-limit 0 -c mini -c model.model_kwargs.extra_headers.X-Session-ID=task-src__fEoJCG9__agent -c model.model_kwargs.reasoning_effort=xhigh -c model.model_kwargs.max_tokens=32000 --exit-immediately 2>&1 </dev/null | tee /logs/agent/mini-swe-agent.txt
+Command outputs captured
+Collecting main service artifacts

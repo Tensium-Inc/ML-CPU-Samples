@@ -1,0 +1,5 @@
+Building Docker image harbor-prebuilt:harbor-docker-egress-control-sidecar--b1e6760734a9e6f6 from /home/runner/work/Anvil/Anvil/.venv/lib/python3.13/site-packages/harbor/environments/docker/harbor-docker-egress-control-sidecar using /home/runner/work/Anvil/Anvil/.venv/lib/python3.13/site-packages/harbor/environments/docker/harbor-docker-egress-control-sidecar/Dockerfile at 2026-09-10 10:42:26.846193+00:00
+Skipping image OS validation for hb__1e6369913bea62892c720c9d9810df96: docker inspect returned 1
+Running healthcheck: python3 -c "import socket; socket.socket(socket.AF_UNIX).connect('/run/envd/envd.sock')"
+Healthcheck passed
+Collecting main service artifacts

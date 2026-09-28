@@ -1,0 +1,29 @@
+# Live run for the current scoring period.
+paths:
+  data_dir: data
+
+windows:
+  fit:
+    from: "2024-01-01"
+    to: "2024-02-15"
+  score:
+    from: "2024-03-25"
+    to: "2024-03-31"
+
+labelling:
+  window_days: 3
+
+encoding:
+  smoothing: 50.0
+
+recent:
+  flights: 20
+
+model:
+  seed: 5
+  max_iter: 200
+  learning_rate: 0.08
+  max_depth: 6
+
+scoring:
+  watch_threshold: 0.08

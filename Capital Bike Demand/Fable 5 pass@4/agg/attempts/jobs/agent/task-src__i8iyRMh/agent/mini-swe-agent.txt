@@ -1,0 +1,3701 @@
+This is mini-swe-agent version 2.4.6.
+Check the v2 migration guide at https://klieret.short.gy/mini-v2-migration
+Loading global config from '/home/ubuntu/.config/mini-swe-agent/.env'
+Warning: Input is not a terminal (fd=0).
+Building agent config from specs: ['mini', 
+'model.model_kwargs.extra_headers.X-Session-ID=task-src__i8iyRMh__agent', 
+'model.model_kwargs.reasoning_effort=xhigh', 
+'model.model_kwargs.max_tokens=32000']
+
+System:
+You are a helpful assistant that can interact with a computer.
+
+User:
+Please solve this issue: I am handing you a live hourly bike-demand forecast 
+incident. The September through December
+2012 release is frozen because the inherited pipeline cannot reconcile its mixed
+history exports,
+uses a weak retrospective model, and publishes intervals that do not survive a 
+forward replay.
+Ordinary local checks can look reasonable while the four-month production 
+horizon is still wrong.
+
+The complete workspace is `/workspace/target/`. It contains real UCI Bike 
+Sharing data, four
+incompatible labeled history exports under `data/history/`, their registry, the 
+public terminal
+request contract, starter code under `pipeline/` and `scripts/`, visible tests, 
+and `env_cli.py`.
+There is no internet. Do not edit the data, the registry, `env_cli.py`, or 
+visible tests. Repair
+the implementation under `pipeline/` and `scripts/`. At least two implementation
+files must
+change. The issue-time requests omit `cnt`, `casual`, and `registered`; all 
+three are outcomes and
+must never be predictors.
+
+The operations service is authoritative. It owns the runtime cache, protected 
+validation waves,
+staged snapshots, signed action history, and final replay. Editing code alone is
+not a delivery.
+Drive this exact ordered walk with `python3 env_cli.py <op>`.
+
+Investigation, before any implementation edit:
+
+1. `inspect.contract`
+2. `inspect.exports`
+3. `profile.current`
+4. `probe.schema`
+5. `probe.leakage`
+6. `probe.year_bridge`
+7. `probe.commute`
+8. `probe.horizon`
+9. `hypothesis.commit --evidence <id> ... --summary-file investigation.json`
+
+Each probe returns a signed evidence id. `hypothesis.commit` requires all five 
+probe ids and an
+ASCII JSON summary bound to the pristine candidate hashes. The summary must 
+contain
+`candidate_hash`, `code_hash`, an `evidence` list with each id and a substantive
+`observation`, a
+substantive `hypothesis`, and a `planned_test`. Editing implementation code 
+before the commitment
+locks the incident. You may create investigation notes outside `pipeline/` and 
+`scripts/`; those
+notes do not change the pristine implementation binding.
+
+After the hypothesis is accepted, edit and test the candidate, then run:
+
+1. `test.visible`
+2. `backtest.replay`
+3. `candidate.attest`
+4. `reproduce`
+5. `stage.open`
+6. `deploy.prepare`
+7. `deploy.commit`
+8. `validate`
+9. `diagnostics.read`
+10. `recovery.plan --family <family> --diagnosis <receipt>`
+11. `recovery.apply --family <same-family> --diagnosis <same-receipt>`
+12. `recovery.verify`
+13. `cache.audit`
+14. `reproduce`
+15. `stage.open`
+16. `deploy.prepare`
+17. `deploy.commit`
+18. `validate`
+19. `audit.horizon`
+20. `audit.intervals`
+21. `promote.canary`
+22. `validate.canary`
+23. `promote.production`
+24. `freeze`
+25. `submit`
+
+The first protected validation is deliberately dirty because the served cache is
+stale. This
+operational fault is injected before candidate quality is assessed. Read the 
+diagnostics and use
+both the returned diagnosis receipt and `required_family`. A wrong family, a 
+mismatched receipt, or
+an out-of-order operation is rejected without advancing the phase, so correct it
+and retry the same
+operation. Validation is rate limited to three accepted calls and returns only 
+`clean` or `dirty`
+plus an operational signal, not labels or row-level errors. The staged candidate
+is immutable, and
+the second deployment is required after the recovered cache advances.
+
+If step 18 returns `clean`, continue directly to `audit.horizon`. If it returns 
+`dirty` with signal
+`protected_behavior_dirty`, use the single bounded revision cycle. Improve at 
+least two
+implementation files, then run `candidate.revise`, `test.visible`, 
+`backtest.replay`,
+`candidate.attest`, `reproduce`, `stage.open`, `deploy.prepare`, 
+`deploy.commit`, and the third and
+final `validate`. A clean third validation continues to `audit.horizon`; another
+dirty result ends
+the release. This conditional cycle is the only permitted departure from the 
+ordered walk above.
+
+The public backtest is intentionally non-discriminating. Use the registry and 
+evidence to decide
+how to normalize the exports, how a model trained on the available calendar 
+range should cross a
+four-month production horizon, how working-day commute hours should be 
+represented, and how an
+80 percent interval should be calibrated from forward residuals. A familiar tree
+fit without a
+sound horizon treatment is not sufficient.
+
+The final output is environment-owned 
+`/workspace/target/terminal-predictions.csv` with exactly:
+
+`instant,predicted_cnt,lower_80,upper_80`
+
+At `submit`, the service replays the frozen production snapshot as the 
+unprivileged runtime over
+the environment-owned history and all 2,888 terminal requests. Grading 
+independently replays the
+same snapshot under input permutations and checks values with tolerance. Overall
+RMSE must be at
+most 65, every calendar-month RMSE at most 72, and working-day commute-hour MAE 
+at most 76.
+Empirical interval coverage must be from 70 through 98 percent, and mean 
+interval width must be at
+most 250 counts. Workspace-written logs, forged receipts, stdout, and 
+self-authored score files are
+ignored. The deliverable is the complete signed trajectory ending in `submit` 
+and its frozen
+environment-owned terminal, not a report or a one-shot code drop.
+
+
+You can execute bash commands and edit files to implement the necessary changes.
+
+## Recommended Workflow
+
+This workflow should be done step-by-step so that you can iterate on your 
+changes and any possible problems.
+
+1. Analyze the codebase by finding and reading relevant files
+2. Create a script to reproduce the issue
+3. Edit the source code to resolve the issue
+4. Verify your fix works by running your script again
+5. Test edge cases to ensure your fix is robust
+6. Submit your changes and finish your work by issuing the following command: 
+`echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT`.
+   Do not combine it with any other command. <important>After this command, you 
+cannot continue working on this task.</important>
+
+## Command Execution Rules
+
+You are operating in an environment where
+
+1. You issue at least one command
+2. The system executes the command(s) in a subshell
+3. You see the result(s)
+4. You write your next command(s)
+
+Each response should include:
+
+1. **Reasoning text** where you explain your analysis and plan
+2. At least one tool call with your command
+
+**CRITICAL REQUIREMENTS:**
+
+- Your response SHOULD include reasoning text explaining what you're doing
+- Your response MUST include AT LEAST ONE bash tool call
+- Directory or environment variable changes are not persistent. Every action is 
+executed in a new subshell.
+- However, you can prefix any action with `MY_ENV_VAR=MY_VALUE cd 
+/path/to/working/dir && ...` or write/load environment variables from files
+- Submit your changes and finish your work by issuing the following command: 
+`echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT`.
+  Do not combine it with any other command. <important>After this command, you 
+cannot continue working on this task.</important>
+
+Example of a CORRECT response:
+<example_response>
+I need to understand the structure of the repository first. Let me check what 
+files are in the current directory to get a better understanding of the 
+codebase.
+
+[Makes bash tool call with {"command": "ls -la"} as arguments]
+</example_response>
+
+<system_information>
+Linux 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026 x86_64
+</system_information>
+
+## Useful command examples
+
+### Create a new file:
+
+```bash
+cat <<'EOF' > newfile.py
+import numpy as np
+hello = "world"
+print(hello)
+EOF
+```
+
+### Edit files with sed:```bash
+# Replace all occurrences
+sed -i 's/old_string/new_string/g' filename.py
+
+# Replace only first occurrence
+sed -i 's/old_string/new_string/' filename.py
+
+# Replace first occurrence on line 1
+sed -i '1s/old_string/new_string/' filename.py
+
+# Replace all occurrences in lines 1-10
+sed -i '1,10s/old_string/new_string/g' filename.py
+```
+
+### View file content:
+
+```bash
+# View specific lines with numbers
+nl -ba filename.py | sed -n '10,20p'
+```
+
+### Any other command you want to run
+
+```bash
+anything
+```
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 1, $0.05):
+Let me start by exploring the workspace structure to understand what we're 
+working with.
+
+```
+find /workspace/target -maxdepth 3 -type d | head -50 && echo "---" && ls -la 
+/workspace/target/
+```
+
+```
+cat /workspace/target/README* 2>/dev/null; ls /workspace/target/data 
+/workspace/target/pipeline /workspace/target/scripts 2>/dev/null
+```
+
+Tool:
+<returncode>
+0
+<output>
+/workspace/target
+/workspace/target/pipeline
+/workspace/target/data
+/workspace/target/data/history
+/workspace/target/scripts
+/workspace/target/tests
+---
+total 56
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep 27 16:11 .
+drwxr-xr-x 1 root   root   4096 Sep 27 16:12 ..
+-rw-r--r-- 1 ubuntu ubuntu  782 Sep 27 16:11 README.md
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep 27 16:11 data
+-rwxr-xr-x 1 ubuntu ubuntu 2034 Sep 27 16:11 env_cli.py
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep 27 16:11 pipeline
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep 27 16:11 scripts
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep 27 16:11 tests
+
+
+Tool:
+<returncode>
+0
+<output>
+# Capital Bike release incident
+
+This workspace contains the editable candidate for a September through December 
+2012 hourly
+demand forecast. Read `data/DATA_CARD.md`, `data/FORECAST_CONTRACT.md`, and
+`data/schema_registry.json`, then use `python3 env_cli.py help`.
+
+The history exports deliberately differ in delimiter, names, units, and 
+duplicate behavior. The
+starter pipeline runs, but its profile is not a trustworthy production forecast.
+Operations must
+be performed through `env_cli.py`; the service state is outside this workspace.
+
+Useful local commands after the investigation commitment are:
+
+```bash
+python3 -m unittest discover -s tests
+python3 scripts/run_backtest.py
+```
+
+Do not create the final CSV yourself. `submit` writes the environment-owned 
+terminal artifact.
+/workspace/target/data:
+DATA_CARD.md
+FORECAST_CONTRACT.md
+forecast.csv
+history
+schema_registry.json
+
+/workspace/target/pipeline:
+__init__.py
+data.py
+features.py
+forecast.py
+intervals.py
+model.py
+
+/workspace/target/scripts:
+predict.py
+run_backtest.py
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 2, $0.08):
+```
+cat /workspace/target/data/DATA_CARD.md 
+/workspace/target/data/FORECAST_CONTRACT.md
+```
+
+```
+cat /workspace/target/data/schema_registry.json && ls -la 
+/workspace/target/data/history/
+```
+
+Tool:
+<returncode>
+0
+<output>
+# Data card
+
+The records come from the hourly table of the UCI Bike Sharing dataset.
+
+- Source page: https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset
+- DOI: 10.24432/C5W894
+- License: Creative Commons Attribution 4.0 International
+- Source SHA256: 
+e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f
+- Full source: 17,379 hourly records from 2011-01-01 through 2012-12-31
+- Visible labeled history: 11,539 unique records through 2012-04-30
+- Runtime validation advances: May through August 2012
+- Terminal horizon: 2,888 records from 2012-09-01 through 2012-12-31
+
+`cnt` is total hourly rentals and equals `casual + registered`. All three 
+columns are outcomes.
+They are available in labeled history but unavailable at issue time and 
+forbidden as predictors.
+The normalized weather observations in a request are available at the hourly 
+issue time. Missing
+clock hours are source gaps and must not be invented. `instant` is the stable 
+row identity.
+# Forecast contract
+
+Normalize every visible history export according to `schema_registry.json`. 
+Apply its delimiter,
+column rename, and scale rules, concatenate the canonical columns, deduplicate 
+by integer
+`instant`, and sort by `instant`. The result has 11,539 unique rows. Weather 
+values return to the
+source scale from 0 through 1.
+
+The runtime calls:
+
+```bash
+python3 scripts/predict.py --history HISTORY.csv --requests REQUESTS.csv 
+--output OUTPUT.csv --seed 2026
+```
+
+Keep this command and output contract. History is a canonical labeled CSV. 
+Requests contain the
+same issue-time fields but omit `cnt`, `casual`, and `registered`. Output must 
+be deterministic,
+ASCII, and contain exactly these columns in this order:
+
+`instant,predicted_cnt,lower_80,upper_80`
+
+Every request identity appears exactly once. Values are finite and nonnegative, 
+with
+`lower_80 <= predicted_cnt <= upper_80`. The implementation must be invariant to
+independent
+history and request row permutations.
+
+Use chronological validation only. All training dates must precede the 
+evaluation dates. The
+public March and April folds are rehearsal evidence, not the production 
+discriminator. The
+protected runtime adds later waves after the forced cache recovery. Calibrate 
+the 80 percent
+interval from forward residuals without terminal labels.
+
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "canonical_columns": [
+    "instant",
+    "dteday",
+    "season",
+    "yr",
+    "mnth",
+    "hr",
+    "holiday",
+    "weekday",
+    "workingday",
+    "weathersit",
+    "temp",
+    "atemp",
+    "hum",
+    "windspeed",
+    "casual",
+    "registered",
+    "cnt"
+  ],
+  "expected_unique_history_rows": 11539,
+  "exports": [
+    {
+      "delimiter": ",",
+      "expected_raw_rows": 4250,
+      "expected_unique_rows": 4250,
+      "file": "history/2011_h1.csv",
+      "rename": {},
+      "scale_to_canonical": {}
+    },
+    {
+      "delimiter": ";",
+      "expected_raw_rows": 4395,
+      "expected_unique_rows": 4395,
+      "file": "history/2011_h2_semicolon.csv",
+      "rename": {
+        "casual_count": "casual",
+        "date": "dteday",
+        "demand": "cnt",
+        "feels_like_norm": "atemp",
+        "hour": "hr",
+        "humidity_norm": "hum",
+        "is_holiday": "holiday",
+        "is_working_day": "workingday",
+        "member_count": "registered",
+        "month": "mnth",
+        "row_id": "instant",
+        "season_code": "season",
+        "temperature_norm": "temp",
+        "weather_code": "weathersit",
+        "weekday_index": "weekday",
+        "wind_norm": "windspeed",
+        "year_index": "yr"
+      },
+      "scale_to_canonical": {}
+    },
+    {
+      "delimiter": "|",
+      "expected_raw_rows": 1433,
+      "expected_unique_rows": 1433,
+      "file": "history/2012_jan_feb_pipe.csv",
+      "rename": {
+        "atemp_pct": "atemp",
+        "hum_pct": "hum",
+        "temp_pct": "temp",
+        "total_count": "cnt",
+        "windspeed_pct": "windspeed"
+      },
+      "scale_to_canonical": {
+        "atemp": 0.01,
+        "hum": 0.01,
+        "temp": 0.01,
+        "windspeed": 0.01
+      }
+    },
+    {
+      "deduplicate_on": "instant",
+      "delimiter": ",",
+      "expected_raw_rows": 1533,
+      "expected_unique_rows": 1461,
+      "file": "history/2012_mar_apr_duplicates.csv",
+      "rename": {},
+      "scale_to_canonical": {}
+    }
+  ],
+  "history_end": "2012-04-30",
+  "history_start": "2011-01-01"
+}
+total 752
+drwxr-xr-x 1 ubuntu ubuntu   4096 Sep 27 16:11 .
+drwxr-xr-x 1 ubuntu ubuntu   4096 Sep 27 16:11 ..
+-rw-r--r-- 1 ubuntu ubuntu 273149 Sep 27 16:11 2011_h1.csv
+-rw-r--r-- 1 ubuntu ubuntu 287062 Sep 27 16:11 2011_h2_semicolon.csv
+-rw-r--r-- 1 ubuntu ubuntu  84851 Sep 27 16:11 2012_jan_feb_pipe.csv
+-rw-r--r-- 1 ubuntu ubuntu 101776 Sep 27 16:11 2012_mar_apr_duplicates.csv
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 3, $0.13):
+```
+cat /workspace/target/env_cli.py && cat /workspace/target/pipeline/__init__.py 
+/workspace/target/pipeline/data.py
+```
+
+```
+cat /workspace/target/pipeline/features.py /workspace/target/pipeline/model.py 
+/workspace/target/pipeline/intervals.py /workspace/target/pipeline/forecast.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+#!/usr/bin/env python3
+"""Thin client for the root-owned Capital Bike release service."""
+from __future__ import annotations
+
+import json
+import socket
+import sys
+import time
+from pathlib import Path
+
+
+SOCKET_PATH = Path("/run/capital-bike-task/ops.sock")
+
+
+def call_socket(argv: list[str]) -> int:
+    request = (json.dumps({"argv": argv}, separators=(",", ":")) + 
+"\n").encode("ascii")
+    with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as client:
+        client.connect(str(SOCKET_PATH))
+        client.sendall(request)
+        chunks = []
+        while True:
+            block = client.recv(65536)
+            if not block:
+                break
+            chunks.append(block)
+            if b"\n" in block:
+                break
+    reply = json.loads(b"".join(chunks).splitlines()[0].decode("ascii"))
+    print(json.dumps(reply.get("payload", {}), indent=2, sort_keys=True))
+    return int(reply.get("returncode", 1))
+
+
+def main() -> int:
+    argv = sys.argv[1:]
+    if argv == ["help"]:
+        print("investigation: inspect.contract inspect.exports profile.current 
+probe.schema probe.leakage probe.year_bridge probe.commute probe.horizon 
+hypothesis.commit")
+        print("release: test.visible backtest.replay candidate.attest reproduce 
+stage.open deploy.prepare deploy.commit validate diagnostics.read recovery.plan 
+recovery.apply recovery.verify cache.audit candidate.revise audit.horizon 
+audit.intervals promote.canary validate.canary promote.production freeze 
+submit")
+        return 0
+    deadline = time.time() + 5.0
+    while time.time() < deadline and not SOCKET_PATH.is_socket():
+        time.sleep(0.05)
+    if not SOCKET_PATH.is_socket():
+        print(json.dumps({"accepted": False, "error": "ops_socket_unavailable"},
+indent=2))
+        return 70
+    try:
+        return call_socket(argv)
+    except (OSError, ValueError) as exc:
+        print(json.dumps({"accepted": False, "error": 
+f"service_unavailable:{exc}"}, indent=2))
+        return 70
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+"""Forecast pipeline package."""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pandas as pd
+
+
+CANONICAL_COLUMNS = [
+    "instant",
+    "dteday",
+    "season",
+    "yr",
+    "mnth",
+    "hr",
+    "holiday",
+    "weekday",
+    "workingday",
+    "weathersit",
+    "temp",
+    "atemp",
+    "hum",
+    "windspeed",
+    "casual",
+    "registered",
+    "cnt",
+]
+
+
+def _types(frame: pd.DataFrame) -> pd.DataFrame:
+    result = frame.copy()
+    result["dteday"] = pd.to_datetime(result["dteday"], errors="raise", 
+format="mixed")
+    numeric = [name for name in result.columns if name != "dteday"]
+    result[numeric] = result[numeric].apply(pd.to_numeric, errors="raise")
+    return result
+
+
+def load_workspace_history(data_dir: str | Path = "data") -> pd.DataFrame:
+    root = Path(data_dir)
+    registry = json.loads((root / 
+"schema_registry.json").read_text(encoding="ascii"))
+    parts = []
+    for spec in registry["exports"]:
+        part = pd.read_csv(root / spec["file"], sep=spec["delimiter"])
+        part = part.rename(columns=spec.get("rename", {}))
+        parts.append(part.reindex(columns=CANONICAL_COLUMNS))
+    return _types(pd.concat(parts, 
+ignore_index=True)).sort_values("instant").reset_index(drop=True)
+
+
+def load_runtime_history(path: str | Path) -> pd.DataFrame:
+    return 
+_types(pd.read_csv(path)).sort_values("instant").reset_index(drop=True)
+
+
+def load_requests(path: str | Path) -> pd.DataFrame:
+    return 
+_types(pd.read_csv(path)).sort_values("instant").reset_index(drop=True)
+
+
+Tool:
+<returncode>
+0
+<output>
+from __future__ import annotations
+
+import pandas as pd
+
+
+FEATURES = [
+    "season",
+    "yr",
+    "mnth",
+    "hr",
+    "holiday",
+    "weekday",
+    "workingday",
+    "weathersit",
+    "temp",
+    "atemp",
+    "hum",
+    "windspeed",
+]
+
+
+def make_features(frame: pd.DataFrame) -> pd.DataFrame:
+    return frame[FEATURES].astype(float).copy()
+from sklearn.dummy import DummyRegressor
+
+
+def build_model(seed: int):
+    del seed
+    return DummyRegressor(strategy="mean")
+from __future__ import annotations
+
+import numpy as np
+
+
+def interval_radius(absolute_residuals) -> float:
+    values = np.asarray(absolute_residuals, dtype=float)
+    return float(np.quantile(values, 0.20))
+
+
+def bounds(prediction, radius: float):
+    point = np.asarray(prediction, dtype=float)
+    return np.maximum(point - radius, 0.0), point + radius
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+from pipeline.features import make_features
+from pipeline.intervals import bounds, interval_radius
+from pipeline.model import build_model
+
+
+def predict_frame(history: pd.DataFrame, requests: pd.DataFrame, seed: int = 
+2026) -> pd.DataFrame:
+    ordered = history.sort_values("instant").reset_index(drop=True)
+    cutoff = pd.to_datetime(ordered["dteday"]).max() - pd.Timedelta(days=30)
+    train = ordered[pd.to_datetime(ordered["dteday"]) < cutoff]
+    valid = ordered[pd.to_datetime(ordered["dteday"]) >= cutoff]
+    calibration_model = build_model(seed + 1)
+    calibration_model.fit(make_features(train), train["cnt"])
+    residuals = np.abs(valid["cnt"].to_numpy(dtype=float) - 
+calibration_model.predict(make_features(valid)))
+    model = build_model(seed)
+    model.fit(make_features(ordered), ordered["cnt"])
+    prediction = np.maximum(np.asarray(model.predict(make_features(requests)), 
+dtype=float), 0.0)
+    low, high = bounds(prediction, interval_radius(residuals))
+    return pd.DataFrame(
+        {
+            "instant": requests["instant"].astype(int),
+            "predicted_cnt": prediction,
+            "lower_80": low,
+            "upper_80": high,
+        }
+    ).sort_values("instant").reset_index(drop=True)
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 4, $0.18):
+```
+cat /workspace/target/scripts/predict.py 
+/workspace/target/scripts/run_backtest.py
+```
+
+```
+ls /workspace/target/tests/ && cat /workspace/target/tests/*.py | head -200
+```
+
+Tool:
+<returncode>
+0
+<output>
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from pipeline.data import load_requests, load_runtime_history
+from pipeline.forecast import predict_frame
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--history", required=True)
+    parser.add_argument("--requests", required=True)
+    parser.add_argument("--output", required=True)
+    parser.add_argument("--seed", type=int, default=2026)
+    args = parser.parse_args()
+    result = predict_frame(load_runtime_history(args.history), 
+load_requests(args.requests), args.seed)
+    result.to_csv(args.output, index=False, lineterminator="\n", 
+float_format="%.12g")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from pipeline.data import load_workspace_history
+from pipeline.features import make_features
+from pipeline.model import build_model
+
+
+def score(history: pd.DataFrame, start: str, stop: str, seed: int) -> dict:
+    train = history[history["dteday"] < start]
+    valid = history[(history["dteday"] >= start) & (history["dteday"] < stop)]
+    model = build_model(seed)
+    model.fit(make_features(train), train["cnt"])
+    prediction = np.maximum(model.predict(make_features(valid)), 0.0)
+    error = valid["cnt"].to_numpy(dtype=float) - prediction
+    return {
+        "start": start,
+        "stop": stop,
+        "rows": int(len(valid)),
+        "rmse": round(float(np.sqrt(np.mean(np.square(error)))), 6),
+        "mae": round(float(np.mean(np.abs(error))), 6),
+    }
+
+
+def main() -> int:
+    history = load_workspace_history()
+    report = {
+        "history_rows": int(len(history)),
+        "unique_instants": int(history["instant"].nunique()),
+        "weather_max": round(float(history[["temp", "atemp", "hum", 
+"windspeed"]].max().max()), 6),
+        "folds": [
+            score(history, "2012-03-01", "2012-04-01", 2027),
+            score(history, "2012-04-01", "2012-05-01", 2028),
+        ],
+    }
+    print(json.dumps(report, sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+
+
+Tool:
+<returncode>
+0
+<output>
+test_visible.py
+from __future__ import annotations
+
+import unittest
+
+import pandas as pd
+
+from pipeline.features import make_features
+
+
+class VisibleContractTests(unittest.TestCase):
+    def test_feature_contract_excludes_outcomes(self) -> None:
+        frame = pd.DataFrame(
+            {
+                "season": [1],
+                "yr": [1],
+                "mnth": [4],
+                "hr": [8],
+                "holiday": [0],
+                "weekday": [1],
+                "workingday": [1],
+                "weathersit": [1],
+                "temp": [0.5],
+                "atemp": [0.5],
+                "hum": [0.4],
+                "windspeed": [0.2],
+                "dteday": [pd.Timestamp("2012-04-01")],
+                "instant": [1],
+            }
+        )
+        matrix = make_features(frame)
+        self.assertEqual(len(matrix), 1)
+        self.assertFalse({"cnt", "casual", 
+"registered"}.intersection(matrix.columns))
+        self.assertTrue(all(pd.api.types.is_numeric_dtype(matrix[name]) for name
+in matrix))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 5, $0.24):
+Now let me look at the data files and the requests file to understand the raw 
+exports.
+
+```
+head -3 /workspace/target/data/history/2011_h1.csv; echo ---; head -3 
+/workspace/target/data/history/2011_h2_semicolon.csv; echo ---; head -3 
+/workspace/target/data/history/2012_jan_feb_pipe.csv; echo ---; head -3 
+/workspace/target/data/history/2012_mar_apr_duplicates.csv; echo ---; head -3 
+/workspace/target/data/forecast.csv; wc -l /workspace/target/data/forecast.csv
+```
+
+```
+cd /workspace/target && python3 -c "import sklearn, pandas, numpy; 
+print(sklearn.__version__, pandas.__version__, numpy.__version__)" && python3 
+env_cli.py help
+```
+
+Tool:
+<returncode>
+0
+<output>
+instant,dteday,season,yr,mnth,hr,holiday,weekday,workingday,weathersit,temp,atem
+p,hum,windspeed,casual,registered,cnt
+1,2011-01-01,1,0,1,0,0,6,0,1,0.24,0.2879,0.81,0,3,13,16
+2,2011-01-01,1,0,1,1,0,6,0,1,0.22,0.2727,0.8,0,8,32,40
+---
+row_id;date;season_code;year_index;month;hour;is_holiday;weekday_index;is_workin
+g_day;weather_code;temperature_norm;feels_like_norm;humidity_norm;wind_norm;casu
+al_count;member_count;demand
+4251;2011-07-01;3;0;7;0;0;5;1;1;0.66;0.6212;0.5;0;20;48;68
+4252;2011-07-01;3;0;7;1;0;5;1;1;0.66;0.6212;0.5;0;15;16;31
+---
+instant|dteday|season|yr|mnth|hr|holiday|weekday|workingday|weathersit|temp_pct|
+atemp_pct|hum_pct|windspeed_pct|casual|registered|total_count
+8646|2012-01-01|1|1|1|0|0|0|0|1|36|37.88|66|0|5|43|48
+8647|2012-01-01|1|1|1|1|0|0|0|1|36|34.85|66|13.43|15|78|93
+---
+instant,dteday,season,yr,mnth,hr,holiday,weekday,workingday,weathersit,temp,atem
+p,hum,windspeed,casual,registered,cnt
+10267,2012-03-08,1,1,3,20,0,4,1,2,0.6,0.6212,0.43,0.3881,20,282,302
+10395,2012-03-14,1,1,3,5,0,3,1,1,0.44,0.4394,0.82,0.1343,2,25,27
+---
+instant,dteday,season,yr,mnth,hr,holiday,weekday,workingday,weathersit,temp,atem
+p,hum,windspeed
+16905,2012-12-12,4,1,12,3,0,3,1,1,0.26,0.2727,0.6,0.1343
+15202,2012-09-30,4,1,9,14,0,0,0,1,0.62,0.6212,0.41,0.2537
+2889 /workspace/target/data/forecast.csv
+
+
+Tool:
+<returncode>
+0
+<output>
+1.8.0 2.3.3 2.3.3
+investigation: inspect.contract inspect.exports profile.current probe.schema 
+probe.leakage probe.year_bridge probe.commute probe.horizon hypothesis.commit
+release: test.visible backtest.replay candidate.attest reproduce stage.open 
+deploy.prepare deploy.commit validate diagnostics.read recovery.plan 
+recovery.apply recovery.verify cache.audit candidate.revise audit.horizon 
+audit.intervals promote.canary validate.canary promote.production freeze submit
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 6, $0.61):
+```
+cd /workspace/target && python3 env_cli.py inspect.contract
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"00516dc0b3158cdc28d1444feaeefc3249b71cb2af822f59fdcd44cc4dc71e37",
+  "next": "inspect.exports",
+  "op": "inspect.contract",
+  "result": {
+    "candidate_hash": 
+"df6596664871a87b0994d833e540e9fab603029cab76c26a4af7b5024955ae71",
+    "code_hash": 
+"6d8f6ccdf6e740f43622ecc61516d938f5c7273423a4b4c12c3d304eb48b8c31",
+    "output_columns": [
+      "instant",
+      "predicted_cnt",
+      "lower_80",
+      "upper_80"
+    ],
+    "terminal_bars": {
+      "commute_mae_max": 76.0,
+      "coverage_max": 0.98,
+      "coverage_min": 0.7,
+      "mean_width_max": 250.0,
+      "month_rmse_max": 72.0,
+      "overall_rmse_max": 65.0
+    },
+    "validate_limit": 3
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 7, $0.72):
+```
+cd /workspace/target && python3 env_cli.py inspect.exports
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"a5e517c633f8c922c55d70183a4138ffa55ef009a6827b88ef53f8f684fb83df",
+  "next": "profile.current",
+  "op": "inspect.exports",
+  "result": {
+    "candidate_hash": 
+"df6596664871a87b0994d833e540e9fab603029cab76c26a4af7b5024955ae71",
+    "code_hash": 
+"6d8f6ccdf6e740f43622ecc61516d938f5c7273423a4b4c12c3d304eb48b8c31",
+    "expected_unique_rows": 11539,
+    "exports": [
+      "history/2011_h1.csv",
+      "history/2011_h2_semicolon.csv",
+      "history/2012_jan_feb_pipe.csv",
+      "history/2012_mar_apr_duplicates.csv"
+    ],
+    "history_end": "2012-04-30",
+    "history_start": "2011-01-01"
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 8, $0.75):
+```
+cd /workspace/target && python3 env_cli.py profile.current
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"791fa1b56e77d104bd3f511f4733d0059e17bc30f3c299c5d71dcd07d5b88783",
+  "next": "probe.schema",
+  "op": "profile.current",
+  "result": {
+    "candidate_hash": 
+"df6596664871a87b0994d833e540e9fab603029cab76c26a4af7b5024955ae71",
+    "code_hash": 
+"6d8f6ccdf6e740f43622ecc61516d938f5c7273423a4b4c12c3d304eb48b8c31",
+    "public_rehearsal": {
+      "folds": [
+        {
+          "mae": 156.304809,
+          "rmse": 210.822943,
+          "rows": 783,
+          "start": "2012-03-01",
+          "stop": "2012-04-01"
+        },
+        {
+          "mae": 177.780325,
+          "rmse": 231.824737,
+          "rows": 750,
+          "start": "2012-04-01",
+          "stop": "2012-05-01"
+        }
+      ],
+      "history_rows": 11611,
+      "unique_instants": 11539,
+      "weather_max": 100.0
+    }
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 9, $0.79):
+```
+cd /workspace/target && python3 env_cli.py probe.schema
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"7e86e27f0fde15ff20fe50ccd34ccb900656150db3ffdf2aec326d044ae77114",
+  "next": "probe.leakage",
+  "op": "probe.schema",
+  "result": {
+    "candidate_hash": 
+"df6596664871a87b0994d833e540e9fab603029cab76c26a4af7b5024955ae71",
+    "code_hash": 
+"6d8f6ccdf6e740f43622ecc61516d938f5c7273423a4b4c12c3d304eb48b8c31",
+    "deduplicate_key": "instant",
+    "delimiters": [
+      ",",
+      ";",
+      "|",
+      ","
+    ],
+    "evidence_id": "ev-7e86e27f0fde15ff",
+    "expected_unique_rows": 11539,
+    "export_count": 4,
+    "renamed_exports": 2,
+    "scaled_exports": 1
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 10, $0.82):
+```
+cd /workspace/target && python3 env_cli.py probe.leakage
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"9a46434f509a6f4c7b2da780ac840fc97f9b9b18abf17431d6bb0bd5c7e53614",
+  "next": "probe.year_bridge",
+  "op": "probe.leakage",
+  "result": {
+    "candidate_hash": 
+"df6596664871a87b0994d833e540e9fab603029cab76c26a4af7b5024955ae71",
+    "code_hash": 
+"6d8f6ccdf6e740f43622ecc61516d938f5c7273423a4b4c12c3d304eb48b8c31",
+    "evidence_id": "ev-9a46434f509a6f4c",
+    "history_outcome_columns": [
+      "casual",
+      "registered",
+      "cnt"
+    ],
+    "request_columns": [
+      "instant",
+      "dteday",
+      "season",
+      "yr",
+      "mnth",
+      "hr",
+      "holiday",
+      "weekday",
+      "workingday",
+      "weathersit",
+      "temp",
+      "atemp",
+      "hum",
+      "windspeed"
+    ],
+    "request_outcome_columns": [],
+    "rule": "training outcomes are unavailable at issue time"
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 11, $0.86):
+```
+cd /workspace/target && python3 env_cli.py probe.year_bridge
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"ab8e19d5ad6d91c50c181a29358f48e03fc469e42eae76701ab1718890268143",
+  "next": "probe.commute",
+  "op": "probe.year_bridge",
+  "result": {
+    "candidate_hash": 
+"df6596664871a87b0994d833e540e9fab603029cab76c26a4af7b5024955ae71",
+    "code_hash": 
+"6d8f6ccdf6e740f43622ecc61516d938f5c7273423a4b4c12c3d304eb48b8c31",
+    "evidence_id": "ev-ab8e19d5ad6d91c5",
+    "future_months": [
+      9,
+      10,
+      11,
+      12
+    ],
+    "paired_month_demand": [
+      {
+        "month": 1,
+        "year_0_mean": 55.507,
+        "year_1_mean": 130.559
+      },
+      {
+        "month": 2,
+        "year_0_mean": 74.291,
+        "year_1_mean": 149.042
+      },
+      {
+        "month": 3,
+        "year_0_mean": 87.733,
+        "year_1_mean": 221.904
+      },
+      {
+        "month": 4,
+        "year_0_mean": 131.947,
+        "year_1_mean": 242.652
+      }
+    ],
+    "terminal_year_index": 1
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 12, $0.89):
+```
+cd /workspace/target && python3 env_cli.py probe.commute
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"4992b2cc5d4f13c7c8b63eb668f513803c66bf30cd27db9fa0b6739330ba2d26",
+  "next": "probe.horizon",
+  "op": "probe.commute",
+  "result": {
+    "candidate_hash": 
+"df6596664871a87b0994d833e540e9fab603029cab76c26a4af7b5024955ae71",
+    "code_hash": 
+"6d8f6ccdf6e740f43622ecc61516d938f5c7273423a4b4c12c3d304eb48b8c31",
+    "evidence_id": "ev-4992b2cc5d4f13c7",
+    "protected_metric": "working-day commute-hour MAE",
+    "workingday_commute_profile": [
+      {
+        "cnt": 214.677,
+        "hr": 7,
+        "workingday": 1,
+        "yr": 0
+      },
+      {
+        "cnt": 349.504,
+        "hr": 8,
+        "workingday": 1,
+        "yr": 0
+      },
+      {
+        "cnt": 180.645,
+        "hr": 9,
+        "workingday": 1,
+        "yr": 0
+      },
+      {
+        "cnt": 215.016,
+        "hr": 16,
+        "workingday": 1,
+        "yr": 0
+      },
+      {
+        "cnt": 394.916,
+        "hr": 17,
+        "workingday": 1,
+        "yr": 0
+      },
+      {
+        "cnt": 367.454,
+        "hr": 18,
+        "workingday": 1,
+        "yr": 0
+      },
+      {
+        "cnt": 281.89,
+        "hr": 7,
+        "workingday": 1,
+        "yr": 1
+      },
+      {
+        "cnt": 520.537,
+        "hr": 8,
+        "workingday": 1,
+        "yr": 1
+      },
+      {
+        "cnt": 266.963,
+        "hr": 9,
+        "workingday": 1,
+        "yr": 1
+      },
+      {
+        "cnt": 290.341,
+        "hr": 16,
+        "workingday": 1,
+        "yr": 1
+      },
+      {
+        "cnt": 529.402,
+        "hr": 17,
+        "workingday": 1,
+        "yr": 1
+      },
+      {
+        "cnt": 510.61,
+        "hr": 18,
+        "workingday": 1,
+        "yr": 1
+      }
+    ]
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 13, $0.94):
+```
+cd /workspace/target && python3 env_cli.py probe.horizon
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"0170a80fd8ed93d3c3587210d192451d05f80cb9cdfe2dc83442e70082a2598b",
+  "next": "hypothesis.commit",
+  "op": "probe.horizon",
+  "result": {
+    "candidate_hash": 
+"df6596664871a87b0994d833e540e9fab603029cab76c26a4af7b5024955ae71",
+    "code_hash": 
+"6d8f6ccdf6e740f43622ecc61516d938f5c7273423a4b4c12c3d304eb48b8c31",
+    "evidence_id": "ev-0170a80fd8ed93d3",
+    "history_end": "2012-04-30",
+    "history_start": "2011-01-01",
+    "same_hour_weather_available": true,
+    "terminal_end": "2012-12-31",
+    "terminal_months": [
+      9,
+      10,
+      11,
+      12
+    ],
+    "terminal_rows": 2888,
+    "terminal_start": "2012-09-01"
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 14, $1.11):
+```
+cd /workspace/target && cat <<'EOF' > investigation.json
+{
+  "candidate_hash": 
+"df6596664871a87b0994d833e540e9fab603029cab76c26a4af7b5024955ae71",
+  "code_hash": 
+"6d8f6ccdf6e740f43622ecc61516d938f5c7273423a4b4c12c3d304eb48b8c31",
+  "evidence": [
+    {
+      "id": "ev-7e86e27f0fde15ff",
+      "observation": "The registry declares four exports with delimiters comma, 
+semicolon, pipe, comma; two exports need column renames, one export 
+(2012_jan_feb_pipe) stores temp, atemp, hum, windspeed as 0-100 percents needing
+a 0.01 scale to canonical 0-1 units, and 2012_mar_apr_duplicates has 1533 raw 
+rows but 1461 unique rows requiring deduplication on instant. The current loader
+in pipeline/data.py never applies scale_to_canonical and never deduplicates, so 
+profile.current reports 11611 rows instead of the expected 11539 and weather_max
+of 100.0 instead of a value at most 1.0. Mixed 0-1 and 0-100 weather units also 
+corrupt any weather-based feature."
+    },
+    {
+      "id": "ev-9a46434f509a6f4c",
+      "observation": "Requests carry only issue-time fields: instant, dteday, 
+season, yr, mnth, hr, holiday, weekday, workingday, weathersit, temp, atemp, 
+hum, windspeed. cnt, casual and registered exist only in labeled history and are
+outcomes, never predictors. The current FEATURES list already excludes them, so 
+no direct leakage exists, but any repair must keep predictors restricted to 
+issue-time fields."
+    },
+    {
+      "id": "ev-ab8e19d5ad6d91c5",
+      "observation": "Paired-month demand shows strong year-over-year growth: 
+January 55.5 to 130.6 (ratio 2.35), February 74.3 to 149.0 (2.01), March 87.7 to
+221.9 (2.53, inflated by an unusually warm March 2012), April 131.9 to 242.7 
+(1.84). The terminal horizon is entirely yr=1 months 9-12, a (yr=1, mnth 9-12) 
+region never seen in training. A tree model cannot extrapolate this level shift;
+it needs an explicit year-bridge: rescale yr=0 targets to the yr=1 level using a
+damped growth factor anchored on the most recent paired months, because raw 
+early-year ratios overstate the growth that will remain by autumn as adoption 
+saturates."
+    },
+    {
+      "id": "ev-4992b2cc5d4f13c7",
+      "observation": "Working-day commute hours have sharply peaked demand: at 
+yr=1, hour 8 averages 520.5 and hour 17 averages 529.4 versus low mid-day 
+levels, and the protected metric is working-day commute-hour MAE with a bar of 
+76. The current DummyRegressor mean model predicts a single constant near 155, 
+guaranteeing commute MAE in the hundreds. Features must represent hour-of-day 
+interacted with working day (hour-of-week and commute indicators) so the model 
+can carve out the twin rush peaks."
+    },
+    {
+      "id": "ev-0170a80fd8ed93d3",
+      "observation": "History covers 2011-01-01 through 2012-04-30 while the 
+terminal horizon is 2888 rows over 2012-09-01 through 2012-12-31, a four-month 
+production gap with a further four-month forward reach. Same-hour weather is 
+available at issue time, so weather regressors are legal. Seasonal shape for 
+months 9-12 exists only in 2011 data at yr=0 level. The current interval code 
+takes the 0.20 quantile of absolute residuals as the radius, which yields 
+roughly 20 percent coverage, not 80, and residuals are measured on a backward 
+split of stale data rather than forward replay conditions."
+    }
+  ],
+  "hypothesis": "The release fails for four compounding reasons. First, 
+pipeline/data.py ignores the registry scale_to_canonical and deduplicate_on 
+rules, so the canonical history has 72 duplicate instants and mixed 0-1 and 
+0-100 weather units, corrupting training. Second, pipeline/model.py uses 
+DummyRegressor(mean), which cannot represent hourly, weekly, weather or commute 
+structure. Third, nothing bridges the year-over-year demand growth: the terminal
+Sep-Dec 2012 rows sit at yr=1 in months observed only at yr=0, so even a strong 
+tree trained on raw counts would predict 2011 autumn levels and systematically 
+undershoot by roughly 40-60 percent. Fourth, pipeline/intervals.py takes the 
+0.20 quantile of absolute residuals from a backward holdout, producing intervals
+near 20 percent coverage that cannot survive forward replay. The repair is to 
+normalize exports exactly per registry, train a gradient-boosted tree on log1p 
+counts with hour-of-week and commute-aware features after rescaling yr=0 targets
+to the yr=1 level with a damped growth factor anchored on the most recent paired
+months (April ratio 1.84, damped toward 1 to reflect saturating adoption by 
+autumn), and calibrate an 80 percent interval radius from forward chronological 
+residuals inflated for the four-month deployment gap, clipped so mean width 
+stays at most 250.",
+  "planned_test": "After the commitment: run the visible unittest suite and 
+scripts/run_backtest.py to confirm canonical loading (11539 unique rows, weather
+max at most 1.0) and large rehearsal RMSE drops on the March and April 2012 
+forward folds. Locally replay a forward analog of the production gap by training
+only on data through 2011-12-31 plus early 2012 slices and scoring later 2012 
+months chronologically, checking that the damped year-bridge removes the level 
+bias, that working-day commute-hour MAE falls well under 76, and that the 
+calibrated radius from forward residuals gives 70-98 percent coverage with mean 
+width at most 250. Then drive the full ordered service walk: test.visible, 
+backtest.replay, candidate.attest, reproduce, stage.open, deploy.prepare, 
+deploy.commit, validate, diagnostics-driven cache recovery with the returned 
+receipt and required family, second deploy and validate, audit.horizon, 
+audit.intervals, canary promotion and validation, production promotion, freeze, 
+submit."
+}
+EOF
+python3 -c "import json; d=json.load(open('investigation.json')); print('ok', 
+list(d.keys()))"
+```
+
+Tool:
+<returncode>
+0
+<output>
+ok ['candidate_hash', 'code_hash', 'evidence', 'hypothesis', 'planned_test']
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 15, $1.17):
+```
+cd /workspace/target && python3 env_cli.py hypothesis.commit --evidence 
+ev-7e86e27f0fde15ff ev-9a46434f509a6f4c ev-ab8e19d5ad6d91c5 ev-4992b2cc5d4f13c7 
+ev-0170a80fd8ed93d3 --summary-file investigation.json
+```
+
+Tool:
+<returncode>
+2
+<output>
+{
+  "accepted": false,
+  "error": "invalid_arguments"
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 16, $1.22):
+```
+cd /workspace/target && python3 env_cli.py hypothesis.commit --evidence 
+ev-7e86e27f0fde15ff --evidence ev-9a46434f509a6f4c --evidence 
+ev-ab8e19d5ad6d91c5 --evidence ev-4992b2cc5d4f13c7 --evidence 
+ev-0170a80fd8ed93d3 --summary-file investigation.json
+```
+
+Tool:
+<returncode>
+1
+<output>
+{
+  "accepted": false,
+  "error": "summary_observation_invalid",
+  "locked": false,
+  "op": "hypothesis.commit"
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 17, $1.28):
+```
+cd /workspace/target && python3 - <<'EOF'
+data = open('investigation.json','rb').read()
+try:
+    data.decode('ascii')
+    print('ascii ok', len(data))
+except UnicodeDecodeError as e:
+    print('non-ascii at', e)
+import json
+d = json.loads(data)
+for e in d['evidence']:
+    print(e['id'], len(e['observation']))
+print('hyp', len(d['hypothesis']), 'plan', len(d['planned_test']))
+EOF
+```
+
+Tool:
+<returncode>
+0
+<output>
+ascii ok 5618
+ev-7e86e27f0fde15ff 641
+ev-9a46434f509a6f4c 388
+ev-ab8e19d5ad6d91c5 619
+ev-4992b2cc5d4f13c7 480
+ev-0170a80fd8ed93d3 576
+hyp 1327 plan 991
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 18, $1.42):
+ASCII is fine. Perhaps observations have a length cap. Let me trim each 
+observation to a tighter, still substantive size and retry.
+
+```
+cd /workspace/target && cat <<'EOF' > investigation.json
+{
+  "candidate_hash": 
+"df6596664871a87b0994d833e540e9fab603029cab76c26a4af7b5024955ae71",
+  "code_hash": 
+"6d8f6ccdf6e740f43622ecc61516d938f5c7273423a4b4c12c3d304eb48b8c31",
+  "evidence": [
+    {
+      "id": "ev-7e86e27f0fde15ff",
+      "observation": "Four exports use delimiters comma, semicolon, pipe, comma;
+two need renames, the pipe export stores weather as 0-100 percents needing a 
+0.01 scale, and the mar-apr export has 1533 raw but 1461 unique rows needing 
+dedup on instant. The current loader skips scale_to_canonical and dedup, so 
+profile shows 11611 rows not 11539 and weather_max 100.0."
+    },
+    {
+      "id": "ev-9a46434f509a6f4c",
+      "observation": "Requests contain only issue-time fields; cnt, casual, 
+registered are outcomes present only in history and must never be predictors. 
+The FEATURES list excludes them, so the repair must keep predictors restricted 
+to the fourteen issue-time columns."
+    },
+    {
+      "id": "ev-ab8e19d5ad6d91c5",
+      "observation": "Paired months show large year-over-year growth: Jan 55.5 
+to 130.6, Feb 74.3 to 149.0, Mar 87.7 to 221.9, Apr 131.9 to 242.7 (ratio 1.84).
+The terminal is yr=1 months 9-12, seen only at yr=0, so a tree cannot 
+extrapolate the level; a damped growth rescaling of yr=0 targets anchored on 
+recent paired months is required."
+    },
+    {
+      "id": "ev-4992b2cc5d4f13c7",
+      "observation": "Working-day commute demand is sharply peaked: at yr=1 hour
+8 averages 520.5 and hour 17 averages 529.4 versus low mid-day levels, and the 
+protected metric is working-day commute-hour MAE with bar 76. The DummyRegressor
+mean model predicts one constant, so features must encode hour interacted with 
+working day."
+    },
+    {
+      "id": "ev-0170a80fd8ed93d3",
+      "observation": "History ends 2012-04-30 while the 2888 terminal rows span 
+2012-09-01 to 2012-12-31, a four-month gap plus four-month reach; same-hour 
+weather is available. The interval code takes the 0.20 quantile of absolute 
+residuals, giving about 20 percent coverage instead of 80, and residuals come 
+from a backward split, not forward replay conditions."
+    }
+  ],
+  "hypothesis": "The release fails for four compounding reasons. First, 
+pipeline/data.py ignores the registry scale_to_canonical and deduplicate_on 
+rules, so canonical history keeps 72 duplicate instants and mixed 0-1 and 0-100 
+weather units. Second, pipeline/model.py uses DummyRegressor(mean), which cannot
+represent hourly, weekly, weather or commute structure. Third, nothing bridges 
+year-over-year growth: terminal Sep-Dec 2012 rows sit at yr=1 in months observed
+only at yr=0, so even a strong tree trained on raw counts would predict 2011 
+autumn levels and undershoot badly. Fourth, pipeline/intervals.py takes the 0.20
+quantile of backward residuals, yielding near 20 percent coverage. The repair: 
+normalize exports exactly per registry, train a gradient-boosted tree on log1p 
+counts with hour-of-week and commute-aware features after rescaling yr=0 targets
+to yr=1 level with a damped growth factor anchored on recent paired months, and 
+calibrate the 80 percent radius from forward chronological residuals inflated 
+for the deployment gap, keeping mean width at most 250.",
+  "planned_test": "After commitment: run the visible tests and 
+scripts/run_backtest.py to confirm 11539 unique rows, weather max at most 1.0, 
+and large rehearsal RMSE drops on the March and April 2012 forward folds. Replay
+a forward analog of the production gap locally by training only through earlier 
+cutoffs and scoring later months chronologically, checking the damped 
+year-bridge removes level bias, commute-hour MAE lands under 76, and the 
+calibrated radius gives 70-98 percent coverage with mean width at most 250. Then
+drive the ordered service walk through deploy, the diagnostics-driven cache 
+recovery with the returned receipt and required family, the second deploy and 
+validate, both audits, canary, production, freeze, and submit."
+}
+EOF
+python3 env_cli.py hypothesis.commit --evidence ev-7e86e27f0fde15ff --evidence 
+ev-9a46434f509a6f4c --evidence ev-ab8e19d5ad6d91c5 --evidence 
+ev-4992b2cc5d4f13c7 --evidence ev-0170a80fd8ed93d3 --summary-file 
+investigation.json
+```
+
+Tool:
+<returncode>
+1
+<output>
+{
+  "accepted": false,
+  "error": "summary_hypothesis_invalid",
+  "locked": false,
+  "op": "hypothesis.commit"
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 19, $1.52):
+Progress — observations accepted now; hypothesis likely too long. Let me shorten
+hypothesis and planned_test.
+
+```
+cd /workspace/target && python3 - <<'EOF'
+import json
+d = json.load(open('investigation.json'))
+d['hypothesis'] = ("The pipeline fails because pipeline/data.py skips the 
+registry scale_to_canonical and dedup rules "
+ "(72 duplicate instants, mixed 0-1 and 0-100 weather units), pipeline/model.py 
+is a DummyRegressor mean that cannot "
+ "capture hourly, weekly, weather or commute structure, no year-bridge exists so
+Sep-Dec 2012 predictions collapse to "
+ "2011 autumn levels, and pipeline/intervals.py uses the 0.20 residual quantile 
+from a backward split, giving near 20 "
+ "percent coverage. Repair: registry-exact normalization, a gradient-boosted 
+tree on log1p counts with hour-of-week and "
+ "commute-aware features, damped year-over-year growth rescaling of yr=0 targets
+anchored on recent paired months, and an "
+ "80 percent radius calibrated from forward residuals inflated for the 
+four-month gap with mean width capped at 250.")
+d['planned_test'] = ("Run visible tests and run_backtest.py to confirm 11539 
+unique rows, weather max at most 1.0, and large "
+ "rehearsal RMSE drops on the March and April 2012 forward folds. Locally replay
+a forward analog of the production gap with "
+ "chronological cutoffs to verify the damped year-bridge removes level bias, 
+commute-hour MAE lands under 76, and the "
+ "calibrated radius yields 70-98 percent coverage with mean width at most 250. 
+Then drive the full ordered service walk "
+ "through deploys, cache recovery, audits, canary, production, freeze, and 
+submit.")
+json.dump(d, open('investigation.json','w'), indent=2)
+print(len(d['hypothesis']), len(d['planned_test']))
+EOF
+python3 env_cli.py hypothesis.commit --evidence ev-7e86e27f0fde15ff --evidence 
+ev-9a46434f509a6f4c --evidence ev-ab8e19d5ad6d91c5 --evidence 
+ev-4992b2cc5d4f13c7 --evidence ev-0170a80fd8ed93d3 --summary-file 
+investigation.json
+```
+
+Tool:
+<returncode>
+1
+<output>
+797 540
+{
+  "accepted": false,
+  "error": "summary_planned_test_invalid",
+  "locked": false,
+  "op": "hypothesis.commit"
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 20, $1.59):
+```
+cd /workspace/target && python3 - <<'EOF'
+import json
+d = json.load(open('investigation.json'))
+d['planned_test'] = ("Run visible tests and run_backtest.py to confirm 11539 
+unique rows, weather max at most 1.0, and large "
+ "rehearsal RMSE drops on the March and April 2012 folds. Replay a forward 
+analog of the gap with chronological cutoffs to "
+ "verify the damped year-bridge removes level bias, commute MAE lands under 76, 
+and coverage sits in 70-98 with mean width "
+ "at most 250, then drive the ordered service walk to submit.")
+json.dump(d, open('investigation.json','w'), indent=2)
+print(len(d['planned_test']))
+EOF
+python3 env_cli.py hypothesis.commit --evidence ev-7e86e27f0fde15ff --evidence 
+ev-9a46434f509a6f4c --evidence ev-ab8e19d5ad6d91c5 --evidence 
+ev-4992b2cc5d4f13c7 --evidence ev-0170a80fd8ed93d3 --summary-file 
+investigation.json
+```
+
+Tool:
+<returncode>
+0
+<output>
+404
+{
+  "accepted": true,
+  "action_id": 
+"9e21c09e77f41b6c62f51755b72fe7d3cc1a0723e43da80169deb9adf48b1e23",
+  "next": "test.visible",
+  "op": "hypothesis.commit",
+  "result": {
+    "candidate_hash": 
+"df6596664871a87b0994d833e540e9fab603029cab76c26a4af7b5024955ae71",
+    "code_hash": 
+"6d8f6ccdf6e740f43622ecc61516d938f5c7273423a4b4c12c3d304eb48b8c31",
+    "evidence_ids": [
+      "ev-7e86e27f0fde15ff",
+      "ev-9a46434f509a6f4c",
+      "ev-ab8e19d5ad6d91c5",
+      "ev-4992b2cc5d4f13c7",
+      "ev-0170a80fd8ed93d3"
+    ],
+    "summary_sha256": 
+"c42615b261df10588aac99dee44fb485b5afd1f4d501db7163a37b0f195be715"
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 21, $2.68):
+Hypothesis committed. Now I can edit the implementation. Let me first view the 
+exact current files individually before rewriting them.
+
+```
+cd /workspace/target && for f in pipeline/__init__.py pipeline/data.py; do echo 
+"=== $f ==="; cat "$f"; done
+```
+
+Tool:
+<returncode>
+0
+<output>
+=== pipeline/__init__.py ===
+"""Forecast pipeline package."""
+=== pipeline/data.py ===
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pandas as pd
+
+
+CANONICAL_COLUMNS = [
+    "instant",
+    "dteday",
+    "season",
+    "yr",
+    "mnth",
+    "hr",
+    "holiday",
+    "weekday",
+    "workingday",
+    "weathersit",
+    "temp",
+    "atemp",
+    "hum",
+    "windspeed",
+    "casual",
+    "registered",
+    "cnt",
+]
+
+
+def _types(frame: pd.DataFrame) -> pd.DataFrame:
+    result = frame.copy()
+    result["dteday"] = pd.to_datetime(result["dteday"], errors="raise", 
+format="mixed")
+    numeric = [name for name in result.columns if name != "dteday"]
+    result[numeric] = result[numeric].apply(pd.to_numeric, errors="raise")
+    return result
+
+
+def load_workspace_history(data_dir: str | Path = "data") -> pd.DataFrame:
+    root = Path(data_dir)
+    registry = json.loads((root / 
+"schema_registry.json").read_text(encoding="ascii"))
+    parts = []
+    for spec in registry["exports"]:
+        part = pd.read_csv(root / spec["file"], sep=spec["delimiter"])
+        part = part.rename(columns=spec.get("rename", {}))
+        parts.append(part.reindex(columns=CANONICAL_COLUMNS))
+    return _types(pd.concat(parts, 
+ignore_index=True)).sort_values("instant").reset_index(drop=True)
+
+
+def load_runtime_history(path: str | Path) -> pd.DataFrame:
+    return 
+_types(pd.read_csv(path)).sort_values("instant").reset_index(drop=True)
+
+
+def load_requests(path: str | Path) -> pd.DataFrame:
+    return 
+_types(pd.read_csv(path)).sort_values("instant").reset_index(drop=True)
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 22, $3.06):
+Now I'll write the repaired implementation. First `pipeline/data.py` — 
+registry-exact normalization (rename, scale, dedup, verification):
+
+```
+cd /workspace/target && cat <<'EOF' > pipeline/data.py
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pandas as pd
+
+
+CANONICAL_COLUMNS = [
+    "instant",
+    "dteday",
+    "season",
+    "yr",
+    "mnth",
+    "hr",
+    "holiday",
+    "weekday",
+    "workingday",
+    "weathersit",
+    "temp",
+    "atemp",
+    "hum",
+    "windspeed",
+    "casual",
+    "registered",
+    "cnt",
+]
+
+
+def _types(frame: pd.DataFrame) -> pd.DataFrame:
+    result = frame.copy()
+    result["dteday"] = pd.to_datetime(result["dteday"], errors="raise", 
+format="mixed")
+    numeric = [name for name in result.columns if name != "dteday"]
+    result[numeric] = result[numeric].apply(pd.to_numeric, errors="raise")
+    return result
+
+
+def _normalize_export(root: Path, spec: dict) -> pd.DataFrame:
+    """Normalize one labeled history export exactly as the registry declares.
+
+    Applies the declared delimiter, column renames, unit scales back to the
+    canonical 0-1 weather range, and per-export deduplication on the declared
+    identity key. Raw and unique row expectations are verified when present.
+    """
+    part = pd.read_csv(root / spec["file"], sep=spec["delimiter"])
+    expected_raw = spec.get("expected_raw_rows")
+    if expected_raw is not None and len(part) != int(expected_raw):
+        raise ValueError(f"{spec['file']}: expected {expected_raw} raw rows, 
+found {len(part)}")
+    part = part.rename(columns=spec.get("rename", {}))
+    for column, factor in spec.get("scale_to_canonical", {}).items():
+        part[column] = pd.to_numeric(part[column], errors="raise") * 
+float(factor)
+    dedup_key = spec.get("deduplicate_on")
+    if dedup_key:
+        part = part.sort_values(dedup_key, 
+kind="mergesort").drop_duplicates(subset=[dedup_key], keep="first")
+    expected_unique = spec.get("expected_unique_rows")
+    if expected_unique is not None and len(part) != int(expected_unique):
+        raise ValueError(f"{spec['file']}: expected {expected_unique} unique 
+rows, found {len(part)}")
+    return part.reindex(columns=CANONICAL_COLUMNS)
+
+
+def load_workspace_history(data_dir: str | Path = "data") -> pd.DataFrame:
+    root = Path(data_dir)
+    registry = json.loads((root / 
+"schema_registry.json").read_text(encoding="ascii"))
+    parts = [_normalize_export(root, spec) for spec in registry["exports"]]
+    merged = pd.concat(parts, ignore_index=True)
+    merged = merged.sort_values("instant", 
+kind="mergesort").drop_duplicates(subset=["instant"], keep="first")
+    expected_total = registry.get("expected_unique_history_rows")
+    if expected_total is not None and len(merged) != int(expected_total):
+        raise ValueError(f"canonical history: expected {expected_total} unique 
+rows, found {len(merged)}")
+    return _types(merged).reset_index(drop=True)
+
+
+def load_runtime_history(path: str | Path) -> pd.DataFrame:
+    frame = _types(pd.read_csv(path))
+    frame = frame.sort_values("instant", 
+kind="mergesort").drop_duplicates(subset=["instant"], keep="first")
+    return frame.reset_index(drop=True)
+
+
+def load_requests(path: str | Path) -> pd.DataFrame:
+    frame = _types(pd.read_csv(path))
+    return frame.sort_values("instant", kind="mergesort").reset_index(drop=True)
+EOF
+python3 -c "
+import sys; sys.path.insert(0,'/workspace/target')
+from pipeline.data import load_workspace_history
+h = load_workspace_history('/workspace/target/data')
+print(len(h), h['instant'].nunique(), 
+float(h[['temp','atemp','hum','windspeed']].max().max()))
+print(h['dteday'].min(), h['dteday'].max())
+"
+```
+
+Tool:
+<returncode>
+0
+<output>
+11539 11539 1.0
+2011-01-01 00:00:00 2012-04-30 00:00:00
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 23, $3.21):
+Canonical loading is fixed. Now the features, model, and intervals:
+
+```
+cd /workspace/target && cat <<'EOF' > pipeline/features.py
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+
+# Issue-time predictors only. `cnt`, `casual`, and `registered` are outcomes and
+# are never selected. `yr` is deliberately excluded: the year level shift is
+# handled by an explicit target-side year bridge, because a tree cannot
+# extrapolate an unseen (yr, month) region.
+FEATURES = [
+    "season",
+    "mnth",
+    "hr",
+    "holiday",
+    "weekday",
+    "workingday",
+    "weathersit",
+    "temp",
+    "atemp",
+    "hum",
+    "windspeed",
+]
+
+COMMUTE_AM_HOURS = (7.0, 8.0, 9.0)
+COMMUTE_PM_HOURS = (16.0, 17.0, 18.0)
+
+
+def make_features(frame: pd.DataFrame) -> pd.DataFrame:
+    """Build the numeric design matrix from issue-time fields.
+
+    Adds hour-of-week and explicit working-day commute indicators so the twin
+    rush peaks on working days are representable, plus a cyclic hour encoding.
+    """
+    matrix = frame[FEATURES].astype(float).copy()
+    hour = matrix["hr"]
+    working = (matrix["workingday"] > 0.5).astype(float)
+    matrix["hour_of_week"] = matrix["weekday"] * 24.0 + hour
+    matrix["is_commute_am"] = working * 
+hour.isin(COMMUTE_AM_HOURS).astype(float)
+    matrix["is_commute_pm"] = working * 
+hour.isin(COMMUTE_PM_HOURS).astype(float)
+    matrix["working_hour"] = working * hour
+    matrix["hr_sin"] = np.sin(hour * (2.0 * np.pi / 24.0))
+    matrix["hr_cos"] = np.cos(hour * (2.0 * np.pi / 24.0))
+    return matrix
+EOF
+cat <<'EOF' > pipeline/model.py
+from __future__ import annotations
+
+import numpy as np
+from sklearn.compose import TransformedTargetRegressor
+from sklearn.ensemble import HistGradientBoostingRegressor
+
+
+def build_model(seed: int):
+    """Gradient-boosted trees on log1p counts.
+
+    The log link stabilises the strongly right-skewed hourly demand and makes
+    the multiplicative year bridge additive. Early stopping is disabled and the
+    seed fixed so a fit on identically sorted data is fully deterministic.
+    """
+    regressor = HistGradientBoostingRegressor(
+        loss="squared_error",
+        learning_rate=0.06,
+        max_iter=400,
+        max_leaf_nodes=63,
+        min_samples_leaf=20,
+        l2_regularization=0.1,
+        early_stopping=False,
+        random_state=int(seed),
+    )
+    return TransformedTargetRegressor(regressor=regressor, func=np.log1p, 
+inverse_func=np.expm1)
+EOF
+cat <<'EOF' > pipeline/intervals.py
+from __future__ import annotations
+
+import numpy as np
+
+
+TARGET_COVERAGE = 0.80
+
+
+def interval_radius(absolute_residuals, coverage: float = TARGET_COVERAGE) -> 
+float:
+    """Radius of a central interval at the requested coverage.
+
+    The radius is the `coverage` quantile of absolute forward residuals, so an
+    80 percent interval uses the 0.80 quantile (the previous 0.20 quantile
+    covered only about a fifth of the outcomes).
+    """
+    values = np.asarray(absolute_residuals, dtype=float)
+    if values.size == 0:
+        return 0.0
+    return float(np.quantile(values, coverage))
+
+
+def bounds(prediction, radius: float):
+    point = np.asarray(prediction, dtype=float)
+    return np.maximum(point - radius, 0.0), point + radius
+EOF
+python3 -m unittest discover -s tests -v 2>&1 | tail -5
+```
+
+Tool:
+<returncode>
+0
+<output>
+
+----------------------------------------------------------------------
+Ran 1 test in 0.004s
+
+OK
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 24, $3.41):
+Visible test passes. Now the core orchestrator `pipeline/forecast.py` with the 
+year bridge and forward-residual interval calibration:
+
+```
+cd /workspace/target && cat <<'EOF' > pipeline/forecast.py
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+from pipeline.features import make_features
+from pipeline.intervals import bounds, interval_radius
+from pipeline.model import build_model
+
+
+# Per-month decay of the excess year-over-year growth beyond the most recent
+# paired calendar month. Paired-month ratios in the labeled history decline as
+# the service matures, so the residual growth is damped when the forecast
+# reaches months beyond the freshest anchor.
+GROWTH_DECAY = 0.93
+# Interval radius guard rails: the mean width bar is 250 counts, so the radius
+# never exceeds 122; the floor protects coverage when the rehearsal window is
+# unusually easy relative to a four-month production horizon.
+RADIUS_MIN = 70.0
+RADIUS_MAX = 122.0
+# Forward-residual inflation per 30 days of deployment gap between the end of
+# the labeled history and the median requested hour.
+GAP_INFLATION_PER_MONTH = 0.05
+CALIBRATION_DAYS = 56
+
+
+def _prepare(history: pd.DataFrame) -> pd.DataFrame:
+    ordered = history.sort_values("instant", kind="mergesort")
+    ordered = ordered.drop_duplicates(subset=["instant"], 
+keep="first").reset_index(drop=True)
+    return ordered
+
+
+def _growth_table(history: pd.DataFrame) -> tuple[dict[int, float], int, float]:
+    """Observed year-over-year ratios by paired calendar month.
+
+    Returns the per-month ratio map, the most recent paired month, and the
+    anchor ratio at that month. Falls back to a neutral bridge when the
+    history holds a single year index.
+    """
+    means = history.groupby(["yr", "mnth"])["cnt"].mean()
+    if 0 not in means.index.get_level_values(0) or 1 not in 
+means.index.get_level_values(0):
+        return {}, 0, 1.0
+    base = means.loc[0]
+    lift = means.loc[1]
+    paired = sorted(set(base.index) & set(lift.index))
+    ratios = {}
+    for month in paired:
+        denominator = float(base.loc[month])
+        if denominator > 0.0:
+            ratios[int(month)] = float(lift.loc[month]) / denominator
+    if not ratios:
+        return {}, 0, 1.0
+    anchor_month = max(ratios)
+    return ratios, anchor_month, ratios[anchor_month]
+
+
+def _growth_for_month(month: int, ratios: dict[int, float], anchor_month: int, 
+anchor_ratio: float) -> float:
+    """Bridged growth for a calendar month at year index 1.
+
+    Paired months use their observed ratio. Months beyond the anchor damp the
+    excess growth by GROWTH_DECAY per month of extrapolation distance.
+    """
+    if month in ratios:
+        return ratios[month]
+    gap = max(int(month) - int(anchor_month), 0)
+    return 1.0 + (anchor_ratio - 1.0) * (GROWTH_DECAY ** gap)
+
+
+def _bridged_target(history: pd.DataFrame, ratios: dict[int, float], 
+anchor_month: int, anchor_ratio: float) -> np.ndarray:
+    """Rescale year-index-0 outcomes onto the year-index-1 demand level."""
+    counts = history["cnt"].to_numpy(dtype=float)
+    year = history["yr"].to_numpy(dtype=float)
+    months = history["mnth"].to_numpy()
+    scale = np.ones(len(history), dtype=float)
+    for row, month in enumerate(months):
+        if year[row] < 0.5:
+            scale[row] = _growth_for_month(int(month), ratios, anchor_month, 
+anchor_ratio)
+    return counts * scale
+
+
+def _fit(history: pd.DataFrame, seed: int):
+    ratios, anchor_month, anchor_ratio = _growth_table(history)
+    target = _bridged_target(history, ratios, anchor_month, anchor_ratio)
+    model = build_model(seed)
+    model.fit(make_features(history), target)
+    return model
+
+
+def _forward_radius(history: pd.DataFrame, requests: pd.DataFrame, seed: int) ->
+float:
+    """Calibrate the 80 percent radius from a strictly forward replay.
+
+    The most recent CALIBRATION_DAYS of labeled history are forecast from a
+    model that saw only earlier records, mirroring production conditions. The
+    resulting radius is inflated for the deployment gap between the history
+    end and the median requested hour, then clipped to the width guard rails.
+    """
+    dates = pd.to_datetime(history["dteday"])
+    cutoff = dates.max() - pd.Timedelta(days=CALIBRATION_DAYS)
+    train = history[dates < cutoff]
+    holdout = history[dates >= cutoff]
+    if len(train) < 2000 or len(holdout) < 200:
+        return RADIUS_MAX
+    model = _fit(train.reset_index(drop=True), seed + 1)
+    forecast = np.maximum(np.asarray(model.predict(make_features(holdout)), 
+dtype=float), 0.0)
+    residuals = np.abs(holdout["cnt"].to_numpy(dtype=float) - forecast)
+    base = interval_radius(residuals)
+    gap_days = float((pd.to_datetime(requests["dteday"]).median() - 
+dates.max()).days)
+    inflation = 1.0 + GAP_INFLATION_PER_MONTH * max(gap_days, 0.0) / 30.0
+    return float(np.clip(base * inflation, RADIUS_MIN, RADIUS_MAX))
+
+
+def predict_frame(history: pd.DataFrame, requests: pd.DataFrame, seed: int = 
+2026) -> pd.DataFrame:
+    ordered = _prepare(history)
+    issued = requests.sort_values("instant", 
+kind="mergesort").reset_index(drop=True)
+    radius = _forward_radius(ordered, issued, seed)
+    model = _fit(ordered, seed)
+    prediction = np.maximum(np.asarray(model.predict(make_features(issued)), 
+dtype=float), 0.0)
+    low, high = bounds(prediction, radius)
+    return pd.DataFrame(
+        {
+            "instant": issued["instant"].astype(int),
+            "predicted_cnt": prediction,
+            "lower_80": low,
+            "upper_80": high,
+        }
+    ).sort_values("instant", kind="mergesort").reset_index(drop=True)
+EOF
+python3 -m unittest discover -s tests 2>&1 | tail -3 && python3 
+scripts/run_backtest.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+Ran 1 test in 0.004s
+
+OK
+{"folds": [{"mae": 111.306181, "rmse": 154.137997, "rows": 743, "start": 
+"2012-03-01", "stop": "2012-04-01"}, {"mae": 99.134646, "rmse": 137.517591, 
+"rows": 718, "start": "2012-04-01", "stop": "2012-05-01"}], "history_rows": 
+11539, "unique_instants": 11539, "weather_max": 1.0}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 25, $3.57):
+```
+cd /workspace/target && cat <<'EOF' > local_replay.py
+import sys, numpy as np, pandas as pd
+sys.path.insert(0, '.')
+from pipeline.data import load_workspace_history
+from pipeline.forecast import predict_frame
+
+hist = load_workspace_history('data')
+REQ_COLS = 
+["instant","dteday","season","yr","mnth","hr","holiday","weekday","workingday","
+weathersit","temp","atemp","hum","windspeed"]
+
+def replay(start, stop, label):
+    train = hist[hist["dteday"] < start].reset_index(drop=True)
+    fold = hist[(hist["dteday"] >= start) & (hist["dteday"] < 
+stop)].reset_index(drop=True)
+    req = fold[REQ_COLS].sample(frac=1.0, random_state=7).reset_index(drop=True)
+# permute to check invariance
+    out = predict_frame(train, req, 2026)
+    merged = out.merge(fold[["instant","cnt","workingday","hr"]], on="instant")
+    err = merged["cnt"] - merged["predicted_cnt"]
+    rmse = float(np.sqrt(np.mean(err**2))); mae = float(np.mean(np.abs(err)))
+    cov = float(np.mean((merged["cnt"] >= merged["lower_80"]) & (merged["cnt"] 
+<= merged["upper_80"])))
+    width = float(np.mean(merged["upper_80"] - merged["lower_80"]))
+    com = merged[(merged["workingday"] > 0.5) & 
+(merged["hr"].isin([7,8,9,16,17,18]))]
+    cmae = float(np.mean(np.abs(com["cnt"] - com["predicted_cnt"])))
+    bias = float(np.mean(err))
+    print(f"{label}: rows={len(merged)} rmse={rmse:.1f} mae={mae:.1f} 
+bias={bias:+.1f} commuteMAE={cmae:.1f} cov={cov:.3f} width={width:.1f}")
+    return out
+
+o1 = replay("2012-03-01","2012-04-01","Mar12 fwd")
+o2 = replay("2012-04-01","2012-05-01","Apr12 fwd")
+
+# permutation invariance + determinism check
+train = hist[hist["dteday"] < "2012-04-01"].reset_index(drop=True)
+fold = hist[(hist["dteday"] >= "2012-04-01") & (hist["dteday"] < 
+"2012-05-01")].reset_index(drop=True)
+req = fold[REQ_COLS]
+a = predict_frame(train, req, 2026)
+b = predict_frame(train.sample(frac=1.0, random_state=1).reset_index(drop=True),
+                  req.sample(frac=1.0, random_state=2).reset_index(drop=True), 
+2026)
+print("permutation-invariant:", a.equals(b))
+c = predict_frame(train, req, 2026)
+print("deterministic:", a.equals(c))
+EOF
+python3 local_replay.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+Mar12 fwd: rows=743 rmse=51.2 mae=32.5 bias=+12.5 commuteMAE=60.5 cov=0.878 
+width=132.7
+Apr12 fwd: rows=718 rmse=156.3 mae=108.1 bias=-104.6 commuteMAE=170.7 cov=0.492 
+width=130.2
+permutation-invariant: True
+deterministic: True
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 26, $4.04):
+```
+cd /workspace/target && cat <<'EOF' > pipeline/forecast.py
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+from pipeline.features import make_features
+from pipeline.intervals import bounds, interval_radius
+from pipeline.model import build_model
+
+
+# Per-month decay of the excess year-over-year growth beyond the most recent
+# anchored calendar month. Weather-adjusted paired-month ratios in the labeled
+# history decline as the service matures, so residual growth is damped when
+# the forecast reaches months beyond the freshest anchor.
+GROWTH_DECAY = 0.93
+# Interval radius guard rails: the mean width bar is 250 counts, so the radius
+# never exceeds 122; the floor protects coverage when the rehearsal window is
+# unusually easy relative to a four-month production horizon.
+RADIUS_MIN = 70.0
+RADIUS_MAX = 122.0
+# Forward-residual inflation per 30 days of deployment gap between the end of
+# the labeled history and the median requested hour.
+GAP_INFLATION_PER_MONTH = 0.05
+CALIBRATION_DAYS = 56
+MIN_MONTH_ROWS = 96
+
+
+def _prepare(history: pd.DataFrame) -> pd.DataFrame:
+    ordered = history.sort_values("instant", kind="mergesort")
+    ordered = ordered.drop_duplicates(subset=["instant"], 
+keep="first").reset_index(drop=True)
+    return ordered
+
+
+def _growth_table(history: pd.DataFrame, seed: int) -> tuple[dict[int, float], 
+int, float]:
+    """Weather-adjusted year-over-year lift by calendar month.
+
+    A reference model trained only on year-index-0 records predicts every
+    year-index-1 record under its actual issue-time weather. The ratio of
+    observed to predicted totals per month is the demand lift net of weather,
+    so an anomalously warm month cannot masquerade as structural growth.
+    Returns the per-month lift map, the freshest anchored month, and its lift.
+    """
+    base = history[history["yr"] < 0.5].reset_index(drop=True)
+    lift_rows = history[history["yr"] >= 0.5].reset_index(drop=True)
+    if len(base) < 2000 or len(lift_rows) < MIN_MONTH_ROWS:
+        return {}, 0, 1.0
+    reference = build_model(seed + 11)
+    reference.fit(make_features(base), base["cnt"].to_numpy(dtype=float))
+    predicted = 
+np.maximum(np.asarray(reference.predict(make_features(lift_rows)), dtype=float),
+1.0)
+    actual = lift_rows["cnt"].to_numpy(dtype=float)
+    months = lift_rows["mnth"].to_numpy()
+    ratios: dict[int, float] = {}
+    for month in sorted({int(m) for m in months}):
+        mask = months == month
+        if int(mask.sum()) < MIN_MONTH_ROWS:
+            continue
+        denominator = float(predicted[mask].sum())
+        if denominator > 0.0:
+            ratios[month] = float(actual[mask].sum()) / denominator
+    if not ratios:
+        return {}, 0, 1.0
+    anchor_month = max(ratios)
+    return ratios, anchor_month, ratios[anchor_month]
+
+
+def _growth_for_month(month: int, ratios: dict[int, float], anchor_month: int, 
+anchor_ratio: float) -> float:
+    """Bridged growth for a calendar month at year index 1.
+
+    Anchored months use their observed weather-adjusted lift. Months beyond
+    the anchor damp the excess growth by GROWTH_DECAY per month of distance.
+    """
+    if month in ratios:
+        return ratios[month]
+    gap = max(int(month) - int(anchor_month), 0)
+    return 1.0 + (anchor_ratio - 1.0) * (GROWTH_DECAY ** gap)
+
+
+def _bridged_target(history: pd.DataFrame, ratios: dict[int, float], 
+anchor_month: int, anchor_ratio: float) -> np.ndarray:
+    """Rescale year-index-0 outcomes onto the year-index-1 demand level."""
+    counts = history["cnt"].to_numpy(dtype=float)
+    year = history["yr"].to_numpy(dtype=float)
+    months = history["mnth"].to_numpy()
+    scale = np.ones(len(history), dtype=float)
+    for row, month in enumerate(months):
+        if year[row] < 0.5:
+            scale[row] = _growth_for_month(int(month), ratios, anchor_month, 
+anchor_ratio)
+    return counts * scale
+
+
+def _fit(history: pd.DataFrame, seed: int):
+    ratios, anchor_month, anchor_ratio = _growth_table(history, seed)
+    target = _bridged_target(history, ratios, anchor_month, anchor_ratio)
+    model = build_model(seed)
+    model.fit(make_features(history), target)
+    return model
+
+
+def _forward_radius(history: pd.DataFrame, requests: pd.DataFrame, seed: int) ->
+float:
+    """Calibrate the 80 percent radius from a strictly forward replay.
+
+    The most recent CALIBRATION_DAYS of labeled history are forecast from a
+    model that saw only earlier records, mirroring production conditions. The
+    resulting radius is inflated for the deployment gap between the history
+    end and the median requested hour, then clipped to the width guard rails.
+    """
+    dates = pd.to_datetime(history["dteday"])
+    cutoff = dates.max() - pd.Timedelta(days=CALIBRATION_DAYS)
+    train = history[dates < cutoff]
+    holdout = history[dates >= cutoff]
+    if len(train) < 2000 or len(holdout) < 200:
+        return RADIUS_MAX
+    model = _fit(train.reset_index(drop=True), seed + 1)
+    forecast = np.maximum(np.asarray(model.predict(make_features(holdout)), 
+dtype=float), 0.0)
+    residuals = np.abs(holdout["cnt"].to_numpy(dtype=float) - forecast)
+    base = interval_radius(residuals)
+    gap_days = float((pd.to_datetime(requests["dteday"]).median() - 
+dates.max()).days)
+    inflation = 1.0 + GAP_INFLATION_PER_MONTH * max(gap_days, 0.0) / 30.0
+    return float(np.clip(base * inflation, RADIUS_MIN, RADIUS_MAX))
+
+
+def predict_frame(history: pd.DataFrame, requests: pd.DataFrame, seed: int = 
+2026) -> pd.DataFrame:
+    ordered = _prepare(history)
+    issued = requests.sort_values("instant", 
+kind="mergesort").reset_index(drop=True)
+    radius = _forward_radius(ordered, issued, seed)
+    model = _fit(ordered, seed)
+    prediction = np.maximum(np.asarray(model.predict(make_features(issued)), 
+dtype=float), 0.0)
+    low, high = bounds(prediction, radius)
+    return pd.DataFrame(
+        {
+            "instant": issued["instant"].astype(int),
+            "predicted_cnt": prediction,
+            "lower_80": low,
+            "upper_80": high,
+        }
+    ).sort_values("instant", kind="mergesort").reset_index(drop=True)
+EOF
+python3 local_replay.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+Mar12 fwd: rows=743 rmse=52.4 mae=32.9 bias=+13.9 commuteMAE=59.1 cov=0.954 
+width=212.6
+Apr12 fwd: rows=718 rmse=82.4 mae=52.3 bias=-41.1 commuteMAE=73.9 cov=0.749 
+width=128.9
+permutation-invariant: True
+deterministic: True
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 27, $4.24):
+Huge improvement on the fragile fold (RMSE 156→82, commute MAE 171→74). Let me 
+inspect the weather-adjusted ratios to see the anchor behavior:
+
+```
+cd /workspace/target && python3 - <<'EOF'
+import sys; sys.path.insert(0,'.')
+import pandas as pd, numpy as np
+from pipeline.data import load_workspace_history
+from pipeline.forecast import _growth_table, _prepare
+
+hist = _prepare(load_workspace_history('data'))
+for cut, label in [("2012-03-01","<=Feb12"), ("2012-04-01","<=Mar12"), 
+("2013-01-01","full<=Apr12")]:
+    sub = hist[hist["dteday"] < cut].reset_index(drop=True)
+    ratios, am, ar = _growth_table(sub, 2026)
+    raw = sub.groupby(["yr","mnth"])["cnt"].mean()
+    rawr = {m: float(raw.loc[1,m]/raw.loc[0,m]) for m in raw.loc[1].index if m 
+in raw.loc[0].index}
+    print(label, "adjusted:", {k: round(v,3) for k,v in ratios.items()}, 
+"anchor", am, round(ar,3))
+    print("      raw:", {k: round(v,3) for k,v in rawr.items()})
+EOF
+```
+
+Tool:
+<returncode>
+0
+<output>
+<=Feb12 adjusted: {1: 2.262, 2: 1.993} anchor 2 1.993
+      raw: {1: 2.352, 2: 2.006}
+<=Mar12 adjusted: {1: 2.262, 2: 1.993, 3: 2.059} anchor 3 2.059
+      raw: {1: 2.352, 2: 2.006, 3: 2.529}
+full<=Apr12 adjusted: {1: 2.262, 2: 1.993, 3: 2.059, 4: 1.687} anchor 4 1.687
+      raw: {1: 2.352, 2: 2.006, 3: 2.529, 4: 1.839}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 28, $4.53):
+```
+cd /workspace/target && cat <<'EOF' > scratch_split.py
+import sys; sys.path.insert(0,'.')
+import numpy as np, pandas as pd
+from pipeline.data import load_workspace_history
+from pipeline.features import make_features
+from pipeline.model import build_model
+from pipeline.forecast import _prepare, GROWTH_DECAY, MIN_MONTH_ROWS
+
+hist = _prepare(load_workspace_history('data'))
+REQ = 
+["instant","dteday","season","yr","mnth","hr","holiday","weekday","workingday","
+weathersit","temp","atemp","hum","windspeed"]
+
+def growth_table(history, target_col, seed):
+    base = history[history["yr"] < 0.5].reset_index(drop=True)
+    lift = history[history["yr"] >= 0.5].reset_index(drop=True)
+    if len(base) < 2000 or len(lift) < MIN_MONTH_ROWS: return {}, 0, 1.0
+    ref = build_model(seed + 11); ref.fit(make_features(base), 
+base[target_col].astype(float))
+    pred = np.maximum(np.asarray(ref.predict(make_features(lift)), float), 1.0)
+    act = lift[target_col].to_numpy(float); months = lift["mnth"].to_numpy()
+    ratios = {}
+    for m in sorted({int(x) for x in months}):
+        mask = months == m
+        if mask.sum() >= MIN_MONTH_ROWS and pred[mask].sum() > 0:
+            ratios[m] = float(act[mask].sum()/pred[mask].sum())
+    if not ratios: return {}, 0, 1.0
+    am = max(ratios); return ratios, am, ratios[am]
+
+def g_for(m, ratios, am, ar):
+    if m in ratios: return ratios[m]
+    return 1.0 + (ar-1.0)*(GROWTH_DECAY**max(m-am,0))
+
+def fit_component(history, col, seed):
+    ratios, am, ar = growth_table(history, col, seed)
+    y = history[col].to_numpy(float).copy()
+    yr = history["yr"].to_numpy(float); mo = history["mnth"].to_numpy()
+    for i in range(len(y)):
+        if yr[i] < 0.5: y[i] *= g_for(int(mo[i]), ratios, am, ar)
+    mod = build_model(seed); mod.fit(make_features(history), y)
+    return mod
+
+def predict_split(train, req, seed=2026):
+    mc = fit_component(train, "casual", seed+100)
+    mr = fit_component(train, "registered", seed+200)
+    p = 
+np.maximum(mc.predict(make_features(req)),0.0)+np.maximum(mr.predict(make_featur
+es(req)),0.0)
+    return np.asarray(p,float)
+
+for start, stop, label in 
+[("2012-03-01","2012-04-01","Mar12"),("2012-04-01","2012-05-01","Apr12")]:
+    train = hist[hist["dteday"] < start].reset_index(drop=True)
+    fold = hist[(hist["dteday"] >= start) & (hist["dteday"] < 
+stop)].reset_index(drop=True)
+    p = predict_split(train, fold)
+    err = fold["cnt"].to_numpy(float) - p
+    com = (fold["workingday"]>0.5)&(fold["hr"].isin([7,8,9,16,17,18]))
+    print(f"{label} split: rmse={np.sqrt(np.mean(err**2)):.1f} 
+mae={np.mean(np.abs(err)):.1f} bias={np.mean(err):+.1f} 
+commuteMAE={np.mean(np.abs(err[com.to_numpy()])):.1f}")
+EOF
+python3 scratch_split.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+Mar12 split: rmse=52.9 mae=33.3 bias=+20.0 commuteMAE=54.1
+Apr12 split: rmse=81.5 mae=52.2 bias=-41.3 commuteMAE=85.9
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 29, $4.69):
+The split model is a wash — I'll keep the simpler single-target design. Now let 
+me run the full CLI end-to-end exactly as the runtime would, checking output 
+contract, determinism, and timing:
+
+```
+cd /workspace/target && python3 - <<'EOF'
+import sys; sys.path.insert(0,'.')
+from pipeline.data import load_workspace_history
+h = load_workspace_history('data')
+h.to_csv('/tmp/canon_history.csv', index=False, lineterminator='\n')
+print(len(h))
+EOF
+time python3 scripts/predict.py --history /tmp/canon_history.csv --requests 
+data/forecast.csv --output /tmp/out1.csv --seed 2026
+head -4 /tmp/out1.csv && wc -l /tmp/out1.csv
+```
+
+Tool:
+<returncode>
+1
+<output>
+11539
+/bin/sh: 8: time: not found
+head: cannot open '/tmp/out1.csv' for reading: No such file or directory
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 30, $4.78):
+```
+cd /workspace/target && /usr/bin/time -v python3 scripts/predict.py --history 
+/tmp/canon_history.csv --requests data/forecast.csv --output /tmp/out1.csv 
+--seed 2026 2>&1 | grep -E "Elapsed|Maximum" ; head -4 /tmp/out1.csv && wc -l 
+/tmp/out1.csv
+```
+
+Tool:
+<returncode>
+1
+<output>
+head: cannot open '/tmp/out1.csv' for reading: No such file or directory
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 31, $4.87):
+```
+cd /workspace/target && python3 scripts/predict.py --history 
+/tmp/canon_history.csv --requests data/forecast.csv --output /tmp/out1.csv 
+--seed 2026; echo "rc=$?"
+```
+
+Tool:
+<returncode>
+0
+<output>
+rc=0
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 32, $4.99):
+```
+cd /workspace/target && head -4 /tmp/out1.csv && wc -l /tmp/out1.csv && python3 
+- <<'EOF'
+import time, subprocess, pandas as pd, numpy as np
+t0=time.time()
+subprocess.run(["python3","scripts/predict.py","--history","/tmp/canon_history.c
+sv","--requests","data/forecast.csv","--output","/tmp/out2.csv","--seed","2026"]
+,check=True)
+print("elapsed", round(time.time()-t0,1), "s")
+a=pd.read_csv('/tmp/out1.csv'); b=pd.read_csv('/tmp/out2.csv')
+print("deterministic:", a.equals(b))
+# permuted requests
+req=pd.read_csv('data/forecast.csv').sample(frac=1.0,random_state=3)
+req.to_csv('/tmp/req_perm.csv',index=False)
+h=pd.read_csv('/tmp/canon_history.csv').sample(frac=1.0,random_state=4)
+h.to_csv('/tmp/hist_perm.csv',index=False)
+subprocess.run(["python3","scripts/predict.py","--history","/tmp/hist_perm.csv",
+"--requests","/tmp/req_perm.csv","--output","/tmp/out3.csv","--seed","2026"],che
+ck=True)
+c=pd.read_csv('/tmp/out3.csv')
+print("permutation-invariant:", a.equals(c))
+print(a.describe().round(2))
+print("monotone ok:", 
+bool(((a.lower_80<=a.predicted_cnt)&(a.predicted_cnt<=a.upper_80)).all()), 
+"finite:", bool(np.isfinite(a.values[:,1:]).all()), "nonneg:", 
+bool((a.values[:,1:]>=0).all()))
+print("mean width:", float((a.upper_80-a.lower_80).mean()))
+m = a.merge(pd.read_csv('data/forecast.csv')[['instant','mnth']] if 'mnth' in 
+pd.read_csv('data/forecast.csv').columns else None, on='instant')
+print(m.groupby('mnth')['predicted_cnt'].mean().round(1))
+EOF
+```
+
+Tool:
+<returncode>
+0
+<output>
+instant,predicted_cnt,lower_80,upper_80
+14492,168.056869398,84.0037730382,252.109965758
+14493,122.487403407,38.4343070476,206.540499767
+14494,88.9737555622,4.92065920231,173.026851922
+2889 /tmp/out1.csv
+elapsed 5.5 s
+deterministic: True
+permutation-invariant: True
+        instant  predicted_cnt  lower_80  upper_80
+count   2888.00        2888.00   2888.00   2888.00
+mean   15935.50         221.02    154.28    305.07
+std      833.84         195.13    178.65    195.13
+min    14492.00           1.66      0.00     85.71
+25%    15213.75          52.39      0.00    136.45
+50%    15935.50         181.43     97.38    265.49
+75%    16657.25         319.62    235.57    403.68
+max    17379.00         968.53    884.48   1052.58
+monotone ok: True finite: True nonneg: True
+mean width: 150.79259800961165
+mnth
+9     291.1
+10    251.9
+11    192.7
+12    151.1
+Name: predicted_cnt, dtype: float64
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 33, $5.27):
+```
+cd /workspace/target && sed -i 's/^RADIUS_MIN = 70.0$/RADIUS_MIN = 80.0/; 
+s/^GAP_INFLATION_PER_MONTH = 0.05$/GAP_INFLATION_PER_MONTH = 0.06/' 
+pipeline/forecast.py && grep -n "RADIUS_MIN\|GAP_INFLATION" pipeline/forecast.py
+| head -4
+cat <<'EOF' > scripts/run_backtest.py
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from pipeline.data import load_workspace_history
+from pipeline.forecast import predict_frame
+
+REQUEST_COLUMNS = [
+    "instant",
+    "dteday",
+    "season",
+    "yr",
+    "mnth",
+    "hr",
+    "holiday",
+    "weekday",
+    "workingday",
+    "weathersit",
+    "temp",
+    "atemp",
+    "hum",
+    "windspeed",
+]
+
+
+def score(history: pd.DataFrame, start: str, stop: str, seed: int) -> dict:
+    """Chronological rehearsal fold through the full production procedure.
+
+    Training rows strictly precede the fold, requests carry only issue-time
+    fields, and the forecast runs the same predict_frame path the runtime
+    executes, including the year bridge and interval calibration.
+    """
+    train = history[history["dteday"] < start].reset_index(drop=True)
+    valid = history[(history["dteday"] >= start) & (history["dteday"] < 
+stop)].reset_index(drop=True)
+    requests = valid[REQUEST_COLUMNS]
+    forecast = predict_frame(train, requests, seed)
+    merged = forecast.merge(valid[["instant", "cnt"]], on="instant", 
+validate="one_to_one")
+    error = merged["cnt"].to_numpy(dtype=float) - 
+merged["predicted_cnt"].to_numpy(dtype=float)
+    return {
+        "start": start,
+        "stop": stop,
+        "rows": int(len(merged)),
+        "rmse": round(float(np.sqrt(np.mean(np.square(error)))), 6),
+        "mae": round(float(np.mean(np.abs(error)))， 6) if False else 
+round(float(np.mean(np.abs(error))), 6),
+    }
+
+
+def main() -> int:
+    history = load_workspace_history()
+    report = {
+        "history_rows": int(len(history)),
+        "unique_instants": int(history["instant"].nunique()),
+        "weather_max": round(float(history[["temp", "atemp", "hum", 
+"windspeed"]].max().max()), 6),
+        "folds": [
+            score(history, "2012-03-01", "2012-04-01", 2027),
+            score(history, "2012-04-01", "2012-05-01", 2028),
+        ],
+    }
+    print(json.dumps(report, sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+EOF
+python3 scripts/run_backtest.py
+```
+
+Tool:
+<returncode>
+1
+<output>
+19:RADIUS_MIN = 80.0
+23:GAP_INFLATION_PER_MONTH = 0.06
+117:    inflation = 1.0 + GAP_INFLATION_PER_MONTH * max(gap_days, 0.0) / 30.0
+118:    return float(np.clip(base * inflation, RADIUS_MIN, RADIUS_MAX))
+  File "/workspace/target/scripts/run_backtest.py", line 52
+    "mae": round(float(np.mean(np.abs(error)))， 6) if False else 
+round(float(np.mean(np.abs(error))), 6),
+                                              ^
+SyntaxError: invalid character '，' (U+FF0C)
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 34, $5.42):
+A stray full-width comma slipped in — let me fix that line:
+
+```
+cd /workspace/target && python3 - <<'EOF'
+from pathlib import Path
+p = Path('scripts/run_backtest.py')
+text = p.read_text(encoding='utf-8')
+bad = '"mae": round(float(np.mean(np.abs(error)))\uff0c 6) if False else 
+round(float(np.mean(np.abs(error))), 6),'
+good = '"mae": round(float(np.mean(np.abs(error))), 6),'
+assert bad in text
+p.write_text(text.replace(bad, good), encoding='ascii')
+print('fixed')
+EOF
+python3 scripts/run_backtest.py && python3 -m unittest discover -s tests 2>&1 | 
+tail -3 && python3 local_replay.py
+```
+
+Tool:
+<returncode>
+-1
+<output>
+fixed
+{"folds": [{"mae": 32.904113, "rmse": 52.428155, "rows": 743, "start": 
+"2012-03-01", "stop": "2012-04-01"}, {"mae": 52.30296, "rmse": 82.445493, 
+"rows": 718, "start": "2012-04-01", "stop": "2012-05-01"}], "history_rows": 
+11539, "unique_instants": 11539, "weather_max": 1.0}
+Ran 1 test in 0.004s
+
+OK
+
+<exception_info>
+An error occurred while executing the command: Command 'cd /workspace/target && 
+python3 - <<'EOF'
+from pathlib import Path
+p = Path('scripts/run_backtest.py')
+text = p.read_text(encoding='utf-8')
+bad = '"mae": round(float(np.mean(np.abs(error)))\uff0c 6) if False else 
+round(float(np.mean(np.abs(error))), 6),'
+good = '"mae": round(float(np.mean(np.abs(error))), 6),'
+assert bad in text
+p.write_text(text.replace(bad, good), encoding='ascii')
+print('fixed')
+EOF
+python3 scripts/run_backtest.py && python3 -m unittest discover -s tests 2>&1 | 
+tail -3 && python3 local_replay.py' timed out after 30 seconds
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 35, $5.53):
+The fix landed (backtest folds now RMSE 52.4/82.4, tests OK) — the shell just 
+hit its 30s limit on `local_replay.py`. Let me run it in the background and 
+poll:
+
+```
+cd /workspace/target && nohup python3 local_replay.py > /tmp/replay.log 2>&1 & 
+echo started
+```
+
+Tool:
+<returncode>
+0
+<output>
+started
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 36, $5.62):
+```
+sleep 25 && cat /tmp/replay.log
+```
+
+Tool:
+<returncode>
+0
+<output>
+Mar12 fwd: rows=743 rmse=52.4 mae=32.9 bias=+13.9 commuteMAE=59.1 cov=0.954 
+width=212.6
+Apr12 fwd: rows=718 rmse=82.4 mae=52.3 bias=-41.1 commuteMAE=73.9 cov=0.786 
+width=146.4
+permutation-invariant: True
+deterministic: True
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 37, $5.74):
+```
+cd /workspace/target && rm -f scratch_split.py local_replay.py && ls && git 
+status 2>/dev/null | head -3; python3 env_cli.py test.visible
+```
+
+Tool:
+<returncode>
+0
+<output>
+README.md
+data
+env_cli.py
+investigation.json
+pipeline
+scripts
+tests
+{
+  "accepted": true,
+  "action_id": 
+"87ed7743bdca84cd50940da34c677841eaa6dd1ae6bae972b37f02f442bb4bdb",
+  "next": "backtest.replay",
+  "op": "test.visible",
+  "result": {
+    "passed": true
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 38, $5.83):
+```
+cd /workspace/target && nohup python3 env_cli.py backtest.replay > 
+/tmp/op_backtest.log 2>&1 & echo bg
+```
+
+Tool:
+<returncode>
+0
+<output>
+bg
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 39, $5.92):
+```
+sleep 25; cat /tmp/op_backtest.log
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"84a846d0c835ea7ee1ac76d8e32ee3b7fcfddd1f746e35c6b1229edd14204df4",
+  "next": "candidate.attest",
+  "op": "backtest.replay",
+  "result": {
+    "report": {
+      "folds": [
+        {
+          "mae": 32.904113,
+          "rmse": 52.428155,
+          "rows": 743,
+          "start": "2012-03-01",
+          "stop": "2012-04-01"
+        },
+        {
+          "mae": 52.30296,
+          "rmse": 82.445493,
+          "rows": 718,
+          "start": "2012-04-01",
+          "stop": "2012-05-01"
+        }
+      ],
+      "history_rows": 11539,
+      "unique_instants": 11539,
+      "weather_max": 1.0
+    }
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 40, $6.02):
+```
+cd /workspace/target && python3 env_cli.py candidate.attest
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"d05a8a900507ebb5ec08ef3d84355577db2c2728b0635d15f24d7db6d4474005",
+  "next": "reproduce",
+  "op": "candidate.attest",
+  "result": {
+    "changed_count": 6,
+    "changed_files": [
+      "pipeline/data.py",
+      "pipeline/features.py",
+      "pipeline/forecast.py",
+      "pipeline/intervals.py",
+      "pipeline/model.py",
+      "scripts/run_backtest.py"
+    ],
+    "code_hash": 
+"209e84b038a325149da5224061011202b79cd6a0f2bd9f6e2b5ff7200aade235"
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 41, $6.11):
+```
+cd /workspace/target && nohup python3 env_cli.py reproduce > 
+/tmp/op_reproduce.log 2>&1 & echo bg
+```
+
+Tool:
+<returncode>
+0
+<output>
+bg
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 42, $6.20):
+```
+sleep 28; cat /tmp/op_reproduce.log
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"e6b1faca467dbd7bbd08707d15444bd0555d77e211077da22a3f390350310e01",
+  "next": "stage.open",
+  "op": "reproduce",
+  "result": {
+    "candidate_hash": 
+"77786a8f5762c4eac1e77d42c23074cbc09dd7d79fe758fe3098f4816418bdd6",
+    "output_sha256": 
+"7bf5fe80065742a54dad4a9143ede80090edda67469efda4a4bd8fa57ccf4402",
+    "runtime_generation": 0
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 43, $6.30):
+```
+cd /workspace/target && python3 env_cli.py stage.open && python3 env_cli.py 
+deploy.prepare
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"94bfe51a35f288f6ac1a31ad0ec3c1db49a44f46575961d0df11af64f0ddda6d",
+  "next": "deploy.prepare",
+  "op": "stage.open",
+  "result": {
+    "candidate_hash": 
+"77786a8f5762c4eac1e77d42c23074cbc09dd7d79fe758fe3098f4816418bdd6",
+    "runtime_generation": 0
+  }
+}
+{
+  "accepted": true,
+  "action_id": 
+"5cbc7af7497cc5f05b4865e23c2a0923dad6fc0721016868b22966c8bea2f070",
+  "next": "deploy.commit",
+  "op": "deploy.prepare",
+  "result": {
+    "candidate_hash": 
+"77786a8f5762c4eac1e77d42c23074cbc09dd7d79fe758fe3098f4816418bdd6",
+    "immutable_stage": true,
+    "runtime_generation": 0
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 44, $6.40):
+```
+cd /workspace/target && python3 env_cli.py deploy.commit
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"d2184ca02bb754b6c731657a69f62cc97915198e1246e4856cca89e67991f5d8",
+  "next": "validate",
+  "op": "deploy.commit",
+  "result": {
+    "candidate_hash": 
+"77786a8f5762c4eac1e77d42c23074cbc09dd7d79fe758fe3098f4816418bdd6",
+    "runtime_generation": 0
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 45, $6.49):
+```
+cd /workspace/target && nohup python3 env_cli.py validate > 
+/tmp/op_validate1.log 2>&1 & echo bg
+```
+
+Tool:
+<returncode>
+0
+<output>
+bg
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 46, $6.59):
+```
+sleep 28; cat /tmp/op_validate1.log
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"3e9acb2ed408ca2a4b33d4ee230f6258543af5c850d650b93d194e24dc490d77",
+  "next": "diagnostics.read",
+  "op": "validate",
+  "result": {
+    "candidate_hash": 
+"77786a8f5762c4eac1e77d42c23074cbc09dd7d79fe758fe3098f4816418bdd6",
+    "remaining": 2,
+    "signal": "runtime_snapshot_stale",
+    "status": "dirty"
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 47, $6.68):
+First validation is dirty with `runtime_snapshot_stale` as designed. Reading 
+diagnostics to get the diagnosis receipt and required family:
+
+```
+cd /workspace/target && python3 env_cli.py diagnostics.read
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"827b96f4786974eef579fc3cd48f3e66fe68d2c529ad2ee9ff78d3348176d058",
+  "next": "recovery.plan",
+  "op": "diagnostics.read",
+  "result": {
+    "choices": [
+      "rebuild",
+      "reload",
+      "restart",
+      "rollback"
+    ],
+    "diagnosis_receipt": "diag-29cfdd1984b92ce80c09",
+    "evidence": {
+      "cache_advance_expected": true,
+      "cache_max_instant": 11539,
+      "cache_rows": 11539,
+      "runtime_generation": 0,
+      "validated_ids_present_in_cache": 0,
+      "validated_wave_min_instant": 11540,
+      "validated_wave_rows": 1464
+    },
+    "required_family": "rebuild"
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 48, $6.78):
+```
+cd /workspace/target && python3 env_cli.py recovery.plan --family rebuild 
+--diagnosis diag-29cfdd1984b92ce80c09
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"c623f60a5ec2d06ed9a355ab94f33a68dbdf1a53962344fd5f234c9306abd9e2",
+  "next": "recovery.apply",
+  "op": "recovery.plan",
+  "result": {
+    "diagnosis_receipt": "diag-29cfdd1984b92ce80c09",
+    "family": "rebuild",
+    "status": "planned"
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 49, $6.88):
+```
+cd /workspace/target && python3 env_cli.py recovery.apply --family rebuild 
+--diagnosis diag-29cfdd1984b92ce80c09 && python3 env_cli.py recovery.verify
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"13ce6cb6536e2f0d9236ada88b9014577b152e6bc72b2f9448cf6774d3c0cafc",
+  "next": "recovery.verify",
+  "op": "recovery.apply",
+  "result": {
+    "diagnosis_receipt": "diag-29cfdd1984b92ce80c09",
+    "family": "rebuild",
+    "runtime_generation": 1,
+    "status": "applied"
+  }
+}
+{
+  "accepted": true,
+  "action_id": 
+"95afcd65fe321a1bfcdb06f2e35a60d5f808ef997d1127a94fc6781bec394fbd",
+  "next": "cache.audit",
+  "op": "recovery.verify",
+  "result": {
+    "cache_rows": 13003,
+    "runtime_generation": 1,
+    "status": "verified"
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 50, $6.99):
+Cache advanced to 13,003 rows (May–June 2012 wave added). Continuing the walk:
+
+```
+cd /workspace/target && python3 env_cli.py cache.audit
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"e38b852f3bd7da3662db7ba7a537d1fbb2d64a3fece9524d40d5ef2d90b839ff",
+  "next": "reproduce",
+  "op": "cache.audit",
+  "result": {
+    "rows": 13003,
+    "runtime_generation": 1,
+    "unique_ids": 13003
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 51, $7.09):
+```
+cd /workspace/target && nohup python3 env_cli.py reproduce > 
+/tmp/op_reproduce2.log 2>&1 & echo bg
+```
+
+Tool:
+<returncode>
+0
+<output>
+bg
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 52, $7.18):
+```
+sleep 28; cat /tmp/op_reproduce2.log
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"3f3c89911d4e37afab319b4243c63a6e8a24afc520589ba1a7f78eb856db4ed3",
+  "next": "stage.open",
+  "op": "reproduce",
+  "result": {
+    "candidate_hash": 
+"77786a8f5762c4eac1e77d42c23074cbc09dd7d79fe758fe3098f4816418bdd6",
+    "output_sha256": 
+"7bf5fe80065742a54dad4a9143ede80090edda67469efda4a4bd8fa57ccf4402",
+    "runtime_generation": 1
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 53, $7.28):
+```
+cd /workspace/target && python3 env_cli.py stage.open && python3 env_cli.py 
+deploy.prepare && python3 env_cli.py deploy.commit
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"3f48a491a2368214c22bf8b227eeba0bbcb99d2c016ebc03a5251d0363f3a273",
+  "next": "deploy.prepare",
+  "op": "stage.open",
+  "result": {
+    "candidate_hash": 
+"77786a8f5762c4eac1e77d42c23074cbc09dd7d79fe758fe3098f4816418bdd6",
+    "runtime_generation": 1
+  }
+}
+{
+  "accepted": true,
+  "action_id": 
+"8544f9ea9b2f19b2b5cfed61e0cd8fc0ee3198ed615ac4db28846d7578aea455",
+  "next": "deploy.commit",
+  "op": "deploy.prepare",
+  "result": {
+    "candidate_hash": 
+"77786a8f5762c4eac1e77d42c23074cbc09dd7d79fe758fe3098f4816418bdd6",
+    "immutable_stage": true,
+    "runtime_generation": 1
+  }
+}
+{
+  "accepted": true,
+  "action_id": 
+"4ea254e5312a7e97dbdf445eaf902bedbd2f215fa23290fb1ff9dc6560a1fad8",
+  "next": "validate",
+  "op": "deploy.commit",
+  "result": {
+    "candidate_hash": 
+"77786a8f5762c4eac1e77d42c23074cbc09dd7d79fe758fe3098f4816418bdd6",
+    "runtime_generation": 1
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 54, $7.39):
+Now the critical second validation (step 18) against the protected waves with 
+the recovered cache:
+
+```
+cd /workspace/target && nohup python3 env_cli.py validate > 
+/tmp/op_validate2.log 2>&1 & echo bg
+```
+
+Tool:
+<returncode>
+0
+<output>
+bg
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 55, $7.48):
+```
+sleep 28; cat /tmp/op_validate2.log
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"4ff5b29095bd9ec0cb7dbb4261a3c8b27f9e96623e98aa5d9d9b98bcb7ec30f1",
+  "next": "audit.horizon",
+  "op": "validate",
+  "result": {
+    "candidate_hash": 
+"77786a8f5762c4eac1e77d42c23074cbc09dd7d79fe758fe3098f4816418bdd6",
+    "remaining": 1,
+    "status": "clean"
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 56, $7.59):
+The second validation is **clean** — no revision cycle needed. Proceeding to the
+audits:
+
+```
+cd /workspace/target && nohup python3 env_cli.py audit.horizon > 
+/tmp/op_audith.log 2>&1 & echo bg
+```
+
+Tool:
+<returncode>
+0
+<output>
+bg
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 57, $7.68):
+```
+sleep 25; cat /tmp/op_audith.log
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"c5783a9baac6f4c951700d6b9d803cb9af5fbd9f2b6cf9863fed715b195175b2",
+  "next": "audit.intervals",
+  "op": "audit.horizon",
+  "result": {
+    "candidate_hash": 
+"77786a8f5762c4eac1e77d42c23074cbc09dd7d79fe758fe3098f4816418bdd6",
+    "row_order_invariant": true
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 58, $7.78):
+```
+cd /workspace/target && nohup python3 env_cli.py audit.intervals > 
+/tmp/op_auditi.log 2>&1 & echo bg
+```
+
+Tool:
+<returncode>
+0
+<output>
+bg
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 59, $7.88):
+```
+sleep 25; cat /tmp/op_auditi.log
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"16c1499ea6240bfc3825c708a984531cf434384ad91580ce3202caebbacc5859",
+  "next": "promote.canary",
+  "op": "audit.intervals",
+  "result": {
+    "coverage_band_checked": true,
+    "runtime_generation": 2,
+    "status": "clean",
+    "width_checked": true
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 60, $7.98):
+```
+cd /workspace/target && python3 env_cli.py promote.canary
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"4ed12b77ee68e4357c15cbcce353ffe4ef599d45855144f2ec4a6ce9e9d24c4e",
+  "next": "validate.canary",
+  "op": "promote.canary",
+  "result": {
+    "candidate_hash": 
+"77786a8f5762c4eac1e77d42c23074cbc09dd7d79fe758fe3098f4816418bdd6",
+    "traffic_percent": 10
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 61, $8.08):
+```
+cd /workspace/target && nohup python3 env_cli.py validate.canary > 
+/tmp/op_canary.log 2>&1 & echo bg
+```
+
+Tool:
+<returncode>
+0
+<output>
+bg
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 62, $8.18):
+```
+sleep 25; cat /tmp/op_canary.log
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"18fecb014cde6034fba078b55578c3be077b43839febdd07356028ffee121c22",
+  "next": "promote.production",
+  "op": "validate.canary",
+  "result": {
+    "candidate_hash": 
+"77786a8f5762c4eac1e77d42c23074cbc09dd7d79fe758fe3098f4816418bdd6",
+    "rows": 372,
+    "status": "clean"
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 63, $8.28):
+```
+cd /workspace/target && python3 env_cli.py promote.production && python3 
+env_cli.py freeze
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"b07206605311b56d45bd36a2e5833cd56bcf1321fe2989297fa1f07f2df16de5",
+  "next": "freeze",
+  "op": "promote.production",
+  "result": {
+    "candidate_hash": 
+"77786a8f5762c4eac1e77d42c23074cbc09dd7d79fe758fe3098f4816418bdd6"
+  }
+}
+{
+  "accepted": true,
+  "action_id": 
+"c3d748cd15b8cef6fafbc7914ef39149f494baa43a006404969da59958075665",
+  "next": "submit",
+  "op": "freeze",
+  "result": {
+    "candidate_hash": 
+"77786a8f5762c4eac1e77d42c23074cbc09dd7d79fe758fe3098f4816418bdd6",
+    "history_sha256": 
+"fbf5e1fb9200ed7a12a78cab458b6763e879a8086118562e9642f1a01fc1f9da",
+    "immutable": true,
+    "runtime_generation": 2
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 64, $8.39):
+Frozen. Now the final `submit` — the service replays the frozen snapshot over 
+the environment-owned history and all 2,888 terminal requests:
+
+```
+cd /workspace/target && nohup python3 env_cli.py submit > /tmp/op_submit.log 
+2>&1 & echo bg
+```
+
+Tool:
+<returncode>
+0
+<output>
+bg
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 65, $8.49):
+```
+sleep 28; cat /tmp/op_submit.log
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "accepted": true,
+  "action_id": 
+"9212662b0b4bfc78f2037f14da854fa48c801c4470fe6a9e66b06edfda80ae43",
+  "next": "complete",
+  "op": "submit",
+  "result": {
+    "output": "terminal-predictions.csv",
+    "rows": 2888
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 66, $8.61):
+Submit accepted and the environment-owned terminal artifact was written. Let me 
+do a final sanity review of the artifact and the changed implementation:
+
+```
+cd /workspace/target && ls -la terminal-predictions.csv && head -3 
+terminal-predictions.csv && python3 - <<'EOF'
+import pandas as pd, numpy as np
+t = pd.read_csv('terminal-predictions.csv')
+print(list(t.columns), len(t), t['instant'].nunique())
+print("ordered bounds ok:", 
+bool(((t.lower_80<=t.predicted_cnt)&(t.predicted_cnt<=t.upper_80)).all()))
+print("finite/nonneg:", bool(np.isfinite(t.iloc[:,1:].values).all()), 
+bool((t.iloc[:,1:].values>=0).all()))
+print("mean width:", round(float((t.upper_80-t.lower_80).mean()),1))
+req = pd.read_csv('data/forecast.csv')[['instant','mnth']]
+m = t.merge(req, on='instant')
+print(m.groupby('mnth')['predicted_cnt'].mean().round(1).to_dict())
+EOF
+```
+
+Tool:
+<returncode>
+0
+<output>
+-r--r--r-- 1 root root 127415 Sep 27 16:35 terminal-predictions.csv
+instant,predicted_cnt,lower_80,upper_80
+14492,168.012753767,88.0127537668,248.012753767
+14493,110.256376338,30.2563763383,190.256376338
+['instant', 'predicted_cnt', 'lower_80', 'upper_80'] 2888 2888
+ordered bounds ok: True
+finite/nonneg: True True
+mean width: 144.2
+{9: 295.3, 10: 257.3, 11: 195.8, 12: 154.1}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 67, $8.80):
+The incident is fully resolved with the complete signed trajectory ending in an 
+accepted `submit`. Summary of the delivery:
+
+**Investigation (pre-edit, committed):** All 8 ordered investigation ops ran 
+against the pristine candidate; `hypothesis.commit` was accepted with five 
+signed probe evidence IDs bound to the pristine `candidate_hash`/`code_hash`.
+
+**Root causes repaired (6 implementation files):**
+1. **`pipeline/data.py`** — registry-exact export normalization: delimiter, 
+renames, the missing `scale_to_canonical` (0–100 → 0–1 weather units), 
+per-export dedup on `instant`, and row-count verification (11,611 corrupt rows →
+11,539 canonical).
+2. **`pipeline/features.py`** — issue-time-only predictors (outcomes never 
+selected, `yr` deliberately excluded), plus hour-of-week, working-day commute 
+AM/PM indicators, and cyclic hour encoding for the twin rush peaks.
+3. **`pipeline/model.py`** — deterministic `HistGradientBoostingRegressor` on a 
+log1p target (replacing `DummyRegressor(mean)`).
+4. **`pipeline/forecast.py`** — the year bridge: a yr=0-trained reference model 
+measures **weather-adjusted** year-over-year lift per paired month (deflating 
+the warm-March-2012 anomaly, 2.53→2.06), anchors on the freshest month, and 
+damps excess growth 0.93/month across the four-month gap; yr=0 targets are 
+rescaled to the yr=1 level before fitting. Intervals calibrate from a strictly 
+**forward** 56-day replay, inflated per month of deployment gap, clipped so mean
+width ≤ 250.
+5. **`pipeline/intervals.py`** — 0.80 residual quantile (was 0.20 ⇒ ~20% 
+coverage).
+6. **`scripts/run_backtest.py`** — rehearsal folds now replay the true 
+`predict_frame` production path.
+
+**Ordered release walk:** visible tests ✓ → backtest replay ✓ → attest ✓ → 
+reproduce/stage/deploy → validate #1 dirty (`runtime_snapshot_stale`, injected) 
+→ diagnostics receipt `diag-29cfdd1984b92ce80c09`, family `rebuild` → recovery 
+plan/apply/verify (cache 11,539→13,003) → cache audit → second 
+reproduce/stage/deploy → **validate #2 clean** (no revision cycle needed) → 
+horizon audit (row-order invariant) → interval audit clean → canary promoted & 
+clean → production → freeze → **submit** (2,888 rows).
+
+The environment-owned `terminal-predictions.csv` satisfies the contract (exact 
+columns, unique instants, finite nonnegative, ordered bounds, mean width 144), 
+with monthly levels tracking Sep–Dec 2012 demand.
+
+```
+echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT
+```
+
+Tool:
+<returncode>
+-1
+<output>
+
+<exception_info>
+action was not executed
+
+Exit:
+
+Saved trajectory to '/logs/agent/mini-swe-agent.trajectory.json'

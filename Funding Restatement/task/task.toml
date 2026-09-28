@@ -1,0 +1,33 @@
+# Task manifest. Resource + timeout values are the STANDARD and are clamped at
+# evaluation time.
+schema_version = "1.1"
+
+[task]
+name = "funding-restatement-harness-mini"
+description = "A funding-request scoring harness reports a perfect holdout AUC and its scores are worthless in production. The extract records form VERSIONS rather than requests, and adjudication restates the figures, so the label and the features of one request live on different rows. Rebuild the table; the contract is fully specified and the local check rewards getting it wrong."
+keywords = ["long-horizon", "cpu-ml-engineering", "leakage", "evaluation-design", "gated-ops"]
+output_path = "workspace/harness.py"
+
+[verifier]
+timeout_sec = 2400.0
+user = "root"
+network_mode = "no-network"
+
+[agent]
+timeout_sec = 9000.0
+user = "ubuntu"
+
+[environment]
+build_timeout_sec = 3600.0
+cpus = 2
+memory_mb = 7168
+storage_mb = 10240
+gpus = 0
+network_mode = "public"   
+
+[environment.healthcheck]
+command = "test -S /run/fundops.sock"
+interval_sec = 1.0
+timeout_sec = 3.0
+start_period_sec = 2.0
+retries = 40

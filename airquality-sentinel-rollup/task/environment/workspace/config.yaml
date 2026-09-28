@@ -1,0 +1,19 @@
+station: roadside_01
+
+alerting:
+  target: "C6H6(GT)"
+  threshold: 14.0
+  rolling_window_hours: 24
+  rolling_window_rule: >-
+    the mean of the readings recorded in the 24 hours ending at that hour;
+    an unmeasured hour contributes nothing to it
+
+model:
+  kind: random_forest
+  n_estimators: 200
+  min_samples_leaf: 20
+  random_state: 0
+
+paths:
+  history: data/history.csv
+  current_batch: data/current_batch.csv

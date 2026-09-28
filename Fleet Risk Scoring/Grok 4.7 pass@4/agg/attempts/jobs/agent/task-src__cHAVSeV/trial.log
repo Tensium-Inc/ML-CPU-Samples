@@ -1,0 +1,33 @@
+Building Docker image harbor-prebuilt:harbor-docker-egress-control-sidecar--b1e6760734a9e6f6 from /home/runner/work/Anvil/Anvil/.venv/lib/python3.13/site-packages/harbor/environments/docker/harbor-docker-egress-control-sidecar using /home/runner/work/Anvil/Anvil/.venv/lib/python3.13/site-packages/harbor/environments/docker/harbor-docker-egress-control-sidecar/Dockerfile at 2026-09-26 20:35:55.616532+00:00
+Skipping image OS validation for hb__d4ede98cbbda89bdd04e8a7f14a63542: docker inspect returned 1
+Running command: apt-get update && apt-get install -y curl bash build-essential git python3 python3-pip
+Command outputs captured
+Running command: set -euo pipefail; if ! command -v uv >/dev/null 2>&1; then  curl -LsSf https://astral.sh/uv/install.sh | sh; fi && if ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' "$HOME/.bashrc" 2>/dev/null; then  echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"; fi && if [ -f "$HOME/.local/bin/env" ]; then source "$HOME/.local/bin/env"; fi && export PATH="$HOME/.local/bin:$PATH" && uv tool install mini-swe-agent --with litellm --with orjson --with fastapi && mini-swe-agent --help
+Command outputs captured
+Running command: if [ -f "$HOME/.local/bin/env" ]; then . "$HOME/.local/bin/env"; else export PATH="$HOME/.local/bin:$PATH"; fi; mini-swe-agent --yolo --model=xai/grok-4.7 --task='Maintenance control wants the grounding risk scorer back. A migration stripped five modules
+out of `src/fleetrisk/` and never restored them, so every function in those five raises
+`NotImplementedError` and nothing runs.
+
+Rebuild them. The service has to reproduce its last accepted run to the last decimal, on
+both of the scheduled configurations:
+
+    python3 run_scoring.py --config configs/reference.yaml --out out/reference
+    python3 run_scoring.py --config configs/current.yaml   --out out/current
+
+`configs/reference.yaml` is the accepted backtest and the only one you can check yourself
+against. What it produced before the migration is in `reference/`: the score for every
+flight it touched, and the summary the run wrote beside them. `tools/compare_scores.py`
+diffs a pair of score files.
+
+`configs/current.yaml` runs the live scoring period off the same history. It scores flying
+from well after the end of that history, and nothing is published for it, so nothing will
+tell you whether you have that one right.
+
+`SPEC.md` is the contract the desk signed off. It describes every published quantity in the
+terms operations uses and deliberately carries no formulas, so where a definition could go
+more than one way, the published run decides it.
+
+The other modules, the configs and the export are not part of the job. Leave them alone.
+' --output=/logs/agent/mini-swe-agent.trajectory.json --cost-limit 0 -c mini -c model.model_kwargs.extra_headers.X-Session-ID=task-src__cHAVSeV__agent -c model.model_kwargs.reasoning_effort=xhigh -c model.model_kwargs.max_tokens=32000 --exit-immediately 2>&1 </dev/null | tee /logs/agent/mini-swe-agent.txt
+Command outputs captured
+Collecting main service artifacts

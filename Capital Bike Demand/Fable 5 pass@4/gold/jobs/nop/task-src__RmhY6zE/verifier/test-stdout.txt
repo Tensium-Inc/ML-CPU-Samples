@@ -1,0 +1,18 @@
+{
+  "detail": {
+    "accepted_action_counts": {},
+    "binding_reason": "state_untrusted",
+    "causal_gate_walk_ok": false,
+    "chain_reason": "action_history_missing",
+    "gate_reason": "ordered_walk_invalid",
+    "isolation_reason": "authoritative_state_missing",
+    "service_state_isolated": false,
+    "signed_root_action_chain_ok": false,
+    "terminal": {},
+    "terminal_binding_ok": false,
+    "terminal_correct": false,
+    "terminal_reason": "terminal_unbound"
+  },
+  "reward": 0
+}
+Final score: 0

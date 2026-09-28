@@ -1,0 +1,14 @@
+{
+    "job_name": "nop",
+    "n_concurrent_trials": 1,
+    "agents": [
+        {
+            "name": "nop"
+        }
+    ],
+    "datasets": [
+        {
+            "path": "/tmp/drydock-ds"
+        }
+    ]
+}

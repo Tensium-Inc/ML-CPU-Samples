@@ -1,0 +1,7 @@
+{
+  "hours": 6549,
+  "train_hours": 4911,
+  "holdout_hours": 1638,
+  "alert_rate": 0.2657,
+  "holdout_auc": 0.9594
+}

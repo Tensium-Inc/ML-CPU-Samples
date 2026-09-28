@@ -1,0 +1,18 @@
+{
+    "task": {
+        "path": "/tmp/drydock-ds/task-src",
+        "source": "drydock-ds"
+    },
+    "trial_name": "task-src__E6HCixe",
+    "trials_dir": "jobs/agent",
+    "agent_setup_timeout_multiplier": 5.0,
+    "agent": {
+        "name": "mini-swe-agent",
+        "model_name": "xai/grok-4.7",
+        "kwargs": {
+            "reasoning_effort": "xhigh",
+            "max_tokens": 32000
+        }
+    },
+    "job_id": "4a63e7cf-df01-4067-bdc9-f60f159aee57"
+}

@@ -1,0 +1,18 @@
+{
+    "task": {
+        "path": "/tmp/drydock-ds/task-src",
+        "source": "drydock-ds"
+    },
+    "trial_name": "task-src__vishxsz",
+    "trials_dir": "jobs/agent",
+    "agent_setup_timeout_multiplier": 5.0,
+    "agent": {
+        "name": "mini-swe-agent",
+        "model_name": "anthropic/claude-fable-5",
+        "kwargs": {
+            "reasoning_effort": "xhigh",
+            "max_tokens": 32000
+        }
+    },
+    "job_id": "5c141c83-bb05-4a5b-83e5-44f1ae2f0024"
+}

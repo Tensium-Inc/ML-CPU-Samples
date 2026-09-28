@@ -1,0 +1,23 @@
+schema_version = "1.1"
+
+[task]
+name = "fleet-risk-scoring-mini"
+description = "Rebuild a fleet grounding risk service from its specification and one published run, reproducing its output exactly."
+keywords = ["long-horizon", "ml-engineering", "feature-engineering", "pandas", "scikit-learn"]
+
+[verifier]
+timeout_sec = 3000.0
+user = "root"
+network_mode = "no-network"
+
+[agent]
+timeout_sec = 9000.0                       # 150 min standard
+user = "ubuntu"
+
+[environment]
+build_timeout_sec = 3600.0
+cpus = 2
+memory_mb = 7168
+storage_mb = 10240
+gpus = 0
+network_mode = "public"   

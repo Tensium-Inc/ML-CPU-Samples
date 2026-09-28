@@ -1,0 +1,33 @@
+Final score: 0
+{
+  "strict_pass": false,
+  "terminal_correct": false,
+  "terminal_reason": "register_disagreement",
+  "terminal": {
+    "separator": "|",
+    "encounters_in_batch": 14248,
+    "rows_returned": 14248,
+    "coverage": 1.0,
+    "gradeable_encounters": 14248,
+    "registers_wrong": 3022,
+    "register_agreement": 0.7879,
+    "mean_register_size": 3.68
+  },
+  "gate_walk_ok": true,
+  "gate_reason": "ok",
+  "forced_recovery_ok": true,
+  "recovery_reason": "ok",
+  "depth_ok": true,
+  "depth_reason": "ok",
+  "counts": {
+    "accepted_actions": 36,
+    "rejected_actions": 0,
+    "observations": 26,
+    "releases_committed": 1,
+    "checkpoints": 1,
+    "canaries": 1,
+    "wrong_remediations": 0
+  },
+  "rejections": [],
+  "frozen_digest": "54e52b6b7cfe62f7"
+}

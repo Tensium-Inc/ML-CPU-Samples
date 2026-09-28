@@ -1,0 +1,202 @@
+===== docker build: task-src =====
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.90kB 0.0s done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 ...
+
+#3 [auth] docker/dockerfile:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 0.8s
+
+#4 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#4 resolve docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32 done
+#4 sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32 9.08kB / 9.08kB done
+#4 sha256:34b128e419449565adc5ed7f487a6f503a73f1077012cfed86354c731338c44f 1.13kB / 1.13kB done
+#4 sha256:c844dc65644b70ea8b391444db20ff38537384d800ea9896d46ab8f3ce897f51 1.33kB / 1.33kB done
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 0B / 14.14MB 0.1s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 11.53MB / 14.14MB 0.3s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 14.14MB / 14.14MB 0.4s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 14.14MB / 14.14MB 0.5s done
+#4 extracting sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 0.1s
+#4 extracting sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 0.1s done
+#4 DONE 0.7s
+
+#5 [internal] load metadata for docker.io/library/python:3.12-slim
+#5 ...
+
+#6 [auth] library/python:pull token for registry-1.docker.io
+#6 DONE 0.0s
+
+#5 [internal] load metadata for docker.io/library/python:3.12-slim
+#5 DONE 0.7s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 2B done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 2.08MB 0.0s done
+#8 DONE 0.0s
+
+#9 [ 1/10] FROM docker.io/library/python:3.12-slim@sha256:f77ac9e44ae96ef2c90b8053ea08c31f8be030f824196b0ae4db6d462c84e51f
+#9 resolve docker.io/library/python:3.12-slim@sha256:f77ac9e44ae96ef2c90b8053ea08c31f8be030f824196b0ae4db6d462c84e51f done
+#9 sha256:f77ac9e44ae96ef2c90b8053ea08c31f8be030f824196b0ae4db6d462c84e51f 10.37kB / 10.37kB done
+#9 sha256:44ff437bba879d4941b710a369a8f19266aea34b29002807f0c487fabc9eec9b 1.75kB / 1.75kB done
+#9 sha256:9e87977b867847e186d066f531ef783b006d582a985c341c269446088d90f2c4 5.65kB / 5.65kB done
+#9 sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 0B / 29.83MB 0.1s
+#9 sha256:3764a9a7d1e8a98213ab2201a41dbf3da9c60240ea35a5ea96ab994555070a70 0B / 1.29MB 0.1s
+#9 sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0 0B / 12.12MB 0.1s
+#9 sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 16.78MB / 29.83MB 0.3s
+#9 sha256:3764a9a7d1e8a98213ab2201a41dbf3da9c60240ea35a5ea96ab994555070a70 1.29MB / 1.29MB 0.3s done
+#9 sha256:06ad939ed42b51caafb25b14810875d14e0ee0c441d3e2e5e46475fb8c150bca 0B / 249B 0.3s
+#9 sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 29.83MB / 29.83MB 0.4s
+#9 sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0 5.24MB / 12.12MB 0.4s
+#9 sha256:06ad939ed42b51caafb25b14810875d14e0ee0c441d3e2e5e46475fb8c150bca 249B / 249B 0.4s
+#9 sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 29.83MB / 29.83MB 0.6s done
+#9 sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0 12.12MB / 12.12MB 0.7s
+#9 sha256:06ad939ed42b51caafb25b14810875d14e0ee0c441d3e2e5e46475fb8c150bca 249B / 249B 0.6s done
+#9 extracting sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 0.1s
+#9 sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0 12.12MB / 12.12MB 0.8s done
+#9 extracting sha256:6b37362b3da78869050b894b799ad4df04f1f3b52774087db0d81151570244c8 0.8s done
+#9 extracting sha256:3764a9a7d1e8a98213ab2201a41dbf3da9c60240ea35a5ea96ab994555070a70
+#9 extracting sha256:3764a9a7d1e8a98213ab2201a41dbf3da9c60240ea35a5ea96ab994555070a70 0.1s done
+#9 extracting sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0
+#9 extracting sha256:b0dc7f87bef15c2536cb182d6c48b52f90a0522884ec9eb222f833fa97ffebf0 0.4s done
+#9 extracting sha256:06ad939ed42b51caafb25b14810875d14e0ee0c441d3e2e5e46475fb8c150bca
+#9 extracting sha256:06ad939ed42b51caafb25b14810875d14e0ee0c441d3e2e5e46475fb8c150bca done
+#9 DONE 3.9s
+
+#10 [ 2/10] RUN apt-get update -y   && apt-get install -y --no-install-recommends bash jq ripgrep   && rm -rf /var/lib/apt/lists/*   && pip install --no-cache-dir        numpy==2.3.3        pandas==2.3.3        scikit-learn==1.8.0
+#10 0.297 Hit:1 http://deb.debian.org/debian trixie InRelease
+#10 0.304 Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+#10 0.337 Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+#10 0.359 Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9678 kB]
+#10 0.557 Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [4412 B]
+#10 0.576 Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [263 kB]
+#10 1.312 Fetched 10.0 MB in 1s (9284 kB/s)
+#10 1.312 Reading package lists...
+#10 1.838 Reading package lists...
+#10 2.366 Building dependency tree...
+#10 2.491 Reading state information...
+#10 2.662 bash is already the newest version (5.2.37-2+b10).
+#10 2.662 bash set to manually installed.
+#10 2.662 The following additional packages will be installed:
+#10 2.663   libjq1 libonig5
+#10 2.708 The following NEW packages will be installed:
+#10 2.709   jq libjq1 libonig5 ripgrep
+#10 2.781 0 upgraded, 4 newly installed, 0 to remove and 0 not upgraded.
+#10 2.781 Need to get 1870 kB of archives.
+#10 2.781 After this operation, 6675 kB of additional disk space will be used.
+#10 2.781 Get:1 http://deb.debian.org/debian trixie/main amd64 libonig5 amd64 6.9.9-1+b1 [189 kB]
+#10 2.842 Get:2 http://deb.debian.org/debian-security trixie-security/main amd64 libjq1 amd64 1.7.1-6+deb13u4 [168 kB]
+#10 2.847 Get:3 http://deb.debian.org/debian-security trixie-security/main amd64 jq amd64 1.7.1-6+deb13u4 [78.9 kB]
+#10 2.861 Get:4 http://deb.debian.org/debian trixie/main amd64 ripgrep amd64 14.1.1-1+b4 [1434 kB]
+#10 3.040 debconf: unable to initialize frontend: Dialog
+#10 3.040 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#10 3.040 debconf: falling back to frontend: Readline
+#10 3.040 debconf: unable to initialize frontend: Readline
+#10 3.040 debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC entries checked: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.40.1 /usr/local/share/perl/5.40.1 /usr/lib/x86_64-linux-gnu/perl5/5.40 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl-base /usr/lib/x86_64-linux-gnu/perl/5.40 /usr/share/perl/5.40 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 8, <STDIN> line 4.)
+#10 3.040 debconf: falling back to frontend: Teletype
+#10 3.044 debconf: unable to initialize frontend: Teletype
+#10 3.044 debconf: (This frontend requires a controlling tty.)
+#10 3.044 debconf: falling back to frontend: Noninteractive
+#10 3.575 Fetched 1870 kB in 0s (8937 kB/s)
+#10 3.603 Selecting previously unselected package libonig5:amd64.
+#10 3.603 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 5660 files and directories currently installed.)
+#10 3.609 Preparing to unpack .../libonig5_6.9.9-1+b1_amd64.deb ...
+#10 3.610 Unpacking libonig5:amd64 (6.9.9-1+b1) ...
+#10 3.633 Selecting previously unselected package libjq1:amd64.
+#10 3.635 Preparing to unpack .../libjq1_1.7.1-6+deb13u4_amd64.deb ...
+#10 3.635 Unpacking libjq1:amd64 (1.7.1-6+deb13u4) ...
+#10 3.654 Selecting previously unselected package jq.
+#10 3.655 Preparing to unpack .../jq_1.7.1-6+deb13u4_amd64.deb ...
+#10 3.656 Unpacking jq (1.7.1-6+deb13u4) ...
+#10 3.670 Selecting previously unselected package ripgrep.
+#10 3.671 Preparing to unpack .../ripgrep_14.1.1-1+b4_amd64.deb ...
+#10 3.672 Unpacking ripgrep (14.1.1-1+b4) ...
+#10 3.764 Setting up ripgrep (14.1.1-1+b4) ...
+#10 3.766 Setting up libonig5:amd64 (6.9.9-1+b1) ...
+#10 3.768 Setting up libjq1:amd64 (1.7.1-6+deb13u4) ...
+#10 3.770 Setting up jq (1.7.1-6+deb13u4) ...
+#10 3.773 Processing triggers for libc-bin (2.41-12+deb13u4) ...
+#10 5.354 Collecting numpy==2.3.3
+#10 5.427   Downloading numpy-2.3.3-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+#10 5.568 Collecting pandas==2.3.3
+#10 5.587   Downloading pandas-2.3.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (91 kB)
+#10 5.704 Collecting scikit-learn==1.8.0
+#10 5.724   Downloading scikit_learn-1.8.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (11 kB)
+#10 5.761 Collecting python-dateutil>=2.8.2 (from pandas==2.3.3)
+#10 5.780   Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+#10 5.823 Collecting pytz>=2020.1 (from pandas==2.3.3)
+#10 5.842   Downloading pytz-2026.4-py2.py3-none-any.whl.metadata (22 kB)
+#10 5.868 Collecting tzdata>=2022.7 (from pandas==2.3.3)
+#10 5.887   Downloading tzdata-2026.4-py2.py3-none-any.whl.metadata (1.4 kB)
+#10 5.993 Collecting scipy>=1.10.0 (from scikit-learn==1.8.0)
+#10 6.012   Downloading scipy-1.18.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+#10 6.055 Collecting joblib>=1.3.0 (from scikit-learn==1.8.0)
+#10 6.074   Downloading joblib-1.6.0-py3-none-any.whl.metadata (6.5 kB)
+#10 6.099 Collecting threadpoolctl>=3.2.0 (from scikit-learn==1.8.0)
+#10 6.118   Downloading threadpoolctl-3.7.0-py3-none-any.whl.metadata (24 kB)
+#10 6.145 Collecting cloudpickle>=3.0 (from joblib>=1.3.0->scikit-learn==1.8.0)
+#10 6.164   Downloading cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+#10 6.189 Collecting six>=1.5 (from python-dateutil>=2.8.2->pandas==2.3.3)
+#10 6.207   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+#10 6.240 Downloading numpy-2.3.3-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.6 MB)
+#10 6.419    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.6/16.6 MB 104.4 MB/s eta 0:00:00
+#10 6.439 Downloading pandas-2.3.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (12.4 MB)
+#10 6.468    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 466.0 MB/s eta 0:00:00
+#10 6.488 Downloading scikit_learn-1.8.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (8.9 MB)
+#10 6.514    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.9/8.9 MB 356.3 MB/s eta 0:00:00
+#10 6.534 Downloading joblib-1.6.0-py3-none-any.whl (306 kB)
+#10 6.553 Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+#10 6.572 Downloading pytz-2026.4-py2.py3-none-any.whl (506 kB)
+#10 6.592 Downloading scipy-1.18.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.3 MB)
+#10 6.653    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.3/35.3 MB 612.5 MB/s eta 0:00:00
+#10 6.672 Downloading threadpoolctl-3.7.0-py3-none-any.whl (26 kB)
+#10 6.692 Downloading tzdata-2026.4-py2.py3-none-any.whl (347 kB)
+#10 6.711 Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+#10 6.730 Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+#10 6.889 Installing collected packages: pytz, tzdata, threadpoolctl, six, numpy, cloudpickle, scipy, python-dateutil, joblib, scikit-learn, pandas
+#10 18.76 Successfully installed cloudpickle-3.1.2 joblib-1.6.0 numpy-2.3.3 pandas-2.3.3 python-dateutil-2.9.0.post0 pytz-2026.4 scikit-learn-1.8.0 scipy-1.18.1 six-1.17.0 threadpoolctl-3.7.0 tzdata-2026.4
+#10 18.76 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#10 18.87 
+#10 18.87 [notice] A new release of pip is available: 25.0.1 -> 26.2.1
+#10 18.87 [notice] To update, run: pip install --upgrade pip
+#10 DONE 21.8s
+
+#11 [ 3/10] RUN groupadd --gid 1000 ubuntu   && useradd --uid 1000 --gid 1000 --create-home --shell /bin/bash ubuntu
+#11 DONE 0.2s
+
+#12 [ 4/10] COPY backend/ /opt/task/backend/
+#12 DONE 0.1s
+
+#13 [ 5/10] COPY entrypoint.sh /usr/local/bin/capital-bike-task-entrypoint
+#13 DONE 0.0s
+
+#14 [ 6/10] RUN chown -R root:root /opt/task/backend /usr/local/bin/capital-bike-task-entrypoint   && chmod 700 /opt/task/backend /opt/task/backend/service.py   && chmod 700 /opt/task/backend/private   && chmod 600 /opt/task/backend/private/*.csv   && chmod 755 /usr/local/bin/capital-bike-task-entrypoint   && mkdir -p /var/lib/capital-bike-task /run/capital-bike-task   && chown root:root /var/lib/capital-bike-task /run/capital-bike-task   && chmod 700 /var/lib/capital-bike-task   && chmod 755 /run/capital-bike-task
+#14 DONE 0.2s
+
+#15 [ 7/10] COPY workspace/ /workspace/target/
+#15 DONE 0.1s
+
+#16 [ 8/10] RUN chown -R ubuntu:ubuntu /workspace/target   && chmod 755 /workspace/target/env_cli.py /workspace/target/scripts/*.py
+#16 DONE 0.2s
+
+#17 [ 9/10] RUN set -eu;   for name in _private gold oracle solution; do     if [ -e "/workspace/target/$name" ]; then echo "reference directory leaked: $name" >&2; exit 1; fi;   done;   for name in service.py terminal_probe.py terminal.csv terminal_requests.csv validation_wave1.csv validation_wave2.csv base_history.csv terminal-predictions.csv; do     if find /workspace/target -name "$name" -print -quit | grep -q .; then echo "private file leaked: $name" >&2; exit 1; fi;   done
+#17 DONE 0.2s
+
+#18 [10/10] WORKDIR /workspace/target
+#18 DONE 0.0s
+
+#19 exporting to image
+#19 exporting layers
+#19 exporting layers 3.7s done
+#19 writing image sha256:80fca149267c9a2dce7bce37be4421bcda7149de86e269aebf9f2a956a78f1dc done
+#19 naming to docker.io/drydock-evidence/task-src:built done
+#19 DONE 3.7s

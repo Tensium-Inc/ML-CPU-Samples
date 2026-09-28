@@ -1,0 +1,2904 @@
+This is mini-swe-agent version 2.4.6.
+Check the v2 migration guide at https://klieret.short.gy/mini-v2-migration
+Loading global config from '/home/ubuntu/.config/mini-swe-agent/.env'
+Warning: Input is not a terminal (fd=0).
+Building agent config from specs: ['mini', 
+'model.model_kwargs.extra_headers.X-Session-ID=task-src__irorHko__agent', 
+'model.model_kwargs.reasoning_effort=xhigh', 
+'model.model_kwargs.max_tokens=32000']
+
+System:
+You are a helpful assistant that can interact with a computer.
+
+User:
+Please solve this issue: Roadside station 01 pushes an hourly exceedance alert 
+to the control room. The model calls whether the next hour will breach the 
+benzene threshold, and the duty officer decides from that whether a public 
+advisory goes out. The engineer who built it has left. Two tickets came across 
+with the handover and neither has an answer on it.
+
+AQ-118, short batches: The control room submits a block of hours and gets back 
+fewer alert rows than it sent. Which hours went missing is not recorded 
+anywhere; the duty log just shows the two counts not matching.
+
+AQ-124, the display disagrees: Each alert is shown beside a 24-hour mean of the 
+CO sensor. An operator recomputed that mean from the station's own log for a 
+handful of alerts and got a different number on some of them. She could not say 
+which ones, and most of the time it agrees.
+
+Releases
+
+Nothing reaches the control room straight out of this directory. Releases go 
+through `python3 env_cli.py <op>`, which talks to the environment daemon. What 
+the daemon keeps, where you are in the sequence, the ledger of what it accepted,
+the packaged artifact -- it keeps to itself. None of it is reachable from here, 
+and nothing you write locally substitutes for it.
+
+The order is fixed, and each step is refused until the one before it has passed:
+
+1. `reproduce`
+2. `deploy`
+3. `validate`
+4. `diagnostics.read`, then `recovery.apply --family F`, when validate came back
+dirty
+5. `validate` again
+6. `promote`
+7. `submit`
+
+`deploy` packages code and configuration out of your working tree, not data, and
+it is that package rather than your tree that gets validated and that the 
+environment runs at the end. Builds have been unreliable lately. Read back what 
+the build actually shipped.
+
+`validate` runs the packaged artifact over hours you do not have. You get one 
+bit, clean or dirty, and a coarse signal with it. It will not tell you which 
+hours. Four calls for the whole session, and that is the lot.
+
+`recovery.apply` is refused unless `diagnostics.read` ran first and `--family` 
+matches what came back. Guess the family wrong and you are down one attempt, and
+the diagnosis is discarded too.
+
+Neither `promote` nor `submit` will open while anything ahead of it is 
+outstanding.
+
+Done
+
+`scripts/score_hours.py --batch <csv> --out <csv>` is what the alerting service 
+calls: one row per hour handed to it, columns 
+`timestamp,alert_probability,rollup_24h`. That third column is the number on the
+operator's screen and the number she checks against the station log, so it has 
+to be one the log supports.
+
+Work out what those two tickets are actually describing. Correct it in the 
+pipeline, leave CI passing, and ship it down the release path. What counts is 
+the artifact frozen at `submit` and the trajectory that got it there, not a 
+patch left sitting in your working tree and not a writeup.
+
+
+You can execute bash commands and edit files to implement the necessary changes.
+
+## Recommended Workflow
+
+This workflow should be done step-by-step so that you can iterate on your 
+changes and any possible problems.
+
+1. Analyze the codebase by finding and reading relevant files
+2. Create a script to reproduce the issue
+3. Edit the source code to resolve the issue
+4. Verify your fix works by running your script again
+5. Test edge cases to ensure your fix is robust
+6. Submit your changes and finish your work by issuing the following command: 
+`echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT`.
+   Do not combine it with any other command. <important>After this command, you 
+cannot continue working on this task.</important>
+
+## Command Execution Rules
+
+You are operating in an environment where
+
+1. You issue at least one command
+2. The system executes the command(s) in a subshell
+3. You see the result(s)
+4. You write your next command(s)
+
+Each response should include:
+
+1. **Reasoning text** where you explain your analysis and plan
+2. At least one tool call with your command
+
+**CRITICAL REQUIREMENTS:**
+
+- Your response SHOULD include reasoning text explaining what you're doing
+- Your response MUST include AT LEAST ONE bash tool call
+- Directory or environment variable changes are not persistent. Every action is 
+executed in a new subshell.
+- However, you can prefix any action with `MY_ENV_VAR=MY_VALUE cd 
+/path/to/working/dir && ...` or write/load environment variables from files
+- Submit your changes and finish your work by issuing the following command: 
+`echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT`.
+  Do not combine it with any other command. <important>After this command, you 
+cannot continue working on this task.</important>
+
+Example of a CORRECT response:
+<example_response>
+I need to understand the structure of the repository first. Let me check what 
+files are in the current directory to get a better understanding of the 
+codebase.
+
+[Makes bash tool call with {"command": "ls -la"} as arguments]
+</example_response>
+
+<system_information>
+Linux 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026 x86_64
+</system_information>
+
+## Useful command examples
+
+### Create a new file:
+
+```bash
+cat <<'EOF' > newfile.py
+import numpy as np
+hello = "world"
+print(hello)
+EOF
+```
+
+### Edit files with sed:```bash
+# Replace all occurrences
+sed -i 's/old_string/new_string/g' filename.py
+
+# Replace only first occurrence
+sed -i 's/old_string/new_string/' filename.py
+
+# Replace first occurrence on line 1
+sed -i '1s/old_string/new_string/' filename.py
+
+# Replace all occurrences in lines 1-10
+sed -i '1,10s/old_string/new_string/g' filename.py
+```
+
+### View file content:
+
+```bash
+# View specific lines with numbers
+nl -ba filename.py | sed -n '10,20p'
+```
+
+### Any other command you want to run
+
+```bash
+anything
+```
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 1, $0.00):
+I'll start by exploring the repository structure to understand the codebase.
+
+```
+ls -la
+```
+
+```
+find . -type f -name "*.md" | head -50
+```
+
+Tool:
+<returncode>
+0
+<output>
+total 72
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 .
+drwxr-xr-x 1 root   root   4096 Sep  7 21:46 ..
+-rw-r--r-- 1 ubuntu ubuntu  415 Sep  7 21:45 config.yaml
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 data
+-rw-r--r-- 1 ubuntu ubuntu 1857 Sep  7 21:45 env_cli.py
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 results
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 scripts
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 src
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 tests
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 var
+
+
+Tool:
+<returncode>
+0
+<output>
+./data/DATA_CARD.md
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 2, $0.01):
+```
+cd /home/ubuntu 2>/dev/null; pwd; ls -R . | head -100
+```
+
+```
+cat config.yaml; echo ---; cat env_cli.py; echo ---; cat data/DATA_CARD.md
+```
+
+Tool:
+<returncode>
+0
+<output>
+/home/ubuntu
+.:
+
+
+Tool:
+<returncode>
+0
+<output>
+station: roadside_01
+
+alerting:
+  target: "C6H6(GT)"
+  threshold: 14.0
+  rolling_window_hours: 24
+  rolling_window_rule: >-
+    the mean of the readings recorded in the 24 hours ending at that hour;
+    an unmeasured hour contributes nothing to it
+
+model:
+  kind: random_forest
+  n_estimators: 200
+  min_samples_leaf: 20
+  random_state: 0
+
+paths:
+  history: data/history.csv
+  current_batch: data/current_batch.csv
+---
+#!/usr/bin/env python3
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import socket
+import sys
+
+SOCKET_PATH = os.environ.get("ENVD_SOCK", "/run/envd/envd.sock")
+
+OPS = ["inspect", "profile", "sample_records", "feature_audit", "status",
+       "reproduce", "deploy", "validate", "diagnostics.read", "recovery.apply",
+       "promote", "submit"]
+
+
+def call(op: str, args: dict) -> dict:
+    try:
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        sock.settimeout(1800)
+        sock.connect(SOCKET_PATH)
+    except OSError as exc:
+        return {"ok": False, "error": f"ops service unreachable at 
+{SOCKET_PATH}: {exc}"}
+    with sock:
+        sock.sendall(json.dumps({"op": op, "args": args}).encode() + b"\n")
+        buf = b""
+        while not buf.endswith(b"\n"):
+            chunk = sock.recv(65536)
+            if not chunk:
+                break
+            buf += chunk
+    try:
+        return json.loads(buf.decode())
+    except Exception as exc:                                      # noqa: BLE001
+        return {"ok": False, "error": f"bad response: {exc}", "raw": 
+buf[:400].decode("utf-8", "replace")}
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description="gated ops service")
+    ap.add_argument("op", choices=OPS)
+    ap.add_argument("--family", default=None, help="recovery family for 
+recovery.apply")
+    ap.add_argument("--file", default=None, help="file to sample from")
+    ap.add_argument("--at", default=None, help="hour to centre on, e.g. 
+2005-01-20T14:00:00")
+    ns = ap.parse_args()
+
+    args = {k: v for k, v in
+            {"family": ns.family, "file": ns.file, "at": ns.at}.items() if v is 
+not None}
+    resp = call(ns.op, args)
+    print(json.dumps(resp, indent=2, default=str))
+    return 0 if resp.get("ok") else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+---
+# Station log -- data card
+
+**Source.** UCI Machine Learning Repository, *Air Quality* (dataset 360), De 
+Vito et al. (2008).
+Licence: CC BY 4.0. Hourly records from a roadside monitoring station in an 
+Italian city,
+March 2004 to April 2005: five metal-oxide sensor responses, a co-located 
+reference analyser,
+and temperature/humidity.
+
+**What ships here.** Rows from that corpus, split by time. No row is synthesised
+or re-weighted
+and no measured value is altered. The only edit is to how the logger's own 
+unmeasured hours are
+marked.
+
+| file | rows | what it is |
+|---|---|---|
+| `history.csv` | 6,549 | the archive, with the reference analyser column |
+| `current_batch.csv` | 562 | a later week of hours, no analyser column |
+
+**Columns.** `timestamp`, five sensor channels (`PT08.S1(CO)` .. `PT08.S5(O3)`),
+`T`, `RH`, `AH`,
+and in the archive the reference reading `C6H6(GT)`.
+
+**Known properties of the corpus** (all real, none cleaned up for you):
+
+- The station is a roadside cabinet and the log is what the cabinet wrote. Hours
+when the
+  instrument was down, being calibrated or swapped still appear in the file, 
+because the logger
+  writes a row every hour whatever the instrument is doing.
+- Sensor responses are raw metal-oxide readings, not concentrations: they drift 
+with temperature
+  and humidity and have no physical units.
+- Readings are strongly autocorrelated hour to hour, and strongly seasonal 
+across the day.
+- The reference analyser `C6H6(GT)` is present in the archive only; live batches
+carry sensors
+  alone.
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 3, $0.03):
+```
+ls -la /home/ubuntu; echo "---"; find / -maxdepth 3 -name "env_cli.py" 
+2>/dev/null
+```
+
+```
+ls -R /app 2>/dev/null | head -60
+```
+
+Tool:
+<returncode>
+1
+<output>
+total 44
+drwx------ 1 ubuntu ubuntu 4096 Sep  7 21:47 .
+drwxr-xr-x 1 root   root   4096 Sep  7 21:46 ..
+-rw-r--r-- 1 ubuntu ubuntu  220 May  9 11:07 .bash_logout
+-rw-r--r-- 1 ubuntu ubuntu 3589 Sep  7 21:47 .bashrc
+drwxr-xr-x 3 ubuntu ubuntu 4096 Sep  7 21:47 .cache
+drwxr-xr-x 5 ubuntu ubuntu 4096 Sep  7 21:47 .config
+drwxr-xr-x 4 ubuntu ubuntu 4096 Sep  7 21:47 .local
+-rw-r--r-- 1 ubuntu ubuntu  833 Sep  7 21:47 .profile
+-rw-r--r-- 1 ubuntu ubuntu   26 Sep  7 21:47 .zshrc
+---
+/workspace/target/env_cli.py
+
+
+Tool:
+<returncode>
+0
+<output>
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 4, $0.04):
+```
+cd /workspace/target && ls -laR | head -80
+```
+
+```
+cd /workspace/target && cat scripts/*.py | head -200
+```
+
+Tool:
+<returncode>
+0
+<output>
+.:
+total 72
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 .
+drwxr-xr-x 1 root   root   4096 Sep  7 21:46 ..
+-rw-r--r-- 1 ubuntu ubuntu  415 Sep  7 21:45 config.yaml
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 data
+-rw-r--r-- 1 ubuntu ubuntu 1857 Sep  7 21:45 env_cli.py
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 results
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 scripts
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 src
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 tests
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 var
+
+./data:
+total 536
+drwxr-xr-x 1 ubuntu ubuntu   4096 Sep  7 21:45 .
+drwxr-xr-x 1 ubuntu ubuntu   4096 Sep  7 21:45 ..
+-rw-r--r-- 1 ubuntu ubuntu   1537 Sep  7 21:45 DATA_CARD.md
+-rw-r--r-- 1 ubuntu ubuntu  38336 Sep  7 21:45 current_batch.csv
+-rw-r--r-- 1 ubuntu ubuntu 483910 Sep  7 21:45 history.csv
+
+./results:
+total 20
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 .
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 ..
+-rw-r--r-- 1 ubuntu ubuntu  117 Sep  7 21:45 backtest_report.json
+
+./scripts:
+total 28
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 .
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 ..
+-rw-r--r-- 1 ubuntu ubuntu  147 Sep  7 21:45 _bootstrap.py
+-rw-r--r-- 1 ubuntu ubuntu 1386 Sep  7 21:45 run_backtest.py
+-rw-r--r-- 1 ubuntu ubuntu 1685 Sep  7 21:45 score_hours.py
+
+./src:
+total 36
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 .
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 ..
+-rw-r--r-- 1 ubuntu ubuntu    0 Sep  7 21:45 __init__.py
+-rw-r--r-- 1 ubuntu ubuntu  507 Sep  7 21:45 channels.py
+-rw-r--r-- 1 ubuntu ubuntu  777 Sep  7 21:45 features.py
+-rw-r--r-- 1 ubuntu ubuntu  724 Sep  7 21:45 model.py
+-rw-r--r-- 1 ubuntu ubuntu  601 Sep  7 21:45 rollup.py
+-rw-r--r-- 1 ubuntu ubuntu  766 Sep  7 21:45 serve.py
+
+./tests:
+total 20
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 .
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 ..
+-rw-r--r-- 1 ubuntu ubuntu 2377 Sep  7 21:45 test_smoke.py
+
+./var:
+total 20
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 .
+drwxr-xr-x 1 ubuntu ubuntu 4096 Sep  7 21:45 ..
+-rw-r--r-- 1 ubuntu ubuntu  587 Sep  7 21:45 ops_log.jsonl
+
+
+Tool:
+<returncode>
+0
+<output>
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+#!/usr/bin/env python3
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import _bootstrap  # noqa: F401
+import pandas as pd
+import yaml
+from sklearn.metrics import roc_auc_score
+
+from src import channels, features, model
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def main() -> None:
+    cfg = yaml.safe_load((ROOT / "config.yaml").read_text())
+    log = channels.read_log(ROOT / cfg["paths"]["history"])
+    window = int(cfg["alerting"]["rolling_window_hours"])
+
+    X = features.build_features(log, window)
+    y = features.build_labels(log, cfg["alerting"]["target"], 
+float(cfg["alerting"]["threshold"]))
+    y = y.reindex(X.index)
+
+    # Hold out the last quarter of the archive, so the split respects time.
+    cut = int(len(X) * 0.75)
+    Xtr, Xte, ytr, yte = X.iloc[:cut], X.iloc[cut:], y.iloc[:cut], y.iloc[cut:]
+
+    clf = model.train(Xtr, ytr, cfg)
+    auc = float(roc_auc_score(yte, model.score(clf, Xte)))
+
+    report = {
+        "hours": int(len(X)),
+        "train_hours": int(len(Xtr)),
+        "holdout_hours": int(len(Xte)),
+        "alert_rate": round(float(y.mean()), 4),
+        "holdout_auc": round(auc, 4),
+    }
+    out = ROOT / "results"
+    out.mkdir(exist_ok=True)
+    (out / "backtest_report.json").write_text(json.dumps(report, indent=2) + 
+"\n")
+    print(json.dumps(report, indent=2))
+
+
+if __name__ == "__main__":
+    main()
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+import _bootstrap  # noqa: F401
+import pandas as pd
+import yaml
+
+from src import channels, features, model, rollup, serve
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--batch", required=True, help="hourly batch to score")
+    ap.add_argument("--out", required=True, help="destination csv")
+    args = ap.parse_args()
+
+    cfg = yaml.safe_load((ROOT / "config.yaml").read_text())
+    window = int(cfg["alerting"]["rolling_window_hours"])
+
+    archive = channels.read_log(ROOT / cfg["paths"]["history"])
+    X = features.build_features(archive, window)
+    y = features.build_labels(archive, cfg["alerting"]["target"],
+                              float(cfg["alerting"]["threshold"])).reindex(X.ind
+ex)
+    clf = model.train(X, y, cfg)
+
+    batch = channels.read_log(args.batch)
+    frame = serve.build_serving_frame(batch, window)
+    scores = model.score(clf, frame)
+
+    station_log = pd.concat([archive[batch.columns], batch], ignore_index=True)
+    station_log = 
+station_log.drop_duplicates("timestamp").sort_values("timestamp", kind="stable")
+    display = rollup.build_rollups(station_log, window)["rollup_24h"]
+
+    out = pd.DataFrame({"timestamp": frame.index, "alert_probability": 
+scores.values,
+                        "rollup_24h": display.reindex(frame.index).values})
+    dest = Path(args.out)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    out.sort_values("timestamp").to_csv(dest, index=False)
+    print(f"scored {len(out)} hours -> {dest}")
+
+
+if __name__ == "__main__":
+    main()
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 5, $0.07):
+```
+cd /workspace/target && for f in src/*.py; do echo "=== $f"; cat "$f"; done
+```
+
+```
+cd /workspace/target && cat tests/test_smoke.py; echo "=== ops_log"; cat 
+var/ops_log.jsonl; echo "=== results"; cat results/backtest_report.json
+```
+
+Tool:
+<returncode>
+0
+<output>
+=== src/__init__.py
+=== src/channels.py
+from __future__ import annotations
+
+import pandas as pd
+
+SENSORS = ["PT08.S1(CO)", "PT08.S2(NMHC)", "PT08.S3(NOx)", "PT08.S4(NO2)", 
+"PT08.S5(O3)"]
+WEATHER = ["T", "RH", "AH"]
+CHANNELS = SENSORS + WEATHER
+
+# The channel the operator display rolls up.
+ROLLUP_CHANNEL = "PT08.S1(CO)"
+
+
+def read_log(path) -> pd.DataFrame:
+    frame = pd.read_csv(path, low_memory=False)
+    frame["timestamp"] = pd.to_datetime(frame["timestamp"])
+    return frame.sort_values("timestamp", kind="stable").reset_index(drop=True)
+=== src/features.py
+from __future__ import annotations
+
+import pandas as pd
+
+from . import channels, rollup
+
+FEATURE_COLUMNS = channels.CHANNELS + ["rollup_24h", "rollup_6h", 
+"rollup_delta", "hour_of_day"]
+
+
+def build_features(log: pd.DataFrame, window_hours: int = 24) -> pd.DataFrame:
+    frame = log.set_index("timestamp")
+    features = frame[channels.CHANNELS].astype(float).copy()
+    features = features.join(rollup.build_rollups(log, window_hours))
+    features["hour_of_day"] = features.index.hour
+    return features[FEATURE_COLUMNS].sort_index()
+
+
+def build_labels(log: pd.DataFrame, target: str, threshold: float) -> pd.Series:
+    frame = log.set_index("timestamp")
+    nxt = frame[target].astype(float).shift(-1)
+    return (nxt > threshold).astype(int).sort_index().rename("label")
+=== src/model.py
+from __future__ import annotations
+
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+
+from . import features
+
+
+def train(X: pd.DataFrame, y: pd.Series, cfg: dict) -> RandomForestClassifier:
+    m = cfg.get("model", {})
+    clf = RandomForestClassifier(
+        n_estimators=int(m.get("n_estimators", 200)),
+        min_samples_leaf=int(m.get("min_samples_leaf", 20)),
+        random_state=int(m.get("random_state", 0)),
+        n_jobs=1,
+    )
+    clf.fit(X[features.FEATURE_COLUMNS], y)
+    return clf
+
+
+def score(clf: RandomForestClassifier, X: pd.DataFrame) -> pd.Series:
+    p = clf.predict_proba(X[features.FEATURE_COLUMNS])[:, 1]
+    return pd.Series(p, index=X.index, name="alert_probability")
+=== src/rollup.py
+from __future__ import annotations
+
+import pandas as pd
+
+from . import channels
+
+
+def rolling_mean(series: pd.Series, hours: int) -> pd.Series:
+    return series.rolling(hours, min_periods=1).mean()
+
+
+def build_rollups(log: pd.DataFrame, window_hours: int = 24) -> pd.DataFrame:
+    frame = log.set_index("timestamp")
+    source = frame[channels.ROLLUP_CHANNEL].astype(float)
+    return pd.DataFrame({
+        "rollup_24h": rolling_mean(source, window_hours),
+        "rollup_6h": rolling_mean(source, 6),
+        "rollup_delta": source - rolling_mean(source, window_hours),
+    }, index=frame.index)
+=== src/serve.py
+from __future__ import annotations
+
+from pathlib import Path
+
+import pandas as pd
+
+from . import channels, features
+
+ROOT = Path(__file__).resolve().parent.parent
+
+# The cabinet used to be powered down overnight, so nothing was published 
+outside these hours.
+PUBLISHING_HOURS = range(6, 22)
+
+
+def build_serving_frame(batch: pd.DataFrame, window_hours: int = 24) -> 
+pd.DataFrame:
+    archive = channels.read_log(ROOT / "data" / "history.csv")
+    stitched = pd.concat([archive[batch.columns], batch], ignore_index=True)
+    stitched = stitched.sort_values("timestamp", kind="stable")
+
+    frame = features.build_features(stitched, window_hours)
+    frame = frame.loc[frame.index.isin(batch["timestamp"])]
+    return frame.loc[frame.index.hour.isin(PUBLISHING_HOURS)]
+
+
+Tool:
+<returncode>
+0
+<output>
+from __future__ import annotations
+
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+import pandas as pd
+import yaml
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+from src import channels, features, serve  # noqa: E402
+
+CFG = yaml.safe_load((ROOT / "config.yaml").read_text())
+WINDOW = int(CFG["alerting"]["rolling_window_hours"])
+
+
+def _batch():
+    return channels.read_log(ROOT / CFG["paths"]["current_batch"])
+
+
+class TestFeatures(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.frame = features.build_features(_batch(), WINDOW)
+
+    def test_columns_are_the_contract(self):
+        self.assertEqual(list(self.frame.columns), features.FEATURE_COLUMNS)
+
+    def test_indexed_by_hour_and_unique(self):
+        self.assertTrue(self.frame.index.is_unique)
+        self.assertGreater(len(self.frame), 100)
+
+    def test_hour_of_day_is_sane(self):
+        self.assertTrue(self.frame["hour_of_day"].between(0, 23).all())
+
+    def test_rollups_are_finite(self):
+        rolls = self.frame[["rollup_24h", "rollup_6h"]].dropna()
+        self.assertGreater(len(rolls), 0)
+        self.assertTrue((rolls.abs() < 1e6).all().all())
+
+
+class TestServing(unittest.TestCase):
+    def test_serving_frame_matches_training_columns(self):
+        frame = serve.build_serving_frame(_batch(), WINDOW)
+        self.assertEqual(list(frame.columns), features.FEATURE_COLUMNS)
+        self.assertGreater(len(frame), 100)
+
+
+class TestContract(unittest.TestCase):
+    def test_score_hours_writes_the_contract(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "alerts.csv"
+            proc = subprocess.run(
+                [sys.executable, "scripts/score_hours.py",
+                 "--batch", str(ROOT / CFG["paths"]["current_batch"]), "--out", 
+str(out)],
+                cwd=str(ROOT), capture_output=True, text=True, timeout=1800)
+            self.assertEqual(proc.returncode, 0, proc.stderr[-2000:])
+            alerts = pd.read_csv(out)
+            self.assertEqual(list(alerts.columns),
+                             ["timestamp", "alert_probability", "rollup_24h"])
+            self.assertTrue(alerts["alert_probability"].between(0, 1).all())
+            self.assertGreater(alerts["alert_probability"].std(), 0.0)
+
+
+if __name__ == "__main__":
+    unittest.main()
+=== ops_log
+{"job_id": "alerts-2005-01-14", "kind": "batch_score", "batch": 
+"data/current_batch.csv", "hours_in_batch": 562, "hours_alerted": 375, "status":
+"ok"}
+{"job_id": "alerts-2005-01-21", "kind": "batch_score", "batch": 
+"data/current_batch.csv", "hours_in_batch": 562, "hours_alerted": 375, "status":
+"ok"}
+{"job_id": "cabinet-maintenance", "kind": "station_note", "note": "analyser 
+swapped out; logger left running through the changeover"}
+{"job_id": "alerts-2005-01-28", "kind": "batch_score", "batch": 
+"data/current_batch.csv", "hours_in_batch": 562, "hours_alerted": 375, "status":
+"ok"}
+=== results
+{
+  "hours": 6549,
+  "train_hours": 4911,
+  "holdout_hours": 1638,
+  "alert_rate": 0.2657,
+  "holdout_auc": 0.9594
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 6, $0.12):
+```
+cd /workspace/target && head -3 data/history.csv; echo ...; head -3 
+data/current_batch.csv; echo ---; python3 -c "
+import pandas as pd
+h=pd.read_csv('data/history.csv'); b=pd.read_csv('data/current_batch.csv')
+print(h.shape, b.shape); print(h.dtypes); print(h.describe().T)
+print(h.isna().sum())
+print(b.isna().sum())
+"
+```
+
+```
+cd /workspace/target && python3 -c "
+import pandas as pd
+h=pd.read_csv('data/history.csv',parse_dates=['timestamp']); 
+b=pd.read_csv('data/current_batch.csv',parse_dates=['timestamp'])
+print(h.timestamp.min(),h.timestamp.max(),len(h))
+print(b.timestamp.min(),b.timestamp.max(),len(b))
+d=h.timestamp.diff().value_counts()
+print(d.head(10))
+d2=b.timestamp.diff().value_counts()
+print(d2.head(10))
+for c in h.columns[1:]:
+    print(c, (h[c]==-200).sum(), h[c].isna().sum(), h[c].min(), h[c].max())
+"
+```
+
+Tool:
+<returncode>
+0
+<output>
+timestamp,PT08.S1(CO),PT08.S2(NMHC),PT08.S3(NOx),PT08.S4(NO2),PT08.S5(O3),T,RH,A
+H,C6H6(GT)
+2004-03-10 18:00:00,1360.0,1046.0,1056.0,1692.0,1268.0,13.6,48.9,0.7578,11.9
+2004-03-10 19:00:00,1292.0,955.0,1174.0,1559.0,972.0,13.3,47.7,0.7255,9.4
+...
+timestamp,PT08.S1(CO),PT08.S2(NMHC),PT08.S3(NOx),PT08.S4(NO2),PT08.S5(O3),T,RH,A
+H
+2004-12-08 15:00:00,997.0,742.0,911.0,1180.0,899.0,16.7,54.7,1.0311
+2004-12-08 16:00:00,1049.0,790.0,870.0,1183.0,1019.0,15.4,58.9,1.02
+---
+(6549, 10) (562, 9)
+timestamp         object
+PT08.S1(CO)      float64
+PT08.S2(NMHC)    float64
+PT08.S3(NOx)     float64
+PT08.S4(NO2)     float64
+PT08.S5(O3)      float64
+T                float64
+RH               float64
+AH               float64
+C6H6(GT)         float64
+dtype: object
+                count         mean         std  ...        50%        75%       
+max
+PT08.S1(CO)    6549.0  1072.185219  281.030974  ...  1057.0000  1226.0000  
+2040.000
+PT08.S2(NMHC)  6549.0   942.242785  307.425357  ...   929.0000  1131.0000  
+2214.000
+PT08.S3(NOx)   6549.0   832.829440  287.840911  ...   816.0000   984.0000  
+2121.000
+PT08.S4(NO2)   6549.0  1544.890670  381.157428  ...  1551.0000  1744.0000  
+2775.000
+PT08.S5(O3)    6549.0   984.085662  407.827776  ...   937.0000  1235.0000  
+2522.000
+T              6549.0    19.007039   24.266682  ...    20.9000    26.4000    
+44.600
+RH             6549.0    44.663597   31.304527  ...    47.7000    60.8000    
+88.700
+AH             6549.0    -1.018916   20.836406  ...     1.1222     1.4363     
+2.231
+C6H6(GT)       6549.0     8.358391   23.116367  ...     8.7000    14.4000    
+63.700
+
+[9 rows x 8 columns]
+timestamp        0
+PT08.S1(CO)      0
+PT08.S2(NMHC)    0
+PT08.S3(NOx)     0
+PT08.S4(NO2)     0
+PT08.S5(O3)      0
+T                0
+RH               0
+AH               0
+C6H6(GT)         0
+dtype: int64
+timestamp        0
+PT08.S1(CO)      0
+PT08.S2(NMHC)    0
+PT08.S3(NOx)     0
+PT08.S4(NO2)     0
+PT08.S5(O3)      0
+T                0
+RH               0
+AH               0
+dtype: int64
+
+
+Tool:
+<returncode>
+0
+<output>
+2004-03-10 18:00:00 2004-12-08 14:00:00 6549
+2004-12-08 15:00:00 2005-01-01 00:00:00 562
+timestamp
+0 days 01:00:00    6548
+Name: count, dtype: int64
+timestamp
+0 days 01:00:00    561
+Name: count, dtype: int64
+PT08.S1(CO) 71 0 -200.0 2040.0
+PT08.S2(NMHC) 71 0 -200.0 2214.0
+PT08.S3(NOx) 71 0 -200.0 2121.0
+PT08.S4(NO2) 71 0 -200.0 2775.0
+PT08.S5(O3) 71 0 -200.0 2522.0
+T 71 0 -200.0 44.6
+RH 71 0 -200.0 88.7
+AH 71 0 -200.0 2.231
+C6H6(GT) 71 0 -200.0 63.7
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 7, $0.18):
+```
+cd /workspace/target && python3 env_cli.py status; echo "=== inspect"; python3 
+env_cli.py inspect
+```
+
+```
+cd /workspace/target && python3 -c "
+import pandas as pd
+b=pd.read_csv('data/current_batch.csv',parse_dates=['timestamp'])
+print((b==-200).sum())
+print(len(b))
+import collections
+print(collections.Counter(b.timestamp.dt.hour).most_common(5))
+"
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "status",
+  "gates": {
+    "reproduced": false,
+    "deployed": false,
+    "deploy_count": 0,
+    "validate_count": 0,
+    "last_validate": null,
+    "diagnosed": false,
+    "diagnosis_family": null,
+    "inject_active": false,
+    "recovered": false,
+    "recovery_attempts_left": 2,
+    "promoted": false,
+    "submitted": false
+  },
+  "validate_budget": {
+    "used": 0,
+    "limit": 4
+  }
+}
+=== inspect
+{
+  "ok": true,
+  "op": "inspect",
+  "config": {
+    "station": "roadside_01",
+    "alerting": {
+      "target": "C6H6(GT)",
+      "threshold": 14.0,
+      "rolling_window_hours": 24,
+      "rolling_window_rule": "the mean of the readings recorded in the 24 hours 
+ending at that hour; an unmeasured hour contributes nothing to it"
+    },
+    "model": {
+      "kind": "random_forest",
+      "n_estimators": 200,
+      "min_samples_leaf": 20,
+      "random_state": 0
+    },
+    "paths": {
+      "history": "data/history.csv",
+      "current_batch": "data/current_batch.csv"
+    }
+  },
+  "data_files": {
+    "data/current_batch.csv": {
+      "rows": 562,
+      "columns": [
+        "timestamp",
+        "PT08.S1(CO)",
+        "PT08.S2(NMHC)",
+        "PT08.S3(NOx)",
+        "PT08.S4(NO2)",
+        "PT08.S5(O3)",
+        "T",
+        "RH",
+        "AH"
+      ],
+      "span": [
+        "2004-12-08 15:00:00",
+        "2005-01-01 00:00:00"
+      ]
+    },
+    "data/history.csv": {
+      "rows": 6549,
+      "columns": [
+        "timestamp",
+        "PT08.S1(CO)",
+        "PT08.S2(NMHC)",
+        "PT08.S3(NOx)",
+        "PT08.S4(NO2)",
+        "PT08.S5(O3)",
+        "T",
+        "RH",
+        "AH",
+        "C6H6(GT)"
+      ],
+      "span": [
+        "2004-03-10 18:00:00",
+        "2004-12-08 14:00:00"
+      ]
+    }
+  },
+  "scoring_contract": {
+    "entry_point": "scripts/score_hours.py --batch <csv> --out <csv>",
+    "output_columns": [
+      "timestamp",
+      "alert_probability",
+      "rollup_24h"
+    ],
+    "rule": "one row per hour in the batch; rollup_24h is the number the 
+operator display shows beside the alert"
+  },
+  "bundle": {
+    "deployed": false,
+    "digest": null
+  },
+  "gates": {
+    "reproduced": false,
+    "deployed": false,
+    "deploy_count": 0,
+    "validate_count": 0,
+    "last_validate": null,
+    "diagnosed": false,
+    "diagnosis_family": null,
+    "inject_active": false,
+    "recovered": false,
+    "recovery_attempts_left": 2,
+    "promoted": false,
+    "submitted": false
+  }
+}
+
+
+Tool:
+<returncode>
+0
+<output>
+timestamp         0
+PT08.S1(CO)      42
+PT08.S2(NMHC)    42
+PT08.S3(NOx)     42
+PT08.S4(NO2)     42
+PT08.S5(O3)      42
+T                42
+RH               42
+AH               42
+dtype: int64
+562
+[(15, 24), (16, 24), (17, 24), (18, 24), (19, 24)]
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 8, $0.21):
+```
+cd /workspace/target && python3 env_cli.py profile
+```
+
+```
+cd /workspace/target && python3 env_cli.py feature_audit
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "profile",
+  "archive_hours": 6549,
+  "archive_span": [
+    "2004-03-10 18:00:00",
+    "2004-12-08 14:00:00"
+  ],
+  "batch_hours": 562,
+  "channels": [
+    {
+      "channel": "PT08.S1(CO)",
+      "median": 1057.0,
+      "distinct_values": 1004
+    },
+    {
+      "channel": "PT08.S2(NMHC)",
+      "median": 929.0,
+      "distinct_values": 1183
+    },
+    {
+      "channel": "PT08.S3(NOx)",
+      "median": 816.0,
+      "distinct_values": 1145
+    },
+    {
+      "channel": "PT08.S4(NO2)",
+      "median": 1551.0,
+      "distinct_values": 1346
+    },
+    {
+      "channel": "PT08.S5(O3)",
+      "median": 937.0,
+      "distinct_values": 1557
+    },
+    {
+      "channel": "T",
+      "median": 20.9,
+      "distinct_values": 392
+    },
+    {
+      "channel": "RH",
+      "median": 47.7,
+      "distinct_values": 748
+    },
+    {
+      "channel": "AH",
+      "median": 1.12,
+      "distinct_values": 4994
+    },
+    {
+      "channel": "C6H6(GT)",
+      "median": 8.7,
+      "distinct_values": 400
+    }
+  ],
+  "recent_jobs": [
+    {
+      "job_id": "alerts-2005-01-14",
+      "kind": "batch_score",
+      "batch": "data/current_batch.csv",
+      "hours_in_batch": 562,
+      "hours_alerted": 375,
+      "status": "ok"
+    },
+    {
+      "job_id": "alerts-2005-01-21",
+      "kind": "batch_score",
+      "batch": "data/current_batch.csv",
+      "hours_in_batch": 562,
+      "hours_alerted": 375,
+      "status": "ok"
+    },
+    {
+      "job_id": "cabinet-maintenance",
+      "kind": "station_note",
+      "note": "analyser swapped out; logger left running through the changeover"
+    },
+    {
+      "job_id": "alerts-2005-01-28",
+      "kind": "batch_score",
+      "batch": "data/current_batch.csv",
+      "hours_in_batch": 562,
+      "hours_alerted": 375,
+      "status": "ok"
+    }
+  ],
+  "last_validate": {
+    "status": null,
+    "signal": null
+  },
+  "validate_budget": {
+    "used": 0,
+    "limit": 4
+  }
+}
+
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "feature_audit",
+  "file": "data/current_batch.csv",
+  "hour": "2004-12-20 08:00:00",
+  "your_pipeline": {
+    "feature_row": {
+      "PT08.S1(CO)": 970.0,
+      "PT08.S2(NMHC)": 776.0,
+      "PT08.S3(NOx)": 873.0,
+      "PT08.S4(NO2)": 1059.0,
+      "PT08.S5(O3)": 858.0,
+      "T": 8.4,
+      "RH": 57.7,
+      "AH": 0.6376,
+      "rollup_24h": 1085.2083333333333,
+      "rollup_6h": 856.3333333333334,
+      "rollup_delta": -115.20833333333326,
+      "hour_of_day": 8.0
+    },
+    "hours_in_frame": 562,
+    "columns": [
+      "PT08.S1(CO)",
+      "PT08.S2(NMHC)",
+      "PT08.S3(NOx)",
+      "PT08.S4(NO2)",
+      "PT08.S5(O3)",
+      "T",
+      "RH",
+      "AH",
+      "rollup_24h",
+      "rollup_6h",
+      "rollup_delta",
+      "hour_of_day"
+    ]
+  },
+  "raw_rows_in_the_last_24h": [
+    {
+      "timestamp": "2004-12-19T09:00:00.000",
+      "PT08.S1(CO)": 868.0,
+      "PT08.S2(NMHC)": 665.0,
+      "PT08.S3(NOx)": 1067.0,
+      "PT08.S4(NO2)": 865.0,
+      "PT08.S5(O3)": 800.0,
+      "T": 3.2,
+      "RH": 55.7,
+      "AH": 0.4344
+    },
+    {
+      "timestamp": "2004-12-19T10:00:00.000",
+      "PT08.S1(CO)": 970.0,
+      "PT08.S2(NMHC)": 819.0,
+      "PT08.S3(NOx)": 923.0,
+      "PT08.S4(NO2)": 959.0,
+      "PT08.S5(O3)": 926.0,
+      "T": 5.0,
+      "RH": 48.8,
+      "AH": 0.429
+    },
+    {
+      "timestamp": "2004-12-19T11:00:00.000",
+      "PT08.S1(CO)": 1077.0,
+      "PT08.S2(NMHC)": 963.0,
+      "PT08.S3(NOx)": 761.0,
+      "PT08.S4(NO2)": 1081.0,
+      "PT08.S5(O3)": 1151.0,
+      "T": 5.8,
+      "RH": 49.8,
+      "AH": 0.4613
+    },
+    {
+      "timestamp": "2004-12-19T12:00:00.000",
+      "PT08.S1(CO)": 1058.0,
+      "PT08.S2(NMHC)": 962.0,
+      "PT08.S3(NOx)": 778.0,
+      "PT08.S4(NO2)": 1058.0,
+      "PT08.S5(O3)": 1153.0,
+      "T": 6.0,
+      "RH": 47.6,
+      "AH": 0.4488
+    },
+    {
+      "timestamp": "2004-12-19T13:00:00.000",
+      "PT08.S1(CO)": 1136.0,
+      "PT08.S2(NMHC)": 1067.0,
+      "PT08.S3(NOx)": 702.0,
+      "PT08.S4(NO2)": 1143.0,
+      "PT08.S5(O3)": 1298.0,
+      "T": 7.4,
+      "RH": 44.6,
+      "AH": 0.4613
+    },
+    {
+      "timestamp": "2004-12-19T14:00:00.000",
+      "PT08.S1(CO)": 1228.0,
+      "PT08.S2(NMHC)": 1068.0,
+      "PT08.S3(NOx)": 658.0,
+      "PT08.S4(NO2)": 1264.0,
+      "PT08.S5(O3)": 1238.0,
+      "T": 5.2,
+      "RH": 73.1,
+      "AH": 0.6535
+    },
+    {
+      "timestamp": "2004-12-19T15:00:00.000",
+      "PT08.S1(CO)": 1235.0,
+      "PT08.S2(NMHC)": 1118.0,
+      "PT08.S3(NOx)": 612.0,
+      "PT08.S4(NO2)": 1354.0,
+      "PT08.S5(O3)": 1222.0,
+      "T": 4.8,
+      "RH": 81.4,
+      "AH": 0.7055
+    },
+    {
+      "timestamp": "2004-12-19T16:00:00.000",
+      "PT08.S1(CO)": 1217.0,
+      "PT08.S2(NMHC)": 1036.0,
+      "PT08.S3(NOx)": 661.0,
+      "PT08.S4(NO2)": 1260.0,
+      "PT08.S5(O3)": 1171.0,
+      "T": 4.7,
+      "RH": 82.3,
+      "AH": 0.7105
+    },
+    {
+      "timestamp": "2004-12-19T17:00:00.000",
+      "PT08.S1(CO)": 1298.0,
+      "PT08.S2(NMHC)": 1082.0,
+      "PT08.S3(NOx)": 642.0,
+      "PT08.S4(NO2)": 1287.0,
+      "PT08.S5(O3)": 1237.0,
+      "T": 4.7,
+      "RH": 82.8,
+      "AH": 0.7157
+    },
+    {
+      "timestamp": "2004-12-19T18:00:00.000",
+      "PT08.S1(CO)": 1327.0,
+      "PT08.S2(NMHC)": 1219.0,
+      "PT08.S3(NOx)": 582.0,
+      "PT08.S4(NO2)": 1453.0,
+      "PT08.S5(O3)": 1366.0,
+      "T": 4.7,
+      "RH": 83.4,
+      "AH": 0.7177
+    },
+    {
+      "timestamp": "2004-12-19T19:00:00.000",
+      "PT08.S1(CO)": 1293.0,
+      "PT08.S2(NMHC)": 1136.0,
+      "PT08.S3(NOx)": 631.0,
+      "PT08.S4(NO2)": 1365.0,
+      "PT08.S5(O3)": 1278.0,
+      "T": 5.2,
+      "RH": 83.1,
+      "AH": 0.7411
+    },
+    {
+      "timestamp": "2004-12-19T20:00:00.000",
+      "PT08.S1(CO)": 1353.0,
+      "PT08.S2(NMHC)": 1187.0,
+      "PT08.S3(NOx)": 599.0,
+      "PT08.S4(NO2)": 1424.0,
+      "PT08.S5(O3)": 1293.0,
+      "T": 5.5,
+      "RH": 84.1,
+      "AH": 0.7657
+    },
+    {
+      "timestamp": "2004-12-19T21:00:00.000",
+      "PT08.S1(CO)": 1254.0,
+      "PT08.S2(NMHC)": 1111.0,
+      "PT08.S3(NOx)": 630.0,
+      "PT08.S4(NO2)": 1360.0,
+      "PT08.S5(O3)": 1198.0,
+      "T": 5.8,
+      "RH": 84.5,
+      "AH": 0.7822
+    },
+    {
+      "timestamp": "2004-12-19T22:00:00.000",
+      "PT08.S1(CO)": 1189.0,
+      "PT08.S2(NMHC)": 999.0,
+      "PT08.S3(NOx)": 680.0,
+      "PT08.S4(NO2)": 1286.0,
+      "PT08.S5(O3)": 1115.0,
+      "T": 6.2,
+      "RH": 84.1,
+      "AH": 0.8018
+    },
+    {
+      "timestamp": "2004-12-19T23:00:00.000",
+      "PT08.S1(CO)": 1183.0,
+      "PT08.S2(NMHC)": 944.0,
+      "PT08.S3(NOx)": 731.0,
+      "PT08.S4(NO2)": 1226.0,
+      "PT08.S5(O3)": 1092.0,
+      "T": 6.6,
+      "RH": 83.3,
+      "AH": 0.8183
+    },
+    {
+      "timestamp": "2004-12-20T00:00:00.000",
+      "PT08.S1(CO)": 1185.0,
+      "PT08.S2(NMHC)": 966.0,
+      "PT08.S3(NOx)": 711.0,
+      "PT08.S4(NO2)": 1250.0,
+      "PT08.S5(O3)": 1104.0,
+      "T": 6.8,
+      "RH": 82.8,
+      "AH": 0.8216
+    },
+    {
+      "timestamp": "2004-12-20T01:00:00.000",
+      "PT08.S1(CO)": 1098.0,
+      "PT08.S2(NMHC)": 859.0,
+      "PT08.S3(NOx)": 792.0,
+      "PT08.S4(NO2)": 1211.0,
+      "PT08.S5(O3)": 1006.0,
+      "T": 8.2,
+      "RH": 78.4,
+      "AH": 0.8561
+    },
+    {
+      "timestamp": "2004-12-20T02:00:00.000",
+      "PT08.S1(CO)": 938.0,
+      "PT08.S2(NMHC)": 639.0,
+      "PT08.S3(NOx)": 1020.0,
+      "PT08.S4(NO2)": 1059.0,
+      "PT08.S5(O3)": 777.0,
+      "T": 9.7,
+      "RH": 70.9,
+      "AH": 0.8539
+    },
+    {
+      "timestamp": "2004-12-20T03:00:00.000",
+      "PT08.S1(CO)": 883.0,
+      "PT08.S2(NMHC)": 583.0,
+      "PT08.S3(NOx)": 1116.0,
+      "PT08.S4(NO2)": 1019.0,
+      "PT08.S5(O3)": 710.0,
+      "T": 9.5,
+      "RH": 69.9,
+      "AH": 0.8298
+    },
+    {
+      "timestamp": "2004-12-20T04:00:00.000",
+      "PT08.S1(CO)": 839.0,
+      "PT08.S2(NMHC)": 536.0,
+      "PT08.S3(NOx)": 1229.0,
+      "PT08.S4(NO2)": 970.0,
+      "PT08.S5(O3)": 600.0,
+      "T": 9.3,
+      "RH": 65.9,
+      "AH": 0.7757
+    },
+    {
+      "timestamp": "2004-12-20T05:00:00.000",
+      "PT08.S1(CO)": 784.0,
+      "PT08.S2(NMHC)": 479.0,
+      "PT08.S3(NOx)": 1365.0,
+      "PT08.S4(NO2)": 905.0,
+      "PT08.S5(O3)": 477.0,
+      "T": 8.8,
+      "RH": 62.9,
+      "AH": 0.7154
+    },
+    {
+      "timestamp": "2004-12-20T06:00:00.000",
+      "PT08.S1(CO)": 779.0,
+      "PT08.S2(NMHC)": 466.0,
+      "PT08.S3(NOx)": 1393.0,
+      "PT08.S4(NO2)": 881.0,
+      "PT08.S5(O3)": 454.0,
+      "T": 8.6,
+      "RH": 58.8,
+      "AH": 0.6603
+    },
+    {
+      "timestamp": "2004-12-20T07:00:00.000",
+      "PT08.S1(CO)": 883.0,
+      "PT08.S2(NMHC)": 625.0,
+      "PT08.S3(NOx)": 1069.0,
+      "PT08.S4(NO2)": 997.0,
+      "PT08.S5(O3)": 630.0,
+      "T": 9.2,
+      "RH": 55.9,
+      "AH": 0.6521
+    },
+    {
+      "timestamp": "2004-12-20T08:00:00.000",
+      "PT08.S1(CO)": 970.0,
+      "PT08.S2(NMHC)": 776.0,
+      "PT08.S3(NOx)": 873.0,
+      "PT08.S4(NO2)": 1059.0,
+      "PT08.S5(O3)": 858.0,
+      "T": 8.4,
+      "RH": 57.7,
+      "AH": 0.6376
+    }
+  ],
+  "note": "`your_pipeline` is what the working tree computes for this hour. The 
+rows are the logger's own, for the 24 hours ending at it, exactly as stored."
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 9, $0.31):
+```
+cd /workspace/target && python3 -c "import sklearn, pandas, numpy; 
+print(sklearn.__version__, pandas.__version__, numpy.__version__)"; python3 -c "
+import pandas as pd
+h=pd.read_csv('data/history.csv',parse_dates=['timestamp'])
+b=pd.read_csv('data/current_batch.csv',parse_dates=['timestamp'])
+m=(h.iloc[:,1:]==-200)
+print('rows any',m.any(axis=1).sum(),'rows all',m.all(axis=1).sum())
+mb=(b.iloc[:,1:]==-200)
+print('batch rows any',mb.any(axis=1).sum(),'all',mb.all(axis=1).sum())
+print(h.loc[m.any(axis=1),'timestamp'].dt.hour.value_counts().sort_index().to_di
+ct())
+"
+```
+
+```
+cd /workspace/target && ls -a; git status 2>&1 | head -5; python3 -m pytest 
+tests -q 2>&1 | tail -5
+```
+
+Tool:
+<returncode>
+0
+<output>
+1.7.2 2.3.3 2.4.2
+rows any 71 rows all 71
+batch rows any 42 all 42
+{0: 4, 1: 3, 2: 3, 3: 2, 4: 2, 5: 2, 6: 3, 7: 3, 8: 3, 9: 2, 10: 3, 11: 3, 12: 
+3, 13: 3, 14: 4, 15: 4, 16: 4, 17: 3, 18: 2, 19: 3, 20: 3, 21: 3, 22: 3, 23: 3}
+
+
+Tool:
+<returncode>
+0
+<output>
+.
+..
+config.yaml
+data
+env_cli.py
+results
+scripts
+src
+tests
+var
+fatal: not a git repository (or any of the parent directories): .git
+/usr/local/bin/python3: No module named pytest
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 10, $0.38):
+```
+cd /workspace/target && python3 env_cli.py reproduce
+```
+
+```
+cd /workspace/target && python3 -c "
+import numpy as np, pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+X=pd.DataFrame({'a':[1.0,2,np.nan,4,5,np.nan,7,8],'b':[1.0,1,1,1,2,2,2,2]})
+y=[0,0,1,1,0,1,0,1]
+c=RandomForestClassifier(n_estimators=10,random_state=0).fit(X,y)
+print(c.predict_proba(X)[:,1])
+"
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "reproduce",
+  "rc": 0,
+  "seconds": 3.23,
+  "backtest": {
+    "hours": 6549,
+    "train_hours": 4911,
+    "holdout_hours": 1638,
+    "alert_rate": 0.2657,
+    "holdout_auc": 0.9592
+  }
+}
+
+
+Tool:
+<returncode>
+0
+<output>
+[0.15 0.15 0.85 0.85 0.3  0.9  0.5  0.6 ]
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 11, $0.43):
+```
+cat > /tmp/repro.py <<'EOF'
+import subprocess, sys
+import pandas as pd
+ROOT="/workspace/target"
+out="/tmp/alerts.csv"
+p=subprocess.run([sys.executable,"scripts/score_hours.py","--batch","data/curren
+t_batch.csv","--out",out],cwd=ROOT,capture_output=True,text=True)
+print(p.returncode, p.stdout.strip(), p.stderr[-500:])
+b=pd.read_csv(f"{ROOT}/data/current_batch.csv",parse_dates=['timestamp'])
+a=pd.read_csv(out,parse_dates=['timestamp'])
+print("AQ-118: batch hours",len(b),"alert rows",len(a),"missing",len(b)-len(a))
+miss=sorted(set(b.timestamp)-set(a.timestamp))
+print("missing hours sample",[str(x) for x in miss[:5]], "hours of day", 
+sorted({x.hour for x in miss}))
+
+# honest recomputation from the station log, as the operator would do
+h=pd.read_csv(f"{ROOT}/data/history.csv",parse_dates=['timestamp'])
+log=pd.concat([h[b.columns],b],ignore_index=True).drop_duplicates('timestamp').s
+ort_values('timestamp')
+s=log.set_index('timestamp')['PT08.S1(CO)'].astype(float)
+s=s.mask(s==-200)   # unmeasured hours contribute nothing
+ref=s.rolling('24h',min_periods=1).mean()
+m=a.set_index('timestamp').join(ref.rename('ref'))
+d=(m['rollup_24h']-m['ref']).abs()
+print("AQ-124: rows where display != log-supported 
+mean:",int((d>1e-6).sum()),"of",len(m))
+print(m[d>1e-6].head(5))
+print("max abs diff", d.max())
+EOF
+cd /workspace/target && python3 /tmp/repro.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+0 scored 375 hours -> /tmp/alerts.csv 
+AQ-118: batch hours 562 alert rows 375 missing 187
+missing hours sample ['2004-12-08 22:00:00', '2004-12-08 23:00:00', '2004-12-09 
+00:00:00', '2004-12-09 01:00:00', '2004-12-09 02:00:00'] hours of day [0, 1, 2, 
+3, 4, 5, 22, 23]
+AQ-124: rows where display != log-supported mean: 50 of 375
+                     alert_probability   rollup_24h          ref
+timestamp                                                       
+2004-12-14 17:00:00           0.065359  1211.291667  1272.652174
+2004-12-14 18:00:00           0.074195  1124.583333  1245.000000
+2004-12-14 19:00:00           0.062774  1048.208333  1226.523810
+2004-12-14 20:00:00           0.049936   981.916667  1218.300000
+2004-12-14 21:00:00           0.046694   920.958333  1215.947368
+max abs diff 1700.0833333333333
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 12, $0.54):
+Both tickets reproduce. Now let me write the fix, starting with the data-reading
+layer (the `-200` sentinel is the logger's "unmeasured hour" marker).
+
+```
+cd /workspace/target && cat > src/channels.py <<'EOF'
+from __future__ import annotations
+
+import pandas as pd
+
+SENSORS = ["PT08.S1(CO)", "PT08.S2(NMHC)", "PT08.S3(NOx)", "PT08.S4(NO2)", 
+"PT08.S5(O3)"]
+WEATHER = ["T", "RH", "AH"]
+CHANNELS = SENSORS + WEATHER
+
+# The channel the operator display rolls up.
+ROLLUP_CHANNEL = "PT08.S1(CO)"
+
+# The logger writes a row every hour whatever the instrument is doing; hours 
+when the
+# instrument was down, being calibrated or swapped are marked with this sentinel
+rather
+# than left blank. It is a marker, not a reading, and must never enter 
+arithmetic.
+MISSING_SENTINEL = -200.0
+
+
+def drop_sentinels(frame: pd.DataFrame) -> pd.DataFrame:
+    """Turn the logger's unmeasured-hour marker into a real missing value."""
+    out = frame.copy()
+    for column in out.columns:
+        if column == "timestamp":
+            continue
+        values = pd.to_numeric(out[column], errors="coerce")
+        out[column] = values.mask(values <= MISSING_SENTINEL)
+    return out
+
+
+def read_log(path) -> pd.DataFrame:
+    frame = pd.read_csv(path, low_memory=False)
+    frame["timestamp"] = pd.to_datetime(frame["timestamp"])
+    frame = drop_sentinels(frame)
+    return frame.sort_values("timestamp", kind="stable").reset_index(drop=True)
+
+
+def stitch(archive: pd.DataFrame, batch: pd.DataFrame) -> pd.DataFrame:
+    """The station log as the control room sees it: archive, then the live batch
+on top."""
+    shared = [c for c in batch.columns if c in archive.columns]
+    joined = pd.concat([archive[shared], batch[shared]], ignore_index=True)
+    joined = joined.drop_duplicates("timestamp", keep="last")
+    return joined.sort_values("timestamp", kind="stable").reset_index(drop=True)
+EOF
+python3 -c "
+import sys; sys.path.insert(0,'/workspace/target')
+from src import channels
+h=channels.read_log('/workspace/target/data/history.csv')
+print(h.isna().sum().to_dict())
+print(h['PT08.S1(CO)'].min())
+"
+```
+
+Tool:
+<returncode>
+0
+<output>
+{'timestamp': 0, 'PT08.S1(CO)': 71, 'PT08.S2(NMHC)': 71, 'PT08.S3(NOx)': 71, 
+'PT08.S4(NO2)': 71, 'PT08.S5(O3)': 71, 'T': 71, 'RH': 71, 'AH': 71, 'C6H6(GT)': 
+71}
+0.0
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 13, $0.61):
+```
+cd /workspace/target && cat > src/rollup.py <<'EOF'
+from __future__ import annotations
+
+import pandas as pd
+
+from . import channels
+
+
+def _hourly_series(log: pd.DataFrame, column: str) -> pd.Series:
+    frame = log.drop_duplicates("timestamp", 
+keep="last").set_index("timestamp").sort_index()
+    return pd.to_numeric(frame[column], errors="coerce").astype(float)
+
+
+def rolling_mean(series: pd.Series, hours: int) -> pd.Series:
+    """Mean of the readings recorded in the `hours` ending at each hour.
+
+    The window is measured in clock time, not in rows, so a gap in the log 
+shortens the
+    window instead of reaching further back. An hour the instrument did not 
+measure is
+    absent from the log's arithmetic and contributes nothing to the mean; if 
+nothing at
+    all was measured in the window the mean is undefined.
+    """
+    return series.rolling(f"{int(hours)}h", min_periods=1).mean()
+
+
+def build_rollups(log: pd.DataFrame, window_hours: int = 24) -> pd.DataFrame:
+    source = _hourly_series(log, channels.ROLLUP_CHANNEL)
+    window = rolling_mean(source, window_hours)
+    return pd.DataFrame({
+        "rollup_24h": window,
+        "rollup_6h": rolling_mean(source, 6),
+        "rollup_delta": source - window,
+    }, index=source.index)
+EOF
+python3 -c "
+import sys; sys.path.insert(0,'/workspace/target')
+import pandas as pd
+from src import channels, rollup
+h=channels.read_log('/workspace/target/data/history.csv')
+b=channels.read_log('/workspace/target/data/current_batch.csv')
+log=channels.stitch(h,b)
+r=rollup.build_rollups(log,24)
+print(r.isna().sum().to_dict(), len(r))
+print(r.loc['2004-12-14 17:00:00'])
+"
+```
+
+Tool:
+<returncode>
+0
+<output>
+{'rollup_24h': 36, 'rollup_6h': 84, 'rollup_delta': 113} 7111
+rollup_24h      1272.652174
+rollup_6h       1444.000000
+rollup_delta            NaN
+Name: 2004-12-14 17:00:00, dtype: float64
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 14, $0.65):
+```
+cd /workspace/target && python3 -c "
+import sys; sys.path.insert(0,'.')
+import pandas as pd, numpy as np
+from src import channels, rollup
+h=channels.read_log('data/history.csv'); 
+b=channels.read_log('data/current_batch.csv')
+log=channels.stitch(h,b).set_index('timestamp')
+s=log['PT08.S1(CO)']
+na=s.isna()
+grp=(na!=na.shift()).cumsum()
+runs=na.groupby(grp).agg(['sum','size'])
+runs=runs[runs['sum']>0]
+print(runs.assign(start=[s.index[grp[grp==g].index[0]==s.index][0] if False else
+None for g in runs.index]) if False else runs.to_string())
+for g in runs.index:
+    idx=s.index[grp==g]
+    print(len(idx), idx[0], idx[-1])
+"
+```
+
+Tool:
+<returncode>
+0
+<output>
+             sum  size
+PT08.S1(CO)           
+2              3     3
+4             14    14
+6              1     1
+8             45    45
+10             8     8
+12            37    37
+14             5     5
+3 2004-04-01 14:00:00 2004-04-01 16:00:00
+14 2004-05-25 19:00:00 2004-05-26 08:00:00
+1 2004-07-31 00:00:00 2004-07-31 00:00:00
+45 2004-08-26 06:00:00 2004-08-28 02:00:00
+8 2004-09-08 10:00:00 2004-09-08 17:00:00
+37 2004-12-14 17:00:00 2004-12-16 05:00:00
+5 2004-12-24 19:00:00 2004-12-24 23:00:00
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 15, $0.73):
+```
+cd /workspace/target && cat > src/features.py <<'EOF'
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+from . import channels, rollup
+
+FEATURE_COLUMNS = channels.CHANNELS + ["rollup_24h", "rollup_6h", 
+"rollup_delta", "hour_of_day"]
+
+
+def _indexed(log: pd.DataFrame) -> pd.DataFrame:
+    return log.drop_duplicates("timestamp", 
+keep="last").set_index("timestamp").sort_index()
+
+
+def build_features(log: pd.DataFrame, window_hours: int = 24) -> pd.DataFrame:
+    frame = _indexed(log)
+    features = frame[channels.CHANNELS].apply(pd.to_numeric, 
+errors="coerce").astype(float)
+    features = features.join(rollup.build_rollups(log, window_hours))
+    features["hour_of_day"] = features.index.hour
+    return features[FEATURE_COLUMNS].sort_index()
+
+
+def build_labels(log: pd.DataFrame, target: str, threshold: float) -> pd.Series:
+    """1 if the next clock hour breached the threshold, 0 if it did not, NaN if 
+unknown.
+
+    An hour the analyser did not measure is not a quiet hour: it carries no 
+label at all
+    and must not be taught to the model as a negative.
+    """
+    frame = _indexed(log)
+    series = pd.to_numeric(frame[target], errors="coerce").astype(float)
+    hourly = series.reindex(pd.date_range(series.index.min(), 
+series.index.max(), freq="h"))
+    nxt = hourly.shift(-1).reindex(series.index)
+    label = pd.Series(np.where(nxt.isna(), np.nan, (nxt > 
+threshold).astype(float)),
+                      index=series.index, name="label")
+    return label.sort_index()
+
+
+def training_set(log: pd.DataFrame, target: str, threshold: float, window_hours:
+int = 24):
+    """Feature rows paired with the hours that actually carry a label."""
+    X = build_features(log, window_hours)
+    y = build_labels(log, target, threshold).reindex(X.index)
+    keep = y.notna()
+    return X.loc[keep], y.loc[keep].astype(int)
+EOF
+cat > src/serve.py <<'EOF'
+from __future__ import annotations
+
+from pathlib import Path
+
+import pandas as pd
+import yaml
+
+from . import channels, features
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def _history_path() -> Path:
+    cfg = yaml.safe_load((ROOT / "config.yaml").read_text())
+    return ROOT / cfg["paths"]["history"]
+
+
+def batch_hours(batch: pd.DataFrame) -> pd.DatetimeIndex:
+    """Every hour the control room handed over, once each, in time order."""
+    hours = pd.to_datetime(batch["timestamp"])
+    return pd.DatetimeIndex(hours.drop_duplicates().sort_values())
+
+
+def build_serving_frame(batch: pd.DataFrame, window_hours: int = 24) -> 
+pd.DataFrame:
+    """One feature row for every hour in the batch -- no hour is dropped.
+
+    The archive is stitched underneath so that the rolling windows at the start 
+of the
+    batch see the hours that precede them, but only the batch's own hours are 
+returned.
+    """
+    archive = channels.read_log(_history_path())
+    stitched = channels.stitch(archive, batch)
+
+    frame = features.build_features(stitched, window_hours)
+    return frame.reindex(batch_hours(batch))
+EOF
+python3 -c "
+import sys; sys.path.insert(0,'.')
+from src import channels, serve, features
+b=channels.read_log('data/current_batch.csv')
+f=serve.build_serving_frame(b,24)
+print(len(f), list(f.columns)==features.FEATURE_COLUMNS)
+print(f.isna().sum().to_dict())
+"
+```
+
+Tool:
+<returncode>
+0
+<output>
+562 True
+{'PT08.S1(CO)': 42, 'PT08.S2(NMHC)': 42, 'PT08.S3(NOx)': 42, 'PT08.S4(NO2)': 42,
+'PT08.S5(O3)': 42, 'T': 42, 'RH': 42, 'AH': 42, 'rollup_24h': 14, 'rollup_6h': 
+32, 'rollup_delta': 42, 'hour_of_day': 0}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 16, $0.81):
+```
+cd /workspace/target && cat > scripts/score_hours.py <<'EOF'
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+import _bootstrap  # noqa: F401
+import pandas as pd
+import yaml
+
+from src import channels, features, model, serve
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--batch", required=True, help="hourly batch to score")
+    ap.add_argument("--out", required=True, help="destination csv")
+    args = ap.parse_args()
+
+    cfg = yaml.safe_load((ROOT / "config.yaml").read_text())
+    window = int(cfg["alerting"]["rolling_window_hours"])
+
+    archive = channels.read_log(ROOT / cfg["paths"]["history"])
+    X, y = features.training_set(archive, cfg["alerting"]["target"],
+                                 float(cfg["alerting"]["threshold"]), window)
+    clf = model.train(X, y, cfg)
+
+    batch = channels.read_log(args.batch)
+    frame = serve.build_serving_frame(batch, window)
+    scores = model.score(clf, frame)
+
+    # The rollup on the operator's screen is the one the model saw, and both are
+the
+    # station log's own 24-hour mean: unmeasured hours contribute nothing to it.
+    scored = pd.DataFrame({
+        "timestamp": frame.index,
+        "alert_probability": scores.reindex(frame.index).values,
+        "rollup_24h": frame["rollup_24h"].values,
+    })
+
+    # One row out for every hour handed in, in time order.
+    out = (pd.DataFrame({"timestamp": pd.to_datetime(batch["timestamp"])})
+           .merge(scored, on="timestamp", how="left")
+           .sort_values("timestamp", kind="stable")
+           .reset_index(drop=True))
+
+    dest = Path(args.out)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    out.to_csv(dest, index=False)
+    print(f"scored {len(out)} hours of {len(batch)} handed in -> {dest}")
+
+
+if __name__ == "__main__":
+    main()
+EOF
+cat > scripts/run_backtest.py <<'EOF'
+#!/usr/bin/env python3
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import _bootstrap  # noqa: F401
+import yaml
+from sklearn.metrics import roc_auc_score
+
+from src import channels, features, model
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def main() -> None:
+    cfg = yaml.safe_load((ROOT / "config.yaml").read_text())
+    log = channels.read_log(ROOT / cfg["paths"]["history"])
+    window = int(cfg["alerting"]["rolling_window_hours"])
+
+    # Hours the analyser did not measure carry no label and are left out of both
+sides.
+    X, y = features.training_set(log, cfg["alerting"]["target"],
+                                 float(cfg["alerting"]["threshold"]), window)
+
+    # Hold out the last quarter of the archive, so the split respects time.
+    cut = int(len(X) * 0.75)
+    Xtr, Xte, ytr, yte = X.iloc[:cut], X.iloc[cut:], y.iloc[:cut], y.iloc[cut:]
+
+    clf = model.train(Xtr, ytr, cfg)
+    auc = float(roc_auc_score(yte, model.score(clf, Xte)))
+
+    report = {
+        "hours": int(len(X)),
+        "train_hours": int(len(Xtr)),
+        "holdout_hours": int(len(Xte)),
+        "alert_rate": round(float(y.mean()), 4),
+        "holdout_auc": round(auc, 4),
+    }
+    out = ROOT / "results"
+    out.mkdir(exist_ok=True)
+    (out / "backtest_report.json").write_text(json.dumps(report, indent=2) + 
+"\n")
+    print(json.dumps(report, indent=2))
+
+
+if __name__ == "__main__":
+    main()
+EOF
+python3 scripts/run_backtest.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "hours": 6477,
+  "train_hours": 4857,
+  "holdout_hours": 1620,
+  "alert_rate": 0.2686,
+  "holdout_auc": 0.9603
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 17, $0.85):
+```
+cd /workspace/target && python3 /tmp/repro.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+0 scored 562 hours of 562 handed in -> /tmp/alerts.csv 
+AQ-118: batch hours 562 alert rows 562 missing 0
+missing hours sample [] hours of day []
+AQ-124: rows where display != log-supported mean: 0 of 562
+Empty DataFrame
+Columns: [alert_probability, rollup_24h, ref]
+Index: []
+max abs diff 2.2737367544323206e-13
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 18, $0.88):
+```
+cd /workspace/target && python3 -c "
+import pandas as pd
+a=pd.read_csv('/tmp/alerts.csv',parse_dates=['timestamp'])
+print(a.isna().sum().to_dict())
+print(a.alert_probability.describe())
+b=pd.read_csv('data/current_batch.csv',parse_dates=['timestamp'])
+print('rows',len(a),len(b),'same set',set(a.timestamp)==set(b.timestamp))
+print(a.head(3).to_string()); print(a[a.rollup_24h.isna()].head(3).to_string())
+"
+```
+
+Tool:
+<returncode>
+0
+<output>
+{'timestamp': 0, 'alert_probability': 0, 'rollup_24h': 14}
+count    562.000000
+mean       0.218652
+std        0.271468
+min        0.000000
+25%        0.021060
+50%        0.070676
+75%        0.388017
+max        0.993056
+Name: alert_probability, dtype: float64
+rows 562 562 same set True
+            timestamp  alert_probability   rollup_24h
+0 2004-12-08 15:00:00           0.023992  1090.416667
+1 2004-12-08 16:00:00           0.036025  1084.916667
+2 2004-12-08 17:00:00           0.046689  1081.041667
+              timestamp  alert_probability  rollup_24h
+169 2004-12-15 16:00:00           0.616891         NaN
+170 2004-12-15 17:00:00           0.617246         NaN
+171 2004-12-15 18:00:00           0.613936         NaN
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 19, $1.00):
+```
+cd /workspace/target && cat > tests/test_smoke.py <<'EOF'
+from __future__ import annotations
+
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import yaml
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+from src import channels, features, rollup, serve  # noqa: E402
+
+CFG = yaml.safe_load((ROOT / "config.yaml").read_text())
+WINDOW = int(CFG["alerting"]["rolling_window_hours"])
+BATCH_PATH = ROOT / CFG["paths"]["current_batch"]
+HISTORY_PATH = ROOT / CFG["paths"]["history"]
+
+
+def _batch():
+    return channels.read_log(BATCH_PATH)
+
+
+def _raw(path):
+    frame = pd.read_csv(path)
+    frame["timestamp"] = pd.to_datetime(frame["timestamp"])
+    return frame
+
+
+class TestFeatures(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.frame = features.build_features(_batch(), WINDOW)
+
+    def test_columns_are_the_contract(self):
+        self.assertEqual(list(self.frame.columns), features.FEATURE_COLUMNS)
+
+    def test_indexed_by_hour_and_unique(self):
+        self.assertTrue(self.frame.index.is_unique)
+        self.assertGreater(len(self.frame), 100)
+
+    def test_hour_of_day_is_sane(self):
+        self.assertTrue(self.frame["hour_of_day"].between(0, 23).all())
+
+    def test_rollups_are_finite(self):
+        rolls = self.frame[["rollup_24h", "rollup_6h"]].dropna()
+        self.assertGreater(len(rolls), 0)
+        self.assertTrue((rolls.abs() < 1e6).all().all())
+
+
+class TestUnmeasuredHours(unittest.TestCase):
+    """The logger marks an unmeasured hour; it is a marker, never a reading."""
+
+    def test_sentinel_is_not_read_as_a_reading(self):
+        raw = _raw(HISTORY_PATH)
+        marked = (raw.drop(columns=["timestamp"]) == 
+channels.MISSING_SENTINEL).any(axis=1)
+        self.assertGreater(int(marked.sum()), 0, "fixture should contain 
+unmeasured hours")
+
+        log = channels.read_log(HISTORY_PATH)
+        for column in log.columns:
+            if column == "timestamp":
+                continue
+            self.assertFalse((log[column] <= channels.MISSING_SENTINEL).any(),
+                             f"{column} still carries the unmeasured marker")
+        self.assertTrue(log.loc[marked.values, 
+channels.ROLLUP_CHANNEL].isna().all())
+
+    def test_unmeasured_hour_contributes_nothing_to_the_rollup(self):
+        hours = pd.date_range("2005-02-01", periods=4, freq="h")
+        log = pd.DataFrame({"timestamp": hours, channels.ROLLUP_CHANNEL: [100.0,
+np.nan, 200.0, 300.0]})
+        got = rollup.build_rollups(log, WINDOW)["rollup_24h"]
+        self.assertAlmostEqual(got.iloc[1], 100.0)
+        self.assertAlmostEqual(got.iloc[3], 200.0)
+
+    def test_window_is_clock_time_not_rows(self):
+        hours = pd.DatetimeIndex(["2005-02-01 00:00", "2005-02-01 01:00", 
+"2005-02-03 00:00"])
+        log = pd.DataFrame({"timestamp": hours, channels.ROLLUP_CHANNEL: [10.0, 
+20.0, 90.0]})
+        got = rollup.build_rollups(log, WINDOW)["rollup_24h"]
+        self.assertAlmostEqual(got.iloc[1], 15.0)
+        self.assertAlmostEqual(got.iloc[2], 90.0, msg="a gap must not drag old 
+hours into the window")
+
+    def test_unmeasured_target_hour_carries_no_label(self):
+        hours = pd.date_range("2005-02-01", periods=4, freq="h")
+        log = pd.DataFrame({"timestamp": hours, "C6H6(GT)": [1.0, np.nan, 20.0, 
+2.0]})
+        labels = features.build_labels(log, "C6H6(GT)", 14.0)
+        self.assertTrue(np.isnan(labels.iloc[0]), "unmeasured next hour is not a
+quiet hour")
+        self.assertEqual(labels.iloc[1], 1.0)
+        self.assertEqual(labels.iloc[2], 0.0)
+
+
+class TestServing(unittest.TestCase):
+    def test_serving_frame_matches_training_columns(self):
+        frame = serve.build_serving_frame(_batch(), WINDOW)
+        self.assertEqual(list(frame.columns), features.FEATURE_COLUMNS)
+        self.assertGreater(len(frame), 100)
+
+    def test_every_hour_handed_in_gets_a_feature_row(self):
+        batch = _batch()
+        frame = serve.build_serving_frame(batch, WINDOW)
+        self.assertEqual(len(frame), batch["timestamp"].nunique())
+        self.assertEqual(set(frame.index), set(batch["timestamp"]))
+
+    def test_no_hour_of_day_is_filtered_out(self):
+        frame = serve.build_serving_frame(_batch(), WINDOW)
+        self.assertEqual(sorted(set(frame.index.hour)),
+                         sorted(set(_batch()["timestamp"].dt.hour)))
+
+
+class TestContract(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        out = Path(cls.tmp.name) / "alerts.csv"
+        proc = subprocess.run(
+            [sys.executable, "scripts/score_hours.py",
+             "--batch", str(BATCH_PATH), "--out", str(out)],
+            cwd=str(ROOT), capture_output=True, text=True, timeout=1800)
+        assert proc.returncode == 0, proc.stderr[-2000:]
+        cls.alerts = pd.read_csv(out, parse_dates=["timestamp"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_score_hours_writes_the_contract(self):
+        self.assertEqual(list(self.alerts.columns),
+                         ["timestamp", "alert_probability", "rollup_24h"])
+        self.assertTrue(self.alerts["alert_probability"].between(0, 1).all())
+        self.assertGreater(self.alerts["alert_probability"].std(), 0.0)
+
+    def test_one_row_out_per_hour_handed_in(self):
+        batch = _raw(BATCH_PATH)
+        self.assertEqual(len(self.alerts), len(batch))
+        self.assertEqual(set(self.alerts["timestamp"]), set(batch["timestamp"]))
+        self.assertFalse(self.alerts["alert_probability"].isna().any())
+
+    def test_displayed_rollup_is_the_one_the_station_log_supports(self):
+        """Recompute the operator's number straight from the log, as she did."""
+        archive = _raw(HISTORY_PATH)
+        batch = _raw(BATCH_PATH)
+        shared = [c for c in batch.columns if c in archive.columns]
+        log = (pd.concat([archive[shared], batch[shared]], ignore_index=True)
+               .drop_duplicates("timestamp", keep="last")
+               .sort_values("timestamp")
+               .set_index("timestamp"))
+        readings = log[channels.ROLLUP_CHANNEL].astype(float)
+        readings = readings.mask(readings <= channels.MISSING_SENTINEL)
+        expected = readings.rolling(f"{WINDOW}h", min_periods=1).mean()
+
+        got = self.alerts.set_index("timestamp")["rollup_24h"]
+        expected = expected.reindex(got.index)
+        pd.testing.assert_series_equal(got, expected, check_names=False, 
+rtol=1e-9)
+
+
+if __name__ == "__main__":
+    unittest.main()
+EOF
+python3 -m unittest discover -s tests -q 2>&1 | tail -20
+```
+
+Tool:
+<returncode>
+0
+<output>
+----------------------------------------------------------------------
+Ran 14 tests in 3.916s
+
+OK
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 20, $1.08):
+```
+cd /workspace/target && python3 - <<'EOF'
+import pandas as pd, numpy as np, subprocess, sys
+b=pd.read_csv('data/current_batch.csv')
+# tricky batch: shuffled order, a duplicated hour, a 30h gap, an all-sentinel 
+row
+t=b.iloc[:80].copy()
+t=pd.concat([t, t.iloc[[5]]], ignore_index=True)      # duplicate hour
+far=b.iloc[200:210].copy()                            # jump ahead in time
+tricky=pd.concat([t,far],ignore_index=True).sample(frac=1,random_state=0)
+tricky.to_csv('/tmp/tricky.csv',index=False)
+p=subprocess.run([sys.executable,'scripts/score_hours.py','--batch','/tmp/tricky
+.csv','--out','/tmp/tricky_out.csv'],capture_output=True,text=True)
+print(p.returncode,p.stdout.strip(),p.stderr[-800:])
+o=pd.read_csv('/tmp/tricky_out.csv')
+print('in',len(tricky),'out',len(o),'nan prob',o.alert_probability.isna().sum())
+print(o.head(3).to_string())
+EOF
+```
+
+```
+cd /workspace/target && python3 - <<'EOF'
+# batch made only of unmeasured hours, and a batch of one hour
+import pandas as pd, subprocess, sys
+b=pd.read_csv('data/current_batch.csv',parse_dates=['timestamp'])
+bad=b[(b.iloc[:,1:]==-200).all(axis=1)]
+bad.to_csv('/tmp/allmissing.csv',index=False)
+b.iloc[[0]].to_csv('/tmp/onehour.csv',index=False)
+for f in ['/tmp/allmissing.csv','/tmp/onehour.csv']:
+    p=subprocess.run([sys.executable,'scripts/score_hours.py','--batch',f,'--out
+','/tmp/o.csv'],capture_output=True,text=True)
+    print(f,p.returncode,p.stdout.strip(),p.stderr[-400:])
+    print(pd.read_csv('/tmp/o.csv').head(3).to_string())
+EOF
+```
+
+Tool:
+<returncode>
+0
+<output>
+0 scored 91 hours of 91 handed in -> /tmp/tricky_out.csv 
+in 91 out 91 nan prob 0
+             timestamp  alert_probability   rollup_24h
+0  2004-12-08 15:00:00           0.023992  1090.416667
+1  2004-12-08 16:00:00           0.036025  1084.916667
+2  2004-12-08 17:00:00           0.046689  1081.041667
+
+
+Tool:
+<returncode>
+0
+<output>
+/tmp/allmissing.csv 0 scored 42 hours of 42 handed in -> /tmp/o.csv 
+             timestamp  alert_probability  rollup_24h
+0  2004-12-14 17:00:00           0.617246         NaN
+1  2004-12-14 18:00:00           0.613936         NaN
+2  2004-12-14 19:00:00           0.592595         NaN
+/tmp/onehour.csv 0 scored 1 hours of 1 handed in -> /tmp/o.csv 
+             timestamp  alert_probability   rollup_24h
+0  2004-12-08 15:00:00           0.023992  1090.416667
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 21, $1.13):
+```
+cd /workspace/target && grep -rn "PUBLISHING_HOURS\|-200\|min_periods" 
+--include="*.py" . | grep -v tests/; echo "---"; python3 -m unittest discover -s
+tests -q 2>&1 | tail -3; echo "--- backtest"; python3 scripts/run_backtest.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+./src/rollup.py:21:    return series.rolling(f"{int(hours)}h", 
+min_periods=1).mean()
+./src/channels.py:15:MISSING_SENTINEL = -200.0
+---
+Ran 14 tests in 3.850s
+
+OK
+--- backtest
+{
+  "hours": 6477,
+  "train_hours": 4857,
+  "holdout_hours": 1620,
+  "alert_rate": 0.2686,
+  "holdout_auc": 0.9603
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 22, $1.17):
+Fixes are in and CI is green. Now to the release path — deploy, then read back 
+what the build actually shipped.
+
+```
+cd /workspace/target && python3 env_cli.py deploy
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "deploy",
+  "bundle_digest": "0040681704f175b6",
+  "bundle_paths": [
+    "src",
+    "scripts",
+    "config.yaml"
+  ],
+  "bytes_staged": {
+    "src": 6487,
+    "scripts": 3415,
+    "config.yaml": 385
+  },
+  "config_keys_shipped": [
+    "rolling_window_hours",
+    "rolling_window_rule",
+    "target"
+  ]
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 23, $1.21):
+```
+cd /workspace/target && du -b src scripts config.yaml; echo "--- per file"; wc 
+-c src/*.py scripts/*.py config.yaml; echo "--- sum py"; cat src/*.py | wc -c; 
+cat scripts/*.py | wc -c
+```
+
+```
+cd /workspace/target && python3 env_cli.py inspect | python3 -c "import 
+json,sys; d=json.load(sys.stdin); print(json.dumps(d.get('bundle'),indent=2)); 
+print(json.dumps(d.get('config'),indent=2))"
+```
+
+Tool:
+<returncode>
+0
+<output>
+6487    src
+3415    scripts
+415     config.yaml
+--- per file
+    0 src/__init__.py
+ 1658 src/channels.py
+ 1796 src/features.py
+  724 src/model.py
+ 1201 src/rollup.py
+ 1108 src/serve.py
+  147 scripts/_bootstrap.py
+ 1426 scripts/run_backtest.py
+ 1842 scripts/score_hours.py
+  415 config.yaml
+10317 total
+--- sum py
+6487
+3415
+
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "deployed": true,
+  "digest": "0040681704f175b6"
+}
+{
+  "station": "roadside_01",
+  "alerting": {
+    "target": "C6H6(GT)",
+    "threshold": 14.0,
+    "rolling_window_hours": 24,
+    "rolling_window_rule": "the mean of the readings recorded in the 24 hours 
+ending at that hour; an unmeasured hour contributes nothing to it"
+  },
+  "model": {
+    "kind": "random_forest",
+    "n_estimators": 200,
+    "min_samples_leaf": 20,
+    "random_state": 0
+  },
+  "paths": {
+    "history": "data/history.csv",
+    "current_batch": "data/current_batch.csv"
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 24, $1.27):
+```
+cd /workspace/target && python3 env_cli.py status
+```
+
+```
+cd /workspace/target && python3 env_cli.py sample_records --file config.yaml 
+2>&1 | head -40
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "status",
+  "gates": {
+    "reproduced": true,
+    "deployed": true,
+    "deploy_count": 1,
+    "validate_count": 0,
+    "last_validate": null,
+    "diagnosed": false,
+    "diagnosis_family": null,
+    "inject_active": true,
+    "recovered": false,
+    "recovery_attempts_left": 2,
+    "promoted": false,
+    "submitted": false
+  },
+  "validate_budget": {
+    "used": 0,
+    "limit": 4
+  }
+}
+
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "sample_records",
+  "file": "config.yaml",
+  "hours_shown": 15,
+  "rows": [
+    {
+      "station: roadside_01": "alerting:"
+    },
+    {
+      "station: roadside_01": "  target: \"C6H6(GT)\""
+    },
+    {
+      "station: roadside_01": "  threshold: 14.0"
+    },
+    {
+      "station: roadside_01": "  rolling_window_hours: 24"
+    },
+    {
+      "station: roadside_01": "  rolling_window_rule: >-"
+    },
+    {
+      "station: roadside_01": "    the mean of the readings recorded in the 24 
+hours ending at that hour;"
+    },
+    {
+      "station: roadside_01": "    an unmeasured hour contributes nothing to it"
+    },
+    {
+      "station: roadside_01": "model:"
+    },
+    {
+      "station: roadside_01": "  kind: random_forest"
+    },
+    {
+      "station: roadside_01": "  n_estimators: 200"
+    },
+    {
+      "station: roadside_01": "  min_samples_leaf: 20"
+    },
+    {
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 25, $1.32):
+`inject_active: true` — the build shipped a config missing `alerting.threshold` 
+(385 vs 415 bytes, and only 3 of 4 alerting keys). Let me validate to get the 
+signal.
+
+```
+cd /workspace/target && python3 env_cli.py validate
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "validate",
+  "status": "dirty",
+  "signal": "candidate_error",
+  "budget_remaining": 3
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 26, $1.35):
+```
+cd /workspace/target && python3 env_cli.py diagnostics.read
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "diagnostics.read",
+  "family": "stale_config",
+  "symptom": "the deployed bundle was built with a configuration older than the 
+working tree",
+  "detail": {
+    "file": "config.yaml",
+    "bundle_alerting_keys": [
+      "rolling_window_hours",
+      "rolling_window_rule",
+      "target"
+    ],
+    "working_tree_alerting_keys": [
+      "rolling_window_hours",
+      "rolling_window_rule",
+      "target",
+      "threshold"
+    ],
+    "absent_from_bundle": [
+      "threshold"
+    ]
+  },
+  "recovery_families": [
+    "stale_config",
+    "partial_rollout",
+    "clock_skew",
+    "quality_regression"
+  ],
+  "attempts_left": 2
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 27, $1.39):
+```
+cd /workspace/target && python3 env_cli.py recovery.apply --family stale_config
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "recovery.apply",
+  "family": "stale_config",
+  "repaired": "config.yaml",
+  "bundle_digest": "a7fdffcb564aa1af"
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 28, $1.42):
+```
+cd /workspace/target && python3 env_cli.py inspect | python3 -c "import 
+json,sys; d=json.load(sys.stdin); print(json.dumps(d.get('bundle'),indent=2))"; 
+python3 env_cli.py status
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "deployed": true,
+  "digest": "a7fdffcb564aa1af"
+}
+{
+  "ok": true,
+  "op": "status",
+  "gates": {
+    "reproduced": true,
+    "deployed": true,
+    "deploy_count": 1,
+    "validate_count": 1,
+    "last_validate": "dirty",
+    "diagnosed": true,
+    "diagnosis_family": "stale_config",
+    "inject_active": false,
+    "recovered": true,
+    "recovery_attempts_left": 2,
+    "promoted": false,
+    "submitted": false
+  },
+  "validate_budget": {
+    "used": 1,
+    "limit": 4
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 29, $1.45):
+```
+cd /workspace/target && python3 env_cli.py validate
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "validate",
+  "status": "clean",
+  "signal": "ok",
+  "budget_remaining": 2
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 30, $1.48):
+Validation is clean. Let me do a final check of the tree before promoting.
+
+```
+cd /workspace/target && cat results/backtest_report.json && python3 -m unittest 
+discover -s tests -q 2>&1 | tail -3 && python3 /tmp/repro.py
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "hours": 6477,
+  "train_hours": 4857,
+  "holdout_hours": 1620,
+  "alert_rate": 0.2686,
+  "holdout_auc": 0.9603
+}
+Ran 14 tests in 3.981s
+
+OK
+0 scored 562 hours of 562 handed in -> /tmp/alerts.csv 
+AQ-118: batch hours 562 alert rows 562 missing 0
+missing hours sample [] hours of day []
+AQ-124: rows where display != log-supported mean: 0 of 562
+Empty DataFrame
+Columns: [alert_probability, rollup_24h, ref]
+Index: []
+max abs diff 2.2737367544323206e-13
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 31, $1.52):
+```
+cd /workspace/target && python3 env_cli.py promote
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "promote",
+  "bundle_digest": "a7fdffcb564aa1af"
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 32, $1.55):
+```
+cd /workspace/target && python3 env_cli.py submit
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "submit",
+  "frozen_digest": "a7fdffcb564aa1af",
+  "note": "the environment recomputes the graded terminal from this frozen 
+artifact"
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 33, $1.58):
+Submitted and frozen. Final state check:
+
+```
+cd /workspace/target && python3 env_cli.py status
+```
+
+Tool:
+<returncode>
+0
+<output>
+{
+  "ok": true,
+  "op": "status",
+  "gates": {
+    "reproduced": true,
+    "deployed": true,
+    "deploy_count": 1,
+    "validate_count": 2,
+    "last_validate": "clean",
+    "diagnosed": true,
+    "diagnosis_family": "stale_config",
+    "inject_active": false,
+    "recovered": true,
+    "recovery_attempts_left": 2,
+    "promoted": true,
+    "submitted": true
+  },
+  "validate_budget": {
+    "used": 2,
+    "limit": 4
+  }
+}
+
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 34, $1.63):
+All gates are closed out and the artifact is frozen at digest 
+`a7fdffcb564aa1af`.
+
+**What the two tickets were actually describing:**
+
+- **AQ-118 (short batches)** — `serve.build_serving_frame` filtered the frame 
+down to `PUBLISHING_HOURS = range(6, 22)`, a stale rule from when the cabinet 
+was powered down overnight. Every hour between 22:00 and 05:00 was silently 
+dropped: 562 in, 375 out (187 missing, exactly hours 22–05). Removed the filter;
+the serving frame is now reindexed onto the batch's own hours, and 
+`score_hours.py` merges scores back onto the input rows so the row count out 
+always equals the row count in.
+
+- **AQ-124 (the display disagrees)** — the logger writes a row every hour 
+whatever the instrument is doing, and marks unmeasured hours with `-200`. That 
+marker was being read as a reading and averaged into the 24-hour CO mean, so any
+window containing an outage showed a number the station log does not support (50
+of 375 rows disagreed, up to 1700 off). The window was also row-based rather 
+than clock-based. Now `-200` is mapped to missing on read, and the rollup is the
+mean of the readings *recorded* in the 24 clock hours ending at that hour — 
+exactly the config's rule. Where nothing at all was measured in the window the 
+cell is blank rather than fabricated. The same correction removed the 
+mislabelling of unmeasured analyser hours as quiet hours in training (holdout 
+AUC 0.9592 → 0.9603).
+
+**Release path:** `reproduce` → `deploy` (read back: `src`/`scripts` bytes 
+matched, but `config.yaml` shipped 385 vs 415 bytes with only 3 of 4 `alerting` 
+keys — `threshold` dropped) → `validate` came back **dirty / candidate_error** →
+`diagnostics.read` returned family `stale_config` → `recovery.apply --family 
+stale_config` → `validate` **clean** → `promote` → `submit`. Two validate calls 
+used of four, both recovery attempts still in hand. CI is green at 14 tests, 
+with the contract now pinned by tests for one-row-per-hour and for the displayed
+rollup matching an independent recomputation from the log.
+
+```
+echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT
+```
+
+Tool:
+<returncode>
+-1
+<output>
+
+<exception_info>
+action was not executed
+
+Exit:
+
+Saved trajectory to '/logs/agent/mini-swe-agent.trajectory.json'

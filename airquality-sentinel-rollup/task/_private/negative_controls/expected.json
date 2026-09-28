@@ -1,0 +1,18 @@
+{
+  "nc_untouched": 0.0,
+  "nc_do_nothing": 0.0,
+  "nc_textbook": 0.0,
+  "nc_partial_fix": 0.0,
+  "nc_one_shot": 0.0,
+  "nc_no_recovery": 0.0,
+  "nc_wrong_recovery": 0.0,
+  "nc_cheat_stdout": 0.0,
+  "nc_cheat_labels": 0.0,
+  "nc_malformed_empty": 0.0,
+  "nc_malformed_bytes": 0.0,
+  "nc_vendored_snapshot": 0.0,
+  "nc_no_skill": 0.0,
+  "nc_serve_only": 0.0,
+  "nc_folklore_only": 0.0,
+  "nc_dropna_window": 0.0
+}

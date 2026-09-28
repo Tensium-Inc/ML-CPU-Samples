@@ -1,0 +1,28 @@
+Final score: 0.0
+{
+  "deliverable_ok": true,
+  "deliverable_reason": "ok",
+  "table_ok": false,
+  "table_reason": "nothing_deployed",
+  "walk_ok": false,
+  "walk_reason": "walk_incomplete:0/8",
+  "notes_ok": false,
+  "notes_reason": "notes_unread:['applicant', 'decisions', 'deliverable', 'harness', 'recovery', 'requests']",
+  "submitted": false,
+  "comparison": {
+    "row_pass_rate": null,
+    "requests_agreeing": null,
+    "requests_reference": null,
+    "requests_missing": null,
+    "requests_surplus": null,
+    "label_agreeing": null,
+    "applicant_key_agreeing": null,
+    "filed_commitment_cents_agreeing": null,
+    "filed_pre_discount_cents_agreeing": null,
+    "filed_discount_pct_agreeing": null,
+    "candidate_label_counts": null,
+    "sample_wrong": null
+  },
+  "n_actions": 0,
+  "strict_pass": false
+}

@@ -1,0 +1,39 @@
+{
+    "id": "e61d3405-3e42-4989-ba05-29634a59f124",
+    "started_at": "2026-09-26T19:24:58.353026",
+    "updated_at": "2026-09-26T19:59:53.120425",
+    "finished_at": "2026-09-26T19:59:53.120425",
+    "n_total_trials": 1,
+    "stats": {
+        "n_completed_trials": 1,
+        "n_errored_trials": 0,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "mini-swe-agent__grok-4.7__drydock-ds": {
+                "n_trials": 1,
+                "n_errors": 0,
+                "metrics": [
+                    {
+                        "mean": 0.0
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "reward": {
+                        "0.0": [
+                            "task-src__2B8CNDE"
+                        ]
+                    }
+                },
+                "exception_stats": {}
+            }
+        },
+        "n_input_tokens": 8682332,
+        "n_cache_tokens": 7113088,
+        "n_output_tokens": 89051,
+        "cost_usd": 7.229337999999999
+    }
+}

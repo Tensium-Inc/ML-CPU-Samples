@@ -1,0 +1,12 @@
+{
+  "nc_constant_score": 0.05,
+  "nc_do_nothing": 0.05,
+  "nc_hide_via_config": 0.05,
+  "nc_keep_censored": 0.05,
+  "nc_label_boundary": 0.05,
+  "nc_label_window_wrong": 0.05,
+  "nc_recent_window": 0.05,
+  "nc_republish_reference": 0.05,
+  "nc_unsmoothed_rates": 0.05,
+  "nc_zero_fallback": 0.05
+}
